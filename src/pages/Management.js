@@ -1,6 +1,5 @@
 import React from 'react';
 
-import '../styles/management.css';
 
 export default function Management () {
     return (

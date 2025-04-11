@@ -14,6 +14,7 @@ import '@/styles/card.css';
 import '@/styles/dispatch.css';
 import '@/styles/status-modal.css';
 import '@/styles/boarding.css';
+import '@/styles/management.css';
 
 export default function App({ Component, pageProps }) {
   return (
