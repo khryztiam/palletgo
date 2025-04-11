@@ -1,0 +1,75 @@
+/* Estilos para la página de login */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(to right, #2c3e50, #4ca1af);
+  }
+
+  .login-box {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    width: 300px;
+    text-align: center;
+  }
+  
+  .login-logo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .logo-wrapper {
+    background-color: rgb(187, 188, 238);       /* Fondo blanco o el que quieras */
+    border-radius: 50%;            /* Hace el círculo */
+    padding: 10px;                 /* Espaciado interno */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+  }
+  
+  .input-field {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  
+  .input-field:focus {
+    border-color: #4ca1af;
+    outline: none;
+  }
+
+  .login-button {
+    width: 100%;
+    padding: 10px;
+    background: #4ca1af;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  h2 {
+    margin-bottom: 20px;
+    color: #2c3e50;
+  }
+
+  .login-button:hover {
+    background: #357d92;
+  }
+
+  .login-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }

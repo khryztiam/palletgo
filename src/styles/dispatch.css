@@ -1,0 +1,22 @@
+.dispatch-container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0px auto 20px; /* Añade margen superior para el navbar */
+    padding: 20px; 
+  }
+  
+.dispatch-container h1 {
+    color:rgb(115, 18, 18);
+    margin-bottom: 25px;
+    font-size: 1.8rem;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 10px;
+    position: relative;
+    padding-top: 10px; /* Espacio adicional */
+  }
+
+  @media (max-width: 768px) {
+    .dispatch-grid {
+      grid-template-columns: 1fr;
+    }
+  }
