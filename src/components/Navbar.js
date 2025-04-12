@@ -38,7 +38,7 @@ export const Navbar = () => {
 
   return (
     <nav className="navbar">
-      <div className="navbar-container">
+    
         {/* Logo + Nombre */}
         <div className="navbar-brand">
         <img src="/logo_app.svg" alt="PalletGo Logo" className="navbar-logo" />
@@ -111,7 +111,7 @@ export const Navbar = () => {
         >
           {isMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
         </button>
-      </div>
+    
     </nav>
   );
 };

@@ -2,7 +2,7 @@
 .request-container {
   width: 90%;
   max-width: 1200px;
-  margin: 0px auto 20px;
+  margin: 50px auto 20px;
   padding: 20px; 
 }
 
@@ -85,8 +85,10 @@
 
 .modal-content h2 {
   color: rgb(115, 18, 18);
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   font-size: 1.5rem;
+  border-bottom: 2px solid rgb(115, 18, 18); /* Opcional: línea divisoria */
+  text-align:center;
 }
 
 .form-group {

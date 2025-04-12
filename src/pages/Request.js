@@ -166,7 +166,7 @@ export default function Request() {
         }}
         className="floating-btn"
       >
-        + Solicitar
+        Solicitar
       </button>
 
       {/* Listado de órdenes */}
@@ -208,6 +208,7 @@ export default function Request() {
               value={formData.user_submit}
               onChange={handleChange}
               required
+              placeholder='Escriba su nombre...'
             />
           </div>
 
@@ -264,7 +265,7 @@ export default function Request() {
               Cancelar
             </button>
             <button type="submit" className="submit-button">
-              Guardar Solicitud
+              Enviar Solicitud
             </button>
           </div>
         </form>

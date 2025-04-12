@@ -19,11 +19,7 @@ export const Card = ({
           {/* Columna Izquierda */}
           <div className="card-column">
             <p className="card-highlight">{new Date(order.date_order).toLocaleString('es-MX')}</p>
-            {variant === 'dispatch' && (
-              <p className="card-field">
-                <span className="card-label">Solicitante:</span> {order.user_submit}
-              </p>
-            )}
+
             <div className="card-separator"></div>
             <p className="card-label">Detalles:</p>
             <ul className="card-list">
@@ -42,6 +38,11 @@ export const Card = ({
           
           {/* Columna Derecha */}
           <div className="card-column">
+          {variant === 'dispatch' && (
+              <p className="card-field">
+                <span className="card-label">Solicitante:</span> {order.user_submit}
+              </p>
+            )}
             <p className="card-field">
               <span className="card-label">Destino:</span> {order.destiny || 'N/A'}
             </p>
@@ -69,13 +70,10 @@ export const Card = ({
         ) : (
           <div className="status-indicator">
             {order.status === 'SOLICITADO' && (
-              <MdTimer className="icon" style={{ color: '#FFA500' }} />
+              <MdTimer className="icon" style={{ color :'#FFA726' }} />
             )}
             {order.status === 'EN PROGRESO' && (
-              <MdLocalShipping className="icon" style={{ color: '#1E90FF' }} />
-            )}
-            {order.status === 'ENTREGADO' && (
-              <MdDone className="icon" style={{ color: '#32CD32' }} />
+              <MdLocalShipping className="icon" style={{ color: '#66BB6A' }} />
             )}
             <span className="status-text">{order.status}</span>
           </div>
