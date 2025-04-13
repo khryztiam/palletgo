@@ -26,3 +26,343 @@
     height: 2px;
     background: #731212;
   }
+
+ /* Estilo para las tarjetas de estado */
+.control-status-cards-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: grid;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.control-status-card {
+  background-color: #fff;
+  width: 22%;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.control-status-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.control-status-card.selected {
+  border: 2px solid #731212; /* Resaltar tarjeta seleccionada */
+}
+
+.control-status-icon {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 10px;
+}
+
+.control-status-info h3 {
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.control-status-info p {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #731212;
+}
+
+/* Contenedor de la tabla */
+.control-table-container {
+  margin-top: 30px;
+  overflow-x: auto;
+}
+
+/* Estilo para la tabla */
+.control-request-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 30px;
+}
+
+.control-request-table th, .control-request-table td {
+  padding: 12px;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+
+.control-request-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.control-request-table tr:hover {
+  background-color: #f0f0f0;
+  cursor: pointer;
+}
+
+/* Estilo del botón de acción */
+.control-action-btn {
+  background-color: #731212;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.control-action-btn:hover {
+  background-color: #a63131;
+}
+
+@media (max-width: 1024px) {
+  .control-status-card {
+    width: 45%;
+  }
+}
+
+@media (max-width: 768px) {
+  .control-status-cards-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .control-status-card {
+    width: calc(50% - 10px);
+  }
+}
+
+@media (max-width: 768px) {
+  .control-request-table th,
+  .control-request-table td {
+    padding: 8px;
+    font-size: 0.9rem;
+  }
+
+  .control-action-btn {
+    padding: 5px 10px;
+    font-size: 0.9rem;
+  }
+}
+
+
+/* Modal de control*/
+
+/* Estilo para el overlay del modal */
+.control-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Estilo para el contenido del modal */
+.control-modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 400px;
+  max-width: 100%;
+  position: relative;
+}
+
+/* Cabecera del modal */
+.control-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Cuerpo del modal */
+.control-modal-body {
+  margin-top: 20px;
+}
+
+/* Estilo para inputs, selects y textareas */
+.control-modal-body input,
+.control-modal-body textarea,
+.control-modal-body select {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Pie de página del modal con botones */
+.control-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Estilo para botones en el pie del modal */
+.control-modal-footer button {
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.control-modal-footer button:hover {
+  background-color: #45a049;
+}
+
+.control-modal-footer button:nth-child(2) {
+  background-color: #f44336;
+}
+
+.control-modal-footer button:nth-child(2):hover {
+  background-color: #e53935;
+}
+
+
+/* Panel de Gestion Detalles*/
+/* /src/components/admin/control/DetailOptionsPanel.css */
+.detail-options-panel {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.options-buttons {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: flex-end;
+}
+
+.options-buttons button {
+  padding: 8px 12px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.options-buttons button:hover {
+  background-color: #45a049;
+}
+
+.options-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.option-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.option-item span {
+  font-size: 16px;
+}
+
+.option-item button {
+  margin-left: 8px;
+  padding: 6px 10px;
+  background-color: #008CBA;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.option-item button.edit-button {
+  background-color: #ff9800;
+}
+
+.option-item button.delete-button {
+  background-color: #f44336;
+}
+
+.option-item button:hover {
+  opacity: 0.8;
+}
+
+.modal {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  max-width: 500px;
+  margin: 20px auto;
+}
+
+.save-button {
+  background-color: #4CAF50;
+}
+
+.cancel-button {
+  background-color: #f44336;
+}
+
+/* Responsive - Panel de Gestión de Detalles */
+
+@media (max-width: 1024px) {
+  .options-buttons {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .option-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .option-item button {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .detail-options-panel {
+    padding: 10px;
+  }
+
+  .options-buttons {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .options-buttons button {
+    width: 100%;
+  }
+
+  .option-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .option-item span {
+    margin-bottom: 8px;
+  }
+
+  .option-item button {
+    width: 100%;
+  }
+}

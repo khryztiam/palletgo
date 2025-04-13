@@ -1,6 +1,6 @@
 // Componente Timeline.js
 import React from 'react';
-import { FaClipboardList, FaShippingFast, FaHome } from 'react-icons/fa';
+import { FaClipboardList, FaShippingFast, FaCar } from 'react-icons/fa';
 
 const Timeline = ({ events }) => {
   const getIconForArea = (area) => {
@@ -21,7 +21,7 @@ const Timeline = ({ events }) => {
       <ul className="timeline">
         {events.map((event, index) => (
           <li key={index} className="timeline-item">
-            <div className="timeline-icon">< FaClipboardList/></div>
+            <div className="timeline-icon">< FaCar/></div>
             <div className="timeline-content">
               <p className="timeline-date">
                 {event.date.toLocaleString('es-ES', {

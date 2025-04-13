@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import Modal from 'react-modal';
+import RoleGate from '../components/RoleGate';
 
 // Configurar el elemento de la app para el modal
 Modal.setAppElement('#__next');  // Es necesario para mejorar la accesibilidad
@@ -103,6 +104,7 @@ export default function Boarding() {
   if (loading) return <div className="boarding-container">Loading...</div>;
 
   return (
+    <RoleGate allowedRoles={['EMBARQUE']}>
     <div className="boarding-container">
       <h1 className="boarding-title">Embarque</h1>
       <p className="boarding-description">Registro de embarques programados.</p>
@@ -282,5 +284,6 @@ export default function Boarding() {
           )}
         </Modal>
     </div>
+    </RoleGate>
   );
 }

@@ -5,6 +5,18 @@
     align-items: center;
     height: 100vh;
     background: linear-gradient(to right, #2c3e50, #4ca1af);
+    animation: fadeInUp 0.6s ease-out;
+  }
+
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .login-box {
@@ -102,4 +114,13 @@
   
   .login-box.admin-mode {
     background-color:rgb(166, 187, 204); /* celeste claro */
+  }
+
+  .tab-content {
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
+  }
+  
+  .tab-content.show {
+    opacity: 1;
   }

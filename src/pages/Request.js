@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
+import RoleGate from '../components/RoleGate';
 import { Card } from '../components/Card';
 import Modal from 'react-modal';  // Importa react-modal
-
 
 // Configurar el elemento de la app para el modal
 Modal.setAppElement('#__next');  // Es necesario para mejorar la accesibilidad
@@ -13,6 +13,8 @@ export default function Request() {
   const { userName } = useAuth();
   const [orders, setOrders] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [detailOptions, setDetailOptions] = useState([]); // Para opciones de detalle
+
   const [formData, setFormData] = useState({
     area: userName ?? '',
     user_submit: '',
@@ -21,18 +23,7 @@ export default function Request() {
     comments: ''
   });
 
-  // Opciones para los selects
-  const detailOptions = [
-    { value: 'CARTON', label: 'CARTON' },
-    { value: 'CONTENEDOR VACIO', label: 'CONTENEDOR VACIO' },
-    { value: 'TOTEN VACIOS', label: 'TOTEN VACIOS' },
-    { value: 'CAJA LARGA P/AEREO', label: 'CAJA LARGA P/AEREO' },
-    { value: 'CAJA GRANDE P/AEREO', label: 'CAJA GRANDE P/AEREO' },
-    { value: 'RETIRO DE CONTENEDOR', label: 'RETIRO DE CONTENEDOR' },
-    { value: 'RETIRO DE TARIMA', label: 'RETIRO DE TARIMA' },
-    { value: 'TARIMA VACIA', label: 'TARIMA VACIA' },
-    { value: 'CAJAS VACIAS', label: 'CAJAS VACIAS' }
-  ];
+  // Opciones para el select de destino
   const destinyOptions = ['EMBARQUE', 'EPC'];
 
   // Cargar órdenes
@@ -46,9 +37,25 @@ export default function Request() {
     if (!error) setOrders(data || []);
   };
 
+  // Cargar las opciones de detalles desde la tabla `detail_options`
+  const fetchDetailOptions = async () => {
+    const { data, error } = await supabase
+      .from('detail_options') // Nombre de la tabla en Supabase
+      .select('value, label');  // Supón que tienes los campos 'value' y 'label' en tu tabla
+
+    if (!error) {
+      const options = data.map(item => ({
+        value: item.value,  // Usar el valor de la columna 'value'
+        label: item.label    // Usar el valor de la columna 'label'
+      }));
+      setDetailOptions(options); // Actualiza el estado con las opciones cargadas
+    }
+  };
+
   useEffect(() => {
-    // Cargar las órdenes iniciales
+    // Cargar las órdenes iniciales y las opciones de detalle
     fetchOrders();
+    fetchDetailOptions();
 
     // Configurar la suscripción en tiempo real
     const channel = supabase
@@ -100,7 +107,6 @@ export default function Request() {
     };
   }, []); // Solo se ejecuta una vez, al montar el componente
 
-
   // Manejar cambios en el form
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -147,129 +153,131 @@ export default function Request() {
         area: userName
       }));
     }
-  }, [userName]); 
+  }, [userName]);
 
   return (
-    <div className="request-container">
-      <h1>Solicitudes</h1>
-      
-      <button 
-        onClick={() => {
-          setFormData({
-            area: userName ?? '',
-            user_submit: '',
-            details: [],
-            destiny: '',
-            comments: ''
-          });
-          setIsModalOpen(true);
-        }}
-        className="floating-btn"
-      >
-        Solicitar
-      </button>
+    <RoleGate allowedRoles={['LINEA']}>
+      <div className="request-container">
+        <h1>Solicitudes</h1>
+        
+        <button 
+          onClick={() => {
+            setFormData({
+              area: userName ?? '',
+              user_submit: '',
+              details: [],
+              destiny: '',
+              comments: ''
+            });
+            setIsModalOpen(true);
+          }}
+          className="floating-btn"
+        >
+          Solicitar
+        </button>
 
-      {/* Listado de órdenes */}
-      <div className="request-grid">
-        {orders.map(order => (
-          <Card 
-            key={`order-${order.id_order}`}
-            order={order}
-            variant="default"
-          />
-        ))}
+        {/* Listado de órdenes */}
+        <div className="request-grid">
+          {orders.map(order => (
+            <Card 
+              key={`order-${order.id_order}`}
+              order={order}
+              variant="default"
+            />
+          ))}
+        </div>
+
+        {/* Modal de creación */}
+        <Modal
+          isOpen={isModalOpen}
+          onRequestClose={() => setIsModalOpen(false)}  // Cierra el modal cuando se hace clic fuera de él
+          contentLabel="Nueva Solicitud"
+          className="modal-content"
+          overlayClassName="modal-overlay"
+        >
+          <h2>Nueva Solicitud</h2>
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label>Area:</label>
+              <input
+                type="text"
+                name="area"
+                value={formData.area}
+                readOnly
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Solicitante *</label>
+              <input
+                type="text"
+                name="user_submit"
+                value={formData.user_submit}
+                onChange={handleChange}
+                required
+                placeholder='Escriba su nombre...'
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Detalles (Selección múltiple)</label>
+              <Select
+                isMulti
+                options={detailOptions}  // Ahora se utilizan las opciones cargadas desde la base de datos
+                value={detailOptions.filter(opt => formData.details.includes(opt.value))}
+                onChange={(selected) => {
+                  setFormData(prev => ({
+                    ...prev,
+                    details: selected.map(opt => opt.value)
+                  }));
+                }}
+                placeholder="Seleccione los detalles..."
+                noOptionsMessage={() => "No hay más opciones"}
+                className="react-select-container"
+                classNamePrefix="react-select"
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Destino</label>
+              <select
+                name="destiny"
+                value={formData.destiny}
+                onChange={handleChange}
+              >
+                <option value="">Seleccione...</option>
+                {destinyOptions.map(opt => (
+                  <option key={opt} value={opt}>{opt}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>Comentarios</label>
+              <textarea
+                name="comments"
+                value={formData.comments}
+                onChange={handleChange}
+                rows={3}
+                placeholder="Información adicional..."
+              />
+            </div>
+
+            <div className="form-actions">
+              <button 
+                type="button" 
+                onClick={() => setIsModalOpen(false)}
+                className="cancel-button"
+              >
+                Cancelar
+              </button>
+              <button type="submit" className="submit-button">
+                Enviar Solicitud
+              </button>
+            </div>
+          </form>
+        </Modal>
       </div>
-
-      {/* Modal de creación */}
-      <Modal
-        isOpen={isModalOpen}
-        onRequestClose={() => setIsModalOpen(false)}  // Cierra el modal cuando se hace clic fuera de él
-        contentLabel="Nueva Solicitud"
-        className="modal-content"
-        overlayClassName="modal-overlay"
-      >
-        <h2>Nueva Solicitud</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Area:</label>
-            <input
-              type="text"
-              name="area"
-              value={formData.area}
-              readOnly
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Solicitante *</label>
-            <input
-              type="text"
-              name="user_submit"
-              value={formData.user_submit}
-              onChange={handleChange}
-              required
-              placeholder='Escriba su nombre...'
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Detalles (Selección múltiple)</label>
-            <Select
-              isMulti
-              options={detailOptions}
-              value={detailOptions.filter(opt => formData.details.includes(opt.value))}
-              onChange={(selected) => {
-                setFormData(prev => ({
-                  ...prev,
-                  details: selected.map(opt => opt.value)
-                }));
-              }}
-              placeholder="Seleccione los detalles..."
-              noOptionsMessage={() => "No hay más opciones"}
-              className="react-select-container"
-              classNamePrefix="react-select"
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Destino</label>
-            <select
-              name="destiny"
-              value={formData.destiny}
-              onChange={handleChange}
-            >
-              <option value="">Seleccione...</option>
-              {destinyOptions.map(opt => (
-                <option key={opt} value={opt}>{opt}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label>Comentarios</label>
-            <textarea
-              name="comments"
-              value={formData.comments}
-              onChange={handleChange}
-              rows={3}
-              placeholder="Información adicional..."
-            />
-          </div>
-
-          <div className="form-actions">
-            <button 
-              type="button" 
-              onClick={() => setIsModalOpen(false)}
-              className="cancel-button"
-            >
-              Cancelar
-            </button>
-            <button type="submit" className="submit-button">
-              Enviar Solicitud
-            </button>
-          </div>
-        </form>
-      </Modal>
-    </div>
+    </RoleGate>
   );
 }

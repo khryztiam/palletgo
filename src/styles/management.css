@@ -36,37 +36,31 @@
 /* Resumen compacto (versión mejorada) */
 .management-summary-compact {
   display: flex;
-  gap: 15px;
-  margin-bottom: 25px;
-  background: #f8fafc;
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
 }
 
 .management-summary-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   padding: 10px 15px;
   border-radius: 8px;
-  font-size: 0.9rem;
-  min-width: 80px;
+  color: #fff;
+  font-weight: bold;
+  min-width: 120px;
+  text-align: center;
 }
 
 .management-summary-item.admin {
-  background: #fee2e2;
-  color: #b91c1c;
+  background-color: #005792;
 }
 
 .management-summary-item.linea {
-  background: #dbeafe;
-  color: #1d4ed8;
+  background-color: #0e6e30;
 }
 
 .management-summary-item.embarque {
-  background: #dcfce7;
-  color: #166534;
+  background-color: #af4c1c;
 }
 
 .management-summary-item strong {
@@ -124,25 +118,26 @@
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  overflow-x: auto;
+
 }
 
 .management-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 15px;
+  margin-bottom: 20px;
+  overflow-x: auto;
+}
+
+.management-table th,
+.management-table td {
+  padding: 12px;
+  text-align: center;
+  border: 1px solid #ddd;
+  background-color: white;
 }
 
 .management-table th {
-  background-color: #e2e8f0;
-  padding: 12px 15px;
-  text-align: left;
-  font-weight: 600;
-}
-
-.management-table td {
-  padding: 12px 15px;
-  border-bottom: 1px solid #edf2f7;
+  background-color: #f0f0f0;
 }
 
 .management-table tr:last-child td {
@@ -160,17 +155,34 @@
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-.management-clickable-row.admin {
-  background-color: #fee2e2;
+
+@media (max-width: 1024px) {
+  .management-summary-compact {
+    justify-content: space-around;
+  }
+
+  .management-summary-item {
+    min-width: 40%;
+  }
 }
 
-.management-clickable-row.linea {
-  background-color: #dbeafe;
+@media (max-width: 768px) {
+  .management-summary-compact {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .management-summary-item {
+    width: 100%;
+  }
+
+  .management-table th,
+  .management-table td {
+    font-size: 14px;
+    padding: 10px;
+  }
 }
 
-.management-clickable-row.embarque {
-  background-color: #dcfce7;
-}
 
 /* Modal */
 .management-modal-overlay {

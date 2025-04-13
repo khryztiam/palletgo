@@ -252,25 +252,23 @@ export default function Management() {
                 <tr>
                   <th>Nombre</th>
                   <th>Email</th>
-                  <th>Rol</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredUsers.length > 0 ? (
                   filteredUsers.map(user => (
-                    <tr 
-                      key={user.id} 
+                    <tr
+                      key={user.id}
                       onClick={() => openDetailModal(user)}
-                      className={`management-clickable-row ${ROLE_COLORS[user.rol_name]}`}
+                      className={`management-clickable-row ${user.rol_name.toLowerCase()}`}
                     >
                       <td>{user.user_name}</td>
                       <td>{user.email}</td>
-                      <td>{user.rol_name}</td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="3" className="management-no-results">
+                    <td colSpan="2" className="management-no-results">
                       {filter ? 'No hay coincidencias' : 'No hay usuarios registrados'}
                     </td>
                   </tr>

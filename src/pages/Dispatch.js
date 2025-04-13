@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { Card } from '../components/Card';
 import { StatusModal } from '../components/StatusModal';
+import RoleGate from '../components/RoleGate';
 
 
 export default function Dispatch() {
@@ -93,6 +94,7 @@ export default function Dispatch() {
   };
 
   return (
+    <RoleGate allowedRoles={['EMBARQUE']}>
     <div className="dispatch-container">
       <h1>Control de Despachos</h1>
       
@@ -118,5 +120,6 @@ export default function Dispatch() {
         />
       )}
     </div>
+    </RoleGate>
   );
 }

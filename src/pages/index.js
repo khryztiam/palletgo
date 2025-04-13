@@ -13,6 +13,7 @@ export default function Login() {
 
   const router = useRouter();
   const { user, role, login } = useAuth();
+  const [fadeIn, setFadeIn] = useState(true);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,11 +29,19 @@ export default function Login() {
     }
   };
 
+// Efecto para reiniciar animación en cada cambio de tab
+useEffect(() => {
+  setFadeIn(false); // reinicia
+  const timeout = setTimeout(() => setFadeIn(true), 50); // espera breve para reactivar clase
+
+  return () => clearTimeout(timeout);
+}, [activeTab]);
+
   // Redirige automáticamente cuando user y role están disponibles
   useEffect(() => {
     if (user && role) {
       if (role === 'ADMIN') {
-        router.replace('/admin/Management'); // o la página de admin que uses
+        router.replace('/admin/Dashboard'); // o la página de admin que uses
       } else if (role === 'LINEA') {
         router.replace('/Request');
       } else if (role === 'EMBARQUE') {
@@ -78,6 +87,7 @@ export default function Login() {
         {error && <div className="error-message">{error}</div>}
 
         {(activeTab === 'employee' || activeTab === 'admin') && (
+          <div className={`tab-content ${fadeIn ? 'show' : ''}`}>
           <form onSubmit={handleSubmit}>
             <input
               type="email"
@@ -106,6 +116,7 @@ export default function Login() {
               {isLoggingIn ? 'Ingresando...' : 'Ingresar'}
             </button>
           </form>
+          </div>
         )}
       </div>
     </div>
