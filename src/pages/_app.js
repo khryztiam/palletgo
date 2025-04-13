@@ -17,6 +17,9 @@ import '@/styles/status-modal.css';
 import '@/styles/boarding.css';
 import '@/styles/management.css';
 import '@/styles/admingate.css';
+import '@/styles/dashboard.css';
+import '@/styles/control.css';
+import '@/styles/timeline.css';
 
 export default function App({ Component, pageProps }) {
   return (

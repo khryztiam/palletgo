@@ -49,17 +49,14 @@ export const Navbar = () => {
         <div className={`navbar-menu ${isMenuOpen ? 'navbar-mobile' : ''}`}>
           {role === 'ADMIN' && (
             <>
-              <Link href="/Request" onClick={() => setIsMenuOpen(false)}>
-                <span className="navbar-link"><FaHome /> Solicitudes</span>
+              <Link href="/admin/Dashboard" onClick={() => setIsMenuOpen(false)}>
+                <span className="navbar-link"><FaHome /> Dashboard</span>
               </Link>
-              <Link href="/Dispatch" onClick={() => setIsMenuOpen(false)}>
-                <span className="navbar-link"><FaClipboardList /> Despacho</span>
+              <Link href="/admin/Control" onClick={() => setIsMenuOpen(false)}>
+                <span className="navbar-link"><FaClipboardList /> Request Control</span>
               </Link>
-              <Link href="/Boarding" onClick={() => setIsMenuOpen(false)}>
-                <span className="navbar-link"><FaShippingFast /> Embarque</span>
-              </Link>
-              <Link href="/Management" onClick={() => setIsMenuOpen(false)}>
-                <span className="navbar-link"><FaUserCog /> Administración</span>
+              <Link href="/admin/Management" onClick={() => setIsMenuOpen(false)}>
+                <span className="navbar-link"><FaUserCog /> Administration</span>
               </Link>
             </>
           )}

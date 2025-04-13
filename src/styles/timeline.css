@@ -1,0 +1,70 @@
+/* Container for the entire timeline */
+.timeline-container {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Header */
+  .timeline-container h3 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #333;
+    font-weight: 600;
+  }
+  
+  /* The vertical timeline */
+  .timeline {
+    position: relative;
+    padding-left: 30px;
+    border-left: 2px solid #3498db;
+  }
+  
+  /* Style for each event */
+  .timeline-event {
+    display: flex;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  
+  .timeline-dot {
+    position: absolute;
+    left: -13px;
+    top: 10px;
+    background-color: #3498db;
+    color: white;
+    font-size: 1.5rem;
+    padding: 8px;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* The content of the event */
+  .timeline-content {
+    padding-left: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    width: 100%;
+  }
+  
+  /* Date styling */
+  .timeline-date {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    margin-bottom: 5px;
+  }
+  
+  /* Description styling */
+  .timeline-description {
+    font-size: 1rem;
+    color: #2c3e50;
+    font-weight: 500;
+  }
+  

@@ -32,7 +32,7 @@ export default function Login() {
   useEffect(() => {
     if (user && role) {
       if (role === 'ADMIN') {
-        router.replace('/Management'); // o la página de admin que uses
+        router.replace('/admin/Management'); // o la página de admin que uses
       } else if (role === 'LINEA') {
         router.replace('/Request');
       } else if (role === 'EMBARQUE') {
