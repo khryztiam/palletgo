@@ -58,6 +58,9 @@ export const Navbar = () => {
               <Link href="/Boarding" onClick={() => setIsMenuOpen(false)}>
                 <span className="navbar-link"><FaShippingFast /> Embarque</span>
               </Link>
+              <Link href="/Management" onClick={() => setIsMenuOpen(false)}>
+                <span className="navbar-link"><FaUserCog /> Administración</span>
+              </Link>
             </>
           )}
 

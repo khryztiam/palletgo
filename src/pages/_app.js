@@ -16,6 +16,7 @@ import '@/styles/dispatch.css';
 import '@/styles/status-modal.css';
 import '@/styles/boarding.css';
 import '@/styles/management.css';
+import '@/styles/admingate.css';
 
 export default function App({ Component, pageProps }) {
   return (

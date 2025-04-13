@@ -73,3 +73,33 @@
     opacity: 0.6;
     cursor: not-allowed;
   }
+
+  .login-tabs {
+    display: flex;
+    justify-content: center;
+    margin: 1rem 0;
+  }
+  
+  .login-tabs button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #ccc;
+    color: #333;
+    cursor: pointer;
+    margin: 0 5px;
+    border-radius: 5px;
+    font-weight: bold;
+  }
+  
+  .login-tabs button.active {
+    background-color:rgb(37, 133, 53);
+    color: white;
+  }
+  
+  .login-box.employee-mode {
+    background-color: #f0f0f0;
+  }
+  
+  .login-box.admin-mode {
+    background-color:rgb(166, 187, 204); /* celeste claro */
+  }
