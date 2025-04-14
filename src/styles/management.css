@@ -37,7 +37,7 @@
 .management-summary-compact {
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: 10px;
   flex-wrap: wrap;
   margin-bottom: 20px;
 }
@@ -118,14 +118,17 @@
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-
+  overflow-x: auto;
+  width: 100%;
+  overflow-y: auto;            /* Activamos scroll vertical */
+  max-height: 70vh;            /* Limita altura a 70% de la ventana */
 }
 
 .management-table {
+  min-width:600px;
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 20px;
-  overflow-x: auto;
+  margin-bottom: 10px;
 }
 
 .management-table th,
@@ -137,7 +140,7 @@
 }
 
 .management-table th {
-  background-color: #f0f0f0;
+  background-color: #f0a9a9;
 }
 
 .management-table tr:last-child td {
@@ -145,14 +148,50 @@
 }
 
 /* Filas por rol */
-.management-clickable-row {
+
+/* Colores de fila por rol */
+.management-row.admin {
+  background-color: #3e91eb; /* celeste claro */
+}
+
+.management-row.linea {
+  background-color: #79cc79; /* verde claro */
+}
+
+.management-row.embarque {
+  background-color: #a84646; /* amarillo claro */
+}
+
+.management-row {
   cursor: pointer;
   transition: all 0.2s;
 }
 
-.management-clickable-row:hover {
+.management-row:hover {
   transform: translateY(-1px);
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Responsive: ocultar email en móviles y usar el ancho completo para el nombre */
+@media (max-width: 768px) {
+  .management-table th:nth-child(2),
+  .management-table td:nth-child(2) {
+    display: none; /* Oculta la columna de email */
+  }
+
+  .management-table-container {
+    padding: 10px;
+  }
+
+  .management-table th,
+  .management-table td {
+    font-size: 14px;
+    padding: 10px 8px;
+  }
+
+  .management-table {
+    min-width: unset;
+  }
 }
 
 

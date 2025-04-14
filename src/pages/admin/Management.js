@@ -260,7 +260,7 @@ export default function Management() {
                     <tr
                       key={user.id}
                       onClick={() => openDetailModal(user)}
-                      className={`management-clickable-row ${user.rol_name.toLowerCase()}`}
+                      className={`management-row ${user.rol_name.toLowerCase()}`}
                     >
                       <td>{user.user_name}</td>
                       <td>{user.email}</td>
