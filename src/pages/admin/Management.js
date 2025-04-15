@@ -122,7 +122,7 @@ export default function Management() {
         user_name: newUser.user_name,
         rol_name: newUser.rol_name,
         id_rol: ROLE_MAPPING[newUser.rol_name], // Asignamos el ID numérico
-        is_active: true // Estado por defecto
+        //is_active: true // Estado por defecto
       }]);
 
       if (dbError) throw dbError;
@@ -408,13 +408,6 @@ export default function Management() {
                   value={ROLE_MAPPING[editingUser.rol_name]}
                   disabled
                 />
-              </div>
-
-              <div className="management-form-group">
-                <label>Estado</label>
-                <div className="management-status-text">
-                  {editingUser.is_active ? 'Activo' : 'Inactivo'}
-                </div>
               </div>
 
               <div className="management-modal-actions">
