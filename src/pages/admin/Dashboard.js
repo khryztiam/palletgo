@@ -8,16 +8,15 @@ import DashboardHeader from '@/components/admin/DashboardHeader';
 import DonutChart from '@/components/admin/DonutChart';
 import BarChart from '@/components/admin/BarChart';
 import Timeline from '@/components/admin/Timeline';
-
-
-
+import ExportData from '@/components/admin/ExportData'; 
 
 export default function DashboardPage() {
     const [dateRange, setDateRange] = useState({ start: '', end: '' });
-    const [areaFilter, setAreaFilter] = useState('');
+    //const [areaFilter, setAreaFilter] = useState('');
     const [summary, setSummary] = useState({ request: 0, in_progress: 0, delivered: 0, canceled: 0 });
     const [areaData, setAreaData] = useState({});
     const [timeline, setTimeline] = useState([]);
+    const [ordersData, setOrdersData] = useState([]);
   
     useEffect(() => {
       const fetchDashboardData = async () => {
@@ -30,9 +29,9 @@ export default function DashboardPage() {
         const timelineList = [];
   
         orders.forEach(order => {
-          if (areaFilter && order.area !== areaFilter) return;
-          if (dateRange.start && new Date(order.created_at) < new Date(dateRange.start)) return;
-          if (dateRange.end && new Date(order.created_at) > new Date(dateRange.end)) return;
+          //if (areaFilter && order.area !== areaFilter) return;
+          if (dateRange.start && new Date(order.date_order) < new Date(dateRange.start)) return;
+          if (dateRange.end && new Date(order.date_order) > new Date(dateRange.end)) return;
   
             // Asegúrate de que los valores del estado coincidan con los esperados
             if (order.status === 'SOLICITADO') stateSummary.request++;
@@ -50,22 +49,24 @@ export default function DashboardPage() {
         setSummary(stateSummary);
         setAreaData(areaCount);
         setTimeline(timelineList.sort((a, b) => b.date - a.date));
+        setOrdersData(orders); // Guardamos todos los datos para la exportación
       };
   
       fetchDashboardData();
-    }, [areaFilter, dateRange]);
+    }, [dateRange]);
   
     return (
       <AdminGate>
         <div className="dashboard-container">
           <DashboardHeader 
             dateRange={dateRange}
-            area={areaFilter}
+            
             onDateChange={(type, value) => setDateRange(prev => ({ ...prev, [type]: value }))}
-            onAreaChange={setAreaFilter}
+            
           />
           <div className="dashboard-visuals">
             <DonutChart data={summary} />
+            <ExportData data={ordersData} dateRange={dateRange} summary={summary} /> {/* Botón para exportar datos con resumen */}
             <BarChart areaData={areaData} />
           </div>
           <Timeline events={timeline.slice(0, 10)} />
@@ -73,3 +74,7 @@ export default function DashboardPage() {
       </AdminGate>
     );
   }
+
+  //datos del header 
+  //area={areaFilter}
+  //onAreaChange={setAreaFilter}

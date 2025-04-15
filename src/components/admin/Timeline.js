@@ -6,12 +6,13 @@ const Timeline = ({ events }) => {
   const getIconForArea = (area) => {
     switch (area) {
       case 'LINEA':
-        return <FaHome />;
+        return <FaCar />;
       case 'EMBARQUE':
         return <FaShippingFast />;
       case 'ALMACÉN':
         return <FaClipboardList />;
       default:
+        console.log(`No se encontró ícono para el área: ${area}`);
         return null;
     }
   };
@@ -21,7 +22,7 @@ const Timeline = ({ events }) => {
       <ul className="timeline">
         {events.map((event, index) => (
           <li key={index} className="timeline-item">
-            <div className="timeline-icon">< FaCar/></div>
+            <div className="timeline-icon"><FaCar /></div>
             <div className="timeline-content">
               <p className="timeline-date">
                 {event.date.toLocaleString('es-ES', {

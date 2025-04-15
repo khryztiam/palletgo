@@ -21,7 +21,7 @@ const DonutChart = ({ data }) => {
           data.delivered || 0,
           data.canceled || 0,
         ],
-        backgroundColor: ['#f39c12', '#3498db', '#2ecc71', '#e74c3c']
+        backgroundColor: ['#f39c12', '#3498db', '#28a745', '#e74c3c']
       }
     ]
   };
@@ -34,7 +34,7 @@ const DonutChart = ({ data }) => {
         labels: {
           color: '#444',
           font: {
-            size: 14,
+            size: 10,
             weight: '500',
           },
         },

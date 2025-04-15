@@ -31,7 +31,7 @@ export default function Request() {
     const { data, error } = await supabase
       .from('orders')
       .select('*')
-      .neq('status', 'ENTREGADO')
+      .not('status', 'in', '("ENTREGADO","CANCELADO")')
       .order('date_order', { descending: false });
 
     if (!error) setOrders(data || []);

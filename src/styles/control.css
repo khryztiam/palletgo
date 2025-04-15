@@ -262,6 +262,9 @@
 .options-list {
   list-style-type: none;
   padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Crea dos columnas con el mismo ancho */
+  gap: 10px; /* Espacio entre los elementos */
 }
 
 .option-item {
@@ -341,6 +344,10 @@
 @media (max-width: 768px) {
   .detail-options-panel {
     padding: 10px;
+  }
+
+  .options-list {
+    grid-template-columns: 1fr; /* Una columna para pantallas móviles */
   }
 
   .options-buttons {

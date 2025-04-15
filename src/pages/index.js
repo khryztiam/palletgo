@@ -2,7 +2,10 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/context/AuthContext';
 import Image from 'next/image';
+import Modal from 'react-modal';
 import { FaUserTie, FaUser } from 'react-icons/fa';
+
+Modal.setAppElement('#__next'); // necesario para accesibilidad con Next.js
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -10,9 +13,9 @@ export default function Login() {
   const [error, setError] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [activeTab, setActiveTab] = useState('USER');
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
-  const { user, role, login } = useAuth();
+  const { user, role, login, logout } = useAuth();
   const [fadeIn, setFadeIn] = useState(true);
 
   const handleSubmit = async (e) => {
@@ -38,21 +41,29 @@ useEffect(() => {
 }, [activeTab]);
 
   // Redirige automáticamente cuando user y role están disponibles
-  useEffect(() => {
-    if (user && role) {
-      if (role === 'ADMIN') {
-        router.replace('/admin/Dashboard'); // o la página de admin que uses
-      } else if (role === 'LINEA') {
-        router.replace('/Request');
-      } else if (role === 'EMBARQUE') {
-        router.replace('/Dispatch');
-      } else {
-        setError('Rol no autorizado.');
+    useEffect(() => {
+      if (user && role) {
+        const isAdminTab = activeTab === 'admin';
+      
+        if ((isAdminTab && role !== 'ADMIN') || (!isAdminTab && role === 'ADMIN')) {
+          setIsModalOpen(true);
+          setIsLoggingIn(false);
+          return;
+        }
+      
+        if (role === 'ADMIN') {
+          router.replace('/admin/Dashboard');
+        } else if (role === 'LINEA') {
+          router.replace('/Request');
+        } else if (role === 'EMBARQUE') {
+          router.replace('/Dispatch');
+        } else {
+          setError('Rol no autorizado.');
+        }
+      
+        setIsLoggingIn(false);
       }
-
-      setIsLoggingIn(false);
-    }
-  }, [user, role]);
+    }, [user, role, activeTab]); // 👈 ojo: agregamos activeTab en las dependencias
 
   const boxClass = `login-box ${activeTab === 'admin' ? 'admin-mode' : 'employee-mode'}`;
 
@@ -73,7 +84,7 @@ useEffect(() => {
             className={activeTab === 'employee' ? 'active' : ''}
           >
             <FaUser style={{ marginRight: '6px' }} />
-            Empleado
+            Usuario
           </button>
           <button
             onClick={() => setActiveTab('admin')}
@@ -119,6 +130,20 @@ useEffect(() => {
           </div>
         )}
       </div>
+      <Modal
+        isOpen={isModalOpen}
+        onRequestClose={() => setIsModalOpen(false)}
+        className="custom-modal"
+        overlayClassName="custom-overlay"
+      >
+        <h2>Acceso denegado</h2>
+        <p>Esta sección es exclusiva para administradores.</p>
+        <button className='cancel-btn' onClick={async () => {
+          await logout();
+          setIsModalOpen(false);
+          router.replace('/');
+        }}>Cerrar</button>
+      </Modal>
     </div>
   );
 }

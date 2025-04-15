@@ -18,6 +18,8 @@ const DashboardHeader = ({ dateRange, area, onDateChange, onAreaChange }) => (
           onChange={(e) => onDateChange('end', e.target.value)}
         />
       </div>
+      {/*  //No implementado debido a que solo existe area  Linea
+
       <div className="filter-group">
         <label>Área:</label>
         <select value={area} onChange={(e) => onAreaChange(e.target.value)}>
@@ -27,6 +29,8 @@ const DashboardHeader = ({ dateRange, area, onDateChange, onAreaChange }) => (
           <option value="ALMACÉN">Almacén</option>
         </select>
       </div>
+      
+      */}
     </div>
   </div>
 );
