@@ -17,6 +17,7 @@ export default function Login() {
   const router = useRouter();
   const { user, role, login, logout } = useAuth();
   const [fadeIn, setFadeIn] = useState(true);
+  const [accessErrorMessage, setAccessErrorMessage] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -46,6 +47,10 @@ useEffect(() => {
         const isAdminTab = activeTab === 'admin';
       
         if ((isAdminTab && role !== 'ADMIN') || (!isAdminTab && role === 'ADMIN')) {
+          const mensaje = isAdminTab
+            ? 'Esta seccion es exclusiva para administradores.'
+            : 'Esta seccion es exclusiva para usuarios.';
+          setAccessErrorMessage(mensaje);
           setIsModalOpen(true);
           setIsLoggingIn(false);
           return;
@@ -137,7 +142,7 @@ useEffect(() => {
         overlayClassName="custom-overlay"
       >
         <h2>Acceso denegado</h2>
-        <p>Esta sección es exclusiva para administradores.</p>
+        <p>{accessErrorMessage}</p>
         <button className='cancel-btn' onClick={async () => {
           await logout();
           setIsModalOpen(false);

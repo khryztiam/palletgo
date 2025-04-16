@@ -16,7 +16,7 @@ export default function Request() {
   const [detailOptions, setDetailOptions] = useState([]); // Para opciones de detalle
 
   const [formData, setFormData] = useState({
-    area: userName ?? '',
+    area: userName,
     user_submit: '',
     details: [],
     destiny: '',
@@ -31,6 +31,7 @@ export default function Request() {
     const { data, error } = await supabase
       .from('orders')
       .select('*')
+      .eq('area', userName)
       .not('status', 'in', '("ENTREGADO","CANCELADO")')
       .order('date_order', { descending: false });
 

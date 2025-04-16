@@ -176,27 +176,33 @@ export default function Management() {
     if (!confirm('¿Estás seguro de eliminar este usuario permanentemente?')) {
       return;
     }
-
+  
     try {
-      // Primero eliminar de Auth
-      const { error: authError } = await supabase.auth.admin.deleteUser(editingUser.id);
-      if (authError) throw authError;
-
-      // Luego eliminar de public.users
-      const { error: dbError } = await supabase
-        .from('users')
-        .delete()
-        .eq('id', editingUser.id);
-
-      if (dbError) throw dbError;
-
-      showFeedback('Usuario eliminado correctamente', 'success');
-      fetchUsers();
-      setIsDetailModalOpen(false);
+      const response = await fetch('/api/delete-user', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: editingUser.id, // Asegúrate de que 'editingUser' tenga el 'id' del usuario seleccionado
+        }),
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        // Feedback al usuario y refrescar la lista
+        showFeedback('Usuario eliminado correctamente', 'success');
+        fetchUsers();
+        setIsDetailModalOpen(false);
+      } else {
+        showFeedback(`Error al eliminar usuario: ${data.message}`);
+      }
     } catch (error) {
-      showFeedback(`Error al eliminar usuario: ${error.message}`);
+      showFeedback(`Error de conexión: ${error.message}`);
     }
   };
+  
 
   // Abrir modal de detalles
   const openDetailModal = (user) => {
