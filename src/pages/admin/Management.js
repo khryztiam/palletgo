@@ -1,211 +1,136 @@
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 import { useState, useEffect, useMemo } from 'react';
 import AdminGate from '@/components/AdminGate';
-import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
 
-// Mapeo de roles a IDs
-const ROLE_MAPPING = {
-  ADMIN: 1,
-  LINEA: 2,
-  EMBARQUE: 3
-};
-
-// Colores por rol
-const ROLE_COLORS = {
-  ADMIN: 'bg-red-50',
-  LINEA: 'bg-blue-50',
-  EMBARQUE: 'bg-green-50'
-};
+const ROLE_MAPPING = { ADMIN: 1, LINEA: 2, EMBARQUE: 3 };
+const ROLE_COLORS  = { ADMIN: 'bg-red-50', LINEA: 'bg-blue-50', EMBARQUE: 'bg-green-50' };
 
 export default function Management() {
   const { role, loading } = useAuth();
-  const [dbUsers, setDbUsers] = useState([]);
+  const [users, setUsers] = useState([]);
   const [newUser, setNewUser] = useState({
     email: '',
     password: '',
     user_name: '',
     rol_name: 'LINEA',
+    id_rol: ROLE_MAPPING['LINEA'],  // inicializar id_rol
   });
   const [editingUser, setEditingUser] = useState(null);
   const [feedback, setFeedback] = useState({ show: false, message: '', type: '' });
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
-  const [filter, setFilter] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [summary, setSummary] = useState({ ADMIN: 0, LINEA: 0, EMBARQUE: 0 });
 
-  // Calcula usuarios filtrados
-  const filteredUsers = useMemo(() => {
-    return dbUsers.filter(user => 
-      user.user_name.toLowerCase().includes(filter.toLowerCase()) || 
-      user.email.toLowerCase().includes(filter.toLowerCase())
-    );
-  }, [dbUsers, filter]);
-
-  // Actualiza el resumen por rol
-  const updateSummary = (users) => {
-    const summaryData = { ADMIN: 0, LINEA: 0, EMBARQUE: 0 };
-    users.forEach(user => {
-      summaryData[user.rol_name]++;
-    });
-    setSummary(summaryData);
+  const updateSummary = users => {
+    const s = { ADMIN:0, LINEA:0, EMBARQUE:0 };
+    users.forEach(u => s[u.rol_name]++);
+    setSummary(s);
   };
 
-  // Obtiene usuarios
+  // Cargar usuarios
+
   const fetchUsers = async () => {
-    setIsLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-
-      setDbUsers(data);
-      updateSummary(data);
-    } catch (error) {
-      showFeedback(`Error al cargar usuarios: ${error.message}`);
+      setIsLoading(true);
+      const res = await fetch('/api/admin/users');
+      const data = await res.json();
+      setUsers(data);
+      updateSummary(data); // Llama a la función de actualización de resumen
+    } catch (err) {
+      console.error('Error cargando usuarios:', err);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Muestra feedback
-  const showFeedback = (message, type = 'error', duration = 5000) => {
-    setFeedback({ show: true, message, type });
-    setTimeout(() => setFeedback(f => ({ ...f, show: false })), duration);
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const showFeedback = (msg, type='error', duration=5000) => {
+    setFeedback({ show:true, message:msg, type });
+    setTimeout(() => setFeedback(f=>({ ...f, show:false })), duration);
   };
 
-  // Registra nuevo usuario
+  // 👉 Usando endpoint POST
   const handleRegister = async () => {
     try {
-      // Validaciones
       if (!newUser.email || !newUser.password || !newUser.user_name) {
         throw new Error('Todos los campos son requeridos');
       }
-
       if (newUser.password.length < 6) {
         throw new Error('La contraseña debe tener al menos 6 caracteres');
       }
 
-      // Verificar si el email ya existe
-      const { data: existingUsers, error: emailError } = await supabase
-        .from('users')
-        .select('email')
-        .eq('email', newUser.email);
+      // Asegura que id_rol coincida con rol_name
+      const body = { ...newUser, id_rol:ROLE_MAPPING[newUser.rol_name] };
 
-      if (emailError) throw emailError;
-      if (existingUsers.length > 0) {
-        throw new Error('El email ya está registrado');
-      }
-
-      // Crear usuario en Auth
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: newUser.email,
-        password: newUser.password,
-        options: {
-          data: {
-            user_name: newUser.user_name,
-            role: newUser.rol_name
-          }
-        }
+      const res = await fetch('/api/admin/users', {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json' },
+        body: JSON.stringify(body),
       });
-
-      if (authError) throw authError;
-      if (!authData.user) throw new Error('No se pudo crear el usuario');
-
-      // Crear registro en public.users con id_rol correcto
-      const { error: dbError } = await supabase.from('users').insert([{
-        id: authData.user.id,
-        email: newUser.email,
-        user_name: newUser.user_name,
-        rol_name: newUser.rol_name,
-        id_rol: ROLE_MAPPING[newUser.rol_name], // Asignamos el ID numérico
-        //is_active: true // Estado por defecto
-      }]);
-
-      if (dbError) throw dbError;
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || 'Error al crear usuario');
 
       showFeedback('Usuario registrado exitosamente!', 'success');
-      setNewUser({ email: '', password: '', user_name: '', rol_name: 'LINEA' });
+      // Reset form
+      setNewUser({ email:'', password:'', user_name:'', rol_name:'LINEA', id_rol:ROLE_MAPPING.LINEA });
       fetchUsers();
       setIsCreateModalOpen(false);
-    } catch (error) {
-      showFeedback(error.message);
+    } catch (err) {
+      showFeedback(err.message);
     }
   };
 
-  // Actualizar usuario
+  // 👉 Usando endpoint PUT Actualizacion
   const handleUpdate = async () => {
     try {
       if (!editingUser.user_name || !editingUser.rol_name) {
         throw new Error('Nombre y rol son requeridos');
       }
-
-      // Actualizar en public.users con id_rol correcto
-      const { error: dbError } = await supabase
-        .from('users')
-        .update({
-          user_name: editingUser.user_name,
-          rol_name: editingUser.rol_name,
-          id_rol: ROLE_MAPPING[editingUser.rol_name] // Actualizar ID numérico
-        })
-        .eq('id', editingUser.id);
-
-      if (dbError) throw dbError;
-
-      // Actualizar metadata en Auth
-      const { error: authError } = await supabase.auth.admin.updateUserById(
-        editingUser.id,
-        { user_metadata: { role: editingUser.rol_name } }
-      );
-
-      if (authError) throw authError;
+      const payload = {
+        user_name: editingUser.user_name,
+        rol_name: editingUser.rol_name,
+        id_rol: ROLE_MAPPING[editingUser.rol_name]
+      };
+      const res = await fetch(`/api/admin/users/${editingUser.id}`, {
+        method:'PUT',
+        headers:{ 'Content-Type':'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || 'Error al actualizar usuario');
 
       showFeedback('Usuario actualizado exitosamente!', 'success');
       fetchUsers();
       setIsDetailModalOpen(false);
-    } catch (error) {
-      showFeedback(`Error al actualizar usuario: ${error.message}`);
+    } catch (err) {
+      showFeedback(err.message);
     }
   };
 
-  // Eliminar usuario
+  // 👉 Usando endpoint DELETE
   const handleDelete = async () => {
-    if (!confirm('¿Estás seguro de eliminar este usuario permanentemente?')) {
-      return;
-    }
-  
+    if (!confirm('¿Eliminar usuario permanentemente?')) return;
     try {
-      const response = await fetch('/api/delete-user', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: editingUser.id, // Asegúrate de que 'editingUser' tenga el 'id' del usuario seleccionado
-        }),
+      const res = await fetch(`/api/admin/users/${editingUser.id}`, {
+        method:'DELETE',
       });
-  
-      const data = await response.json();
-  
-      if (response.ok) {
-        // Feedback al usuario y refrescar la lista
-        showFeedback('Usuario eliminado correctamente', 'success');
-        fetchUsers();
-        setIsDetailModalOpen(false);
-      } else {
-        showFeedback(`Error al eliminar usuario: ${data.message}`);
-      }
-    } catch (error) {
-      showFeedback(`Error de conexión: ${error.message}`);
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || 'Error al eliminar usuario');
+
+      showFeedback('Usuario eliminado correctamente', 'success');
+      fetchUsers();
+      setIsDetailModalOpen(false);
+    } catch (err) {
+      showFeedback(err.message);
     }
   };
-  
 
-  // Abrir modal de detalles
-  const openDetailModal = (user) => {
+  const openDetailModal = user => {
     setEditingUser(user);
     setIsDetailModalOpen(true);
   };
@@ -214,7 +139,8 @@ export default function Management() {
     if (role === 'ADMIN') fetchUsers();
   }, [role]);
 
-  if (loading) return <div className="management-loading">Cargando...</div>;
+  if (loading) return <div>Cargando...</div>;
+
 
   return (
     <AdminGate>
@@ -233,12 +159,6 @@ export default function Management() {
 
         {/* Búsqueda y acciones */}
         <div className="management-action-bar">
-          <input
-            type="text"
-            placeholder="Buscar por nombre o email..."
-            onChange={(e) => setFilter(e.target.value)}
-            disabled={isLoading}
-          />
           <button 
             onClick={() => setIsCreateModalOpen(true)}
             disabled={isLoading}
@@ -258,11 +178,12 @@ export default function Management() {
                 <tr>
                   <th>Nombre</th>
                   <th>Email</th>
+                  <th>Rol</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredUsers.length > 0 ? (
-                  filteredUsers.map(user => (
+                {users.length > 0 ? (
+                  users.map(user => (
                     <tr
                       key={user.id}
                       onClick={() => openDetailModal(user)}
@@ -270,12 +191,13 @@ export default function Management() {
                     >
                       <td>{user.user_name}</td>
                       <td>{user.email}</td>
+                      <td>{user.rol_name}</td>
                     </tr>
                   ))
                 ) : (
                   <tr>
                     <td colSpan="2" className="management-no-results">
-                      {filter ? 'No hay coincidencias' : 'No hay usuarios registrados'}
+                      'No hay usuarios registrados'
                     </td>
                   </tr>
                 )}
@@ -353,6 +275,7 @@ export default function Management() {
                       email: '',
                       password: '',
                       user_name: '',
+                      id_rol:'',
                       rol_name: 'LINEA'
                     });
                   }}
@@ -427,6 +350,7 @@ export default function Management() {
                 <button 
                   onClick={handleDelete}
                   className="management-danger-btn"
+                  disabled={isLoading}
                 >
                   Eliminar
                 </button>

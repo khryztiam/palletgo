@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import { FaTimes } from 'react-icons/fa';
 import { supabase } from '@/lib/supabase';
+import Select from 'react-select';
 
 Modal.setAppElement('#__next');
 
@@ -119,19 +120,22 @@ const OrderModal = ({ order, isOpen, onClose, onSave }) => {
         </div>
 
         {/* Opciones de detalle - Cargar desde la base de datos */}
-        <div>
+        <div className="form-group">
           <label>Detalles:</label>
-          <select
-            multiple
-            value={details}
-            onChange={(e) => setDetails(Array.from(e.target.selectedOptions, option => option.value))}
-          >
-            {detailOptions.map((option) => (
-              <option key={option.id} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+          <Select
+            isMulti
+            options={detailOptions.map(opt => ({ value: opt.value, label: opt.label }))}
+            value={detailOptions
+              .filter(opt => details.includes(opt.value))
+              .map(opt => ({ value: opt.value, label: opt.label }))}
+            onChange={(selected) => {
+              setDetails(selected ? selected.map(opt => opt.value) : []);
+            }}
+            placeholder="Seleccione los detalles..."
+            noOptionsMessage={() => "No hay más opciones"}
+            className="react-select-container"
+            classNamePrefix="react-select"
+          />
         </div>
 
         <div>

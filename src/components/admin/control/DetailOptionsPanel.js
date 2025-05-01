@@ -1,9 +1,8 @@
 // /src/components/admin/control/DetailOptionsPanel.js
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import Modal from 'react-modal'; // Usando la librería react-modal
+import Modal from 'react-modal';
 
-// Asegúrate de que el modal sea accesible para pantallas pequeñas
 Modal.setAppElement('#__next');
 
 const DetailOptionsPanel = () => {
@@ -12,119 +11,103 @@ const DetailOptionsPanel = () => {
   const [editingOption, setEditingOption] = useState(null);
   const [editedOption, setEditedOption] = useState('');
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [actionType, setActionType] = useState(''); // Para diferenciar entre agregar, editar y eliminar
+  const [mode, setMode] = useState(''); // 'add' | 'manage'
 
-  // Cargar opciones de detalles desde Supabase
-  useEffect(() => {
-    const fetchOptions = async () => {
-      const { data, error } = await supabase
-        .from('detail_options') // Supongamos que tienes esta tabla
-        .select('*')
-        .order('label', { ascending: true });
-
-      if (error) {
-        console.error('Error cargando opciones de detalle:', error.message);
-      } else {
-        setOptions(data);
-      }
-    };
-
-    fetchOptions();
-  }, []); // Solo se ejecuta una vez al montar el componente
-
-  // Función para agregar una nueva opción
-  const handleAddOption = async () => {
-    if (!newOption.trim()) return; // Validación para evitar vacíos
-
+  // Fetch
+  const fetchOptions = async () => {
     const { data, error } = await supabase
       .from('detail_options')
-      .insert([{ label: newOption.trim() }]);
-
-    if (error) {
-      console.error('Error agregando la opción:', error.message);
-    } else {
-      setOptions((prev) => [...prev, ...data]);
-      setNewOption('');
-      setModalIsOpen(false); // Cerrar el modal después de agregar
-    }
+      .select('*')
+      .order('label', { ascending: true });
+    if (error) console.error('Error cargando opciones:', error.message);
+    else setOptions(data);
   };
 
-  // Función para editar una opción
-  const handleEditOption = async () => {
-    if (!editedOption.trim()) return;
+  useEffect(fetchOptions, []);
 
-    const { data, error } = await supabase
-      .from('detail_options')
-      .update({ label: editedOption.trim() })
-      .eq('id', editingOption.id);
-
-    if (error) {
-      console.error('Error editando la opción:', error.message);
-    } else {
-      setOptions((prev) =>
-        prev.map((opt) =>
-          opt.id === editingOption.id ? { ...opt, label: editedOption.trim() } : opt
-        )
-      );
-      setEditingOption(null);
-      setEditedOption('');
-      setModalIsOpen(false); // Cerrar el modal después de editar
-    }
+  // Open modal
+  const openAddModal = () => {
+    setMode('add');
+    setNewOption('');
+    setEditingOption(null);
+    setModalIsOpen(true);
   };
-
-  // Función para eliminar una opción
-  const handleDeleteOption = async () => {
-    const { error } = await supabase
-      .from('detail_options')
-      .delete()
-      .eq('id', editingOption.id);
-
-    if (error) {
-      console.error('Error eliminando la opción:', error.message);
-    } else {
-      setOptions((prev) => prev.filter((opt) => opt.id !== editingOption.id));
-      setEditingOption(null);
-      setModalIsOpen(false); // Cerrar el modal después de eliminar
-    }
-  };
-
-  // Funciones para abrir y cerrar el modal
-  const openModal = (type, option = null) => {
-    setActionType(type);
-    if (type === 'edit' && option) {
-      setEditingOption(option);
-      setEditedOption(option.label);
-    } else {
-      setNewOption('');
-    }
+  const openManageModal = (option) => {
+    setMode('manage');
+    setEditingOption(option);
+    setEditedOption(option.label);
     setModalIsOpen(true);
   };
 
   const closeModal = () => {
     setModalIsOpen(false);
-    setActionType('');
+    setMode('');
     setEditingOption(null);
     setEditedOption('');
     setNewOption('');
   };
 
+  // Handlers
+  const handleAdd = async () => {
+    if (!newOption.trim()) return;
+    const { data, error } = await supabase
+      .from('detail_options')
+      .insert([{ label: newOption.trim() }]);
+    if (error) console.error('Error agregando:', error.message);
+    else {
+      setOptions(prev => [...prev, ...data]);
+      closeModal();
+    }
+  };
+
+  const handleEdit = async () => {
+    if (!editedOption.trim()) return;
+    const { error } = await supabase
+      .from('detail_options')
+      .update({ label: editedOption.trim() })
+      .eq('id', editingOption.id);
+    if (error) console.error('Error editando:', error.message);
+    else {
+      setOptions(prev =>
+        prev.map(opt =>
+          opt.id === editingOption.id ? { ...opt, label: editedOption.trim() } : opt
+        )
+      );
+      closeModal();
+    }
+  };
+
+  const handleDelete = async () => {
+    const { error } = await supabase
+      .from('detail_options')
+      .delete()
+      .eq('id', editingOption.id);
+    if (error) console.error('Error eliminando:', error.message);
+    else {
+      setOptions(prev => prev.filter(opt => opt.id !== editingOption.id));
+      closeModal();
+    }
+  };
+
   return (
     <div className="detail-options-panel">
       <h2>Opciones de Detalles</h2>
-
-      {/* Botones fuera de la tabla */}
       <div className="options-buttons">
-        <button onClick={() => openModal('add')} className="add-button">Agregar Opción</button>
-        <button onClick={() => openModal('edit', editingOption)} className="edit-button">Editar Opción</button>
-        <button onClick={() => openModal('delete', editingOption)} className="delete-button">Eliminar Opción</button>
+      <button onClick={openAddModal} className="add-button">
+        + Agregar Opción
+      </button>
       </div>
-
-      {/* Mostrar las opciones de detalle */}
       <ul className="options-list">
         {options.length > 0 ? (
-          options.map((option) => (
-            <li key={option.id} className="option-item">
-              <span>{option.label}</span>
+          options.map(option => (
+            <li
+              key={option.id}
+              className={`option-item ${
+                editingOption?.id === option.id ? 'selected' : ''
+              }`}
+              onClick={() => openManageModal(option)}
+            >
+              {option.label}
             </li>
           ))
         ) : (
@@ -132,55 +115,62 @@ const DetailOptionsPanel = () => {
         )}
       </ul>
 
-      {/* Modal para agregar, editar y eliminar */}
-      <Modal isOpen={modalIsOpen} onRequestClose={closeModal} className="modal-overlay">
-        <div className="modal-content">
-        <h2>{actionType === 'add' ? 'Agregar Opción' : actionType === 'edit' ? 'Editar Opción' : 'Eliminar Opción'}</h2>
-        
-        {/* Modal para agregar opción */}
-        {actionType === 'add' && (
-          <><div className='form-group'>
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        overlayClassName="control-modal-overlay"
+        className="control-modal-content"
+      >
+        {mode === 'add' ? (
+          <>
+            <h2>Agregar Opción</h2>
+            <div className='control-modal'>
+            <div className='control-form-group'>
             <input
               type="text"
               value={newOption}
-              onChange={(e) => setNewOption(e.target.value)}
+              onChange={e => setNewOption(e.target.value)}
               placeholder="Escribe la nueva opción"
-            /></div>
-            <div className='form-actions'>
-            <button onClick={handleAddOption} className="submit-button">Guardar</button>
-            <button onClick={closeModal} className="cancel-button">Cancelar</button>
+              className='control-form-control'
+            />
+            </div>
+            <div className="control-actions">
+              <button onClick={handleAdd} className="submit-button">
+                Guardar
+              </button>
+              <button onClick={closeModal} className="cancel-button">
+                Cancelar
+              </button>
+            </div>
             </div>
           </>
-        )}
-
-        {/* Modal para editar opción */}
-        {actionType === 'edit' && (
-          <><div className='form-group'>
+        ) : (
+          <>
+            <h2>Gestionar Opción</h2>
+            <div className='control-modal'>
+            <div className='control-form-group'>
             <input
               type="text"
               value={editedOption}
-              onChange={(e) => setEditedOption(e.target.value)}
+              onChange={e => setEditedOption(e.target.value)}
               placeholder="Edita la opción"
-            /></div>
-            <div className='form-actions'>
-            <button onClick={handleEditOption} className="submit-button">Guardar</button>
-            <button onClick={closeModal} className="cancel-button">Cancelar</button>
-            </div>          
-          </>
-        )}
-
-        {/* Modal para eliminar opción */}
-        {actionType === 'delete' && (
-          <><div className='form-group'>
-            <p>¿Estás seguro de que deseas eliminar esta opción?</p></div>
-            <div className='form-actions'>
-            <button onClick={handleDeleteOption} className="submit-button">Eliminar</button>
-            <button onClick={closeModal} className="cancel-button">Cancelar</button>
+              className='control-form-control'
+            />
+            </div>
+            <div className="control-actions">
+              <button onClick={handleEdit} className="management-primary-btn">
+                Guardar
+              </button>
+              <button onClick={handleDelete} className="management-secondary-btn">
+                Eliminar
+              </button>
+              <button onClick={closeModal} className="management-danger-btn">
+                Cancelar
+              </button>
+            </div>
             </div>
           </>
         )}
-        
-        </div>
       </Modal>
     </div>
   );
