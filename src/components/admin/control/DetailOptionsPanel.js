@@ -14,16 +14,21 @@ const DetailOptionsPanel = () => {
   const [mode, setMode] = useState(''); // 'add' | 'manage'
 
   // Fetch
-  const fetchOptions = async () => {
-    const { data, error } = await supabase
-      .from('detail_options')
-      .select('*')
-      .order('label', { ascending: true });
-    if (error) console.error('Error cargando opciones:', error.message);
-    else setOptions(data);
-  };
-
-  useEffect(fetchOptions, []);
+  useEffect(() => {
+    async function fetchOptions() {
+      const { data, error } = await supabase
+        .from('detail_options')
+        .select('*')
+        .order('label', { ascending: true });
+      if (error) {
+        console.error('Error cargando opciones:', error.message);
+      } else {
+        setOptions(data);
+      }
+    }
+  
+    fetchOptions();
+  }, []);
 
   // Open modal
   const openAddModal = () => {

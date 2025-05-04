@@ -19,6 +19,8 @@ export const Navbar = () => {
   const router = useRouter();
   const roleLetter = role ? role.charAt(0) : '';
   const hideNavbarRoutes = ['/', '/login']; // rutas donde no queremos navbar
+  const [isAppDropdownOpen, setIsAppDropdownOpen] = useState(false);
+  const toggleAppDropdown = () => setIsAppDropdownOpen(!isAppDropdownOpen);
 
   if (hideNavbarRoutes.includes(router.pathname)) {
     return null;
@@ -58,6 +60,25 @@ export const Navbar = () => {
               <Link href="/admin/Management" onClick={() => setIsMenuOpen(false)}>
                 <span className="navbar-link"><FaUserCog /> Administration</span>
               </Link>
+                  {/* Menú desplegable "App" */}
+              <div className="navbar-dropdown">
+                <span className="navbar-link" onClick={toggleAppDropdown}>
+                  <FaBars /> App ▼
+                </span>
+                {isAppDropdownOpen && (
+                  <div className="dropdown-content">
+                    <Link href="/Request" onClick={() => setIsMenuOpen(false)}>
+                      <span className="navbar-link"><FaHome /> Solicitudes</span>
+                    </Link>
+                    <Link href="/Dispatch" onClick={() => setIsMenuOpen(false)}>
+                      <span className="navbar-link"><FaClipboardList /> Despacho</span>
+                    </Link>
+                    <Link href="/Boarding" onClick={() => setIsMenuOpen(false)}>
+                      <span className="navbar-link"><FaShippingFast /> Embarque</span>
+                    </Link>
+                  </div>
+                )}
+              </div>
             </>
           )}
 
