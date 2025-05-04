@@ -170,31 +170,3 @@
       flex-direction: column;
   }
 }
-.ReactModal__Overlay {
-  /* Fondo semitransparente */
-  background-color: rgba(0, 0, 0, 0.5) !important;
-  /* Centrar el contenido */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* Que quede por encima de todo */
-  z-index: 1000 !important;
-}
-
-.ReactModal__Content {
-
-  /* Anular posicionamiento inline de react-modal */
-  position: relative !important;
-  inset: auto !important;
-  /* Dimensiones y espaciado */
-  width: 90%;
-  max-width: 500px;
-  padding: 2rem;
-  /* Fondo y bordes */
-  background-color: #ffffff;
-  border-radius: 20px;
-  /* Sombra para destacar */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  /* Evitar outline azul al hacer foco */
-  outline: none !important;
-}
