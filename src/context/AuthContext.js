@@ -17,52 +17,50 @@ export const AuthProvider = ({ children }) => {
     // Esto va a activar getSession automáticamente por el listener
   };
 
-  useEffect(() => {
-    const getSession = async () => {
-      // Obtiene la sesión de Supabase
-      const { data: { session } } = await supabase.auth.getSession();
-      setUser(session?.user || null);  // Establece el usuario
+useEffect(() => {
+  const getSession = async (fromEvent = false) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    setUser(session?.user || null);
 
-      if (session?.user) {
-        // Realiza una consulta a la tabla public.users usando el email
-        const { data, error } = await supabase
-          .from('users') // Asegúrate de que la tabla se llama así
-          .select('user_name, rol_name')  // Los campos a los que accedemos
-          .eq('email', session.user.email) // Usamos el email como filtro
-          .single(); // Asegura que solo regrese un resultado
+    if (session?.user) {
+      const { data, error } = await supabase
+        .from('users')
+        .select('user_name, rol_name')
+        .eq('email', session.user.email)
+        .single();
 
-        if (data) {
-          setUserName(data.user_name);  // Almacena el user_name
-          setRole(data.rol_name);  // Almacena el role_name
-        } else {
-          console.error('Error al obtener datos del usuario:', error);
-        }
+      if (data) {
+        setUserName(data.user_name);
+        setRole(data.rol_name);
+      } else if (!fromEvent) {
+        console.error('Error al obtener datos del usuario:', error);
       }
+    }
 
-      setLoading(false);  // Indica que la sesión ha sido cargada
-    };
+    if (!fromEvent) {
+      setLoading(false);
+    }
+  };
 
-    // Llamamos a la función para obtener la sesión y los datos del usuario
-    getSession();
+  getSession(); // carga inicial
 
-    // Escucha los cambios de sesión y renueva la sesión automáticamente
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user || null);
-      if (session?.user) {
-        getSession();
-      } else {
-        setUserName('');
-        setRole('');
-      }
-    });
+  const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+    setUser(session?.user || null);
+    if (session?.user) {
+      getSession(true); // evita conflicto con loading
+    } else {
+      setUserName('');
+      setRole('');
+    }
+  });
 
-    // Desuscribirse correctamente al desmontar el componente
-    return () => {
-      if (listener && typeof listener.unsubscribe === 'function') {
-        listener.unsubscribe();
-      }
-    };
-  }, []); // Solo se ejecuta una vez al cargar el componente
+  return () => {
+    if (listener && typeof listener.unsubscribe === 'function') {
+      listener.unsubscribe();
+    }
+  };
+}, []);
+
 
     // Función de logout
     const logout = async () => {

@@ -30,19 +30,30 @@ export default function Management() {
 
   // Cargar usuarios
 
-  const fetchUsers = async () => {
-    try {
-      setIsLoading(true);
-      const res = await fetch('/api/admin/users');
-      const data = await res.json();
-      setUsers(data);
-      updateSummary(data); // Llama a la función de actualización de resumen
-    } catch (err) {
-      console.error('Error cargando usuarios:', err);
-    } finally {
-      setIsLoading(false);
+const fetchUsers = async () => {
+  try {
+    setIsLoading(true);
+    const res = await fetch('/api/admin/users');
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || 'Error al obtener usuarios');
     }
-  };
+
+    if (!Array.isArray(data)) {
+      throw new Error('La respuesta del servidor no es una lista de usuarios.');
+    }
+
+    setUsers(data);
+    updateSummary(data);
+  } catch (err) {
+    console.error('Error cargando usuarios:', err);
+    showFeedback(err.message || 'Error desconocido al cargar usuarios');
+    setUsers([]);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   useEffect(() => {
     fetchUsers();

@@ -20,6 +20,7 @@ import '@/styles/admingate.css';
 import '@/styles/dashboard.css';
 import '@/styles/control.css';
 import '@/styles/timeline.css';
+import AdminGate from '@/components/AdminGate';
 
 export default function App({ Component, pageProps }) {
   return (
@@ -40,7 +41,9 @@ export default function App({ Component, pageProps }) {
           />
         </Head>
         <Navbar />
+        <AdminGate>
       <Component {...pageProps} />
+        </AdminGate>
     </AuthProvider>
   );
 }
