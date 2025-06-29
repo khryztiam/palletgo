@@ -6,6 +6,7 @@ const roleRoutes = {
   ADMIN: ['/admin/Dashboard', '/admin/Control', '/admin/Management','/Request', '/Dispatch', '/Boarding'],
   LINEA: ['/Request'],
   EMBARQUE: ['/Dispatch', '/Boarding'],
+  SUPERVISOR: ['/admin/Dashboard', '/admin/Control']
   // agrega más roles y rutas que pueden ver
 };
 
@@ -17,7 +18,7 @@ export default function AdminGate({ children }) {
   useEffect(() => {
     if (loading) return;
 
-    const openRoutes = ['/', '/login', '/register'];
+    const openRoutes = ['/', '/login'];
     const isOpenRoute = openRoutes.includes(router.pathname);
     if (!user && !isOpenRoute) {
       router.replace('/');

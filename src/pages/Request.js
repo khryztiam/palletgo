@@ -1,39 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import Select from 'react-select';
-import { supabase } from '../lib/supabase';
-import { useAuth } from '../context/AuthContext';
-import RoleGate from '../components/RoleGate';
-import { Card } from '../components/Card';
-import Modal from 'react-modal';  // Importa react-modal
+import React, { useState, useEffect } from "react";
+import Select from "react-select";
+import { supabase } from "../lib/supabase";
+import { useAuth } from "../context/AuthContext";
+import RoleGate from "../components/RoleGate";
+import { Card } from "../components/Card";
+import Modal from "react-modal"; // Importa react-modal
 
 // Configurar el elemento de la app para el modal
-Modal.setAppElement('#__next');  // Es necesario para mejorar la accesibilidad
+Modal.setAppElement("#__next"); // Es necesario para mejorar la accesibilidad
 
 export default function Request() {
-  const { userName } = useAuth();
+  const { userName, role } = useAuth();
   const [orders, setOrders] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [detailOptions, setDetailOptions] = useState([]); // Para opciones de detalle
 
   const [formData, setFormData] = useState({
     area: userName,
-    user_submit: '',
+    user_submit: "",
     details: [],
-    destiny: '',
-    comments: ''
+    destiny: "",
+    comments: "",
   });
 
   // Opciones para el select de destino
-  const destinyOptions = ['EMBARQUE', 'EPC'];
+  const destinyOptions = ["EMBARQUE", "EPC"];
 
   // Cargar órdenes
   const fetchOrders = async () => {
-    const { data, error } = await supabase
-      .from('orders')
-      .select('*')
-      .eq('area', userName)
-      .not('status', 'in', '("ENTREGADO","CANCELADO")')
-      .order('date_order', { descending: false });
+    let query = supabase
+      .from("orders")
+      .select("*")
+      .not("status", "in", '("ENTREGADO","CANCELADO")')
+      .order("date_order", { ascending: false });
+
+    // Solo filtrar por área si NO es admin
+    if (role !== "ADMIN") {
+      query = query.eq("area", userName);
+    }
+
+    const { data, error } = await query;
 
     if (!error) setOrders(data || []);
   };
@@ -41,13 +47,13 @@ export default function Request() {
   // Cargar las opciones de detalles desde la tabla `detail_options`
   const fetchDetailOptions = async () => {
     const { data, error } = await supabase
-      .from('detail_options') // Nombre de la tabla en Supabase
-      .select('value, label');  // Supón que tienes los campos 'value' y 'label' en tu tabla
+      .from("detail_options") // Nombre de la tabla en Supabase
+      .select("value, label"); // Supón que tienes los campos 'value' y 'label' en tu tabla
 
     if (!error) {
-      const options = data.map(item => ({
-        value: item.value,  // Usar el valor de la columna 'value'
-        label: item.label    // Usar el valor de la columna 'label'
+      const options = data.map((item) => ({
+        value: item.value, // Usar el valor de la columna 'value'
+        label: item.label, // Usar el valor de la columna 'label'
       }));
       setDetailOptions(options); // Actualiza el estado con las opciones cargadas
     }
@@ -60,35 +66,35 @@ export default function Request() {
 
     // Configurar la suscripción en tiempo real
     const channel = supabase
-      .channel('realtime-orders')
+      .channel("realtime-orders")
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'orders',
+          event: "INSERT",
+          schema: "public",
+          table: "orders",
         },
         (payload) => {
           const newOrder = payload.new;
-          if (newOrder.status !== 'ENTREGADO') {
-            console.log('Nueva solicitud:', newOrder);
+          if (newOrder.status !== "ENTREGADO") {
+            console.log("Nueva solicitud:", newOrder);
             setOrders((prev) => [...prev, newOrder]);
           }
         }
       )
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'orders',
+          event: "UPDATE",
+          schema: "public",
+          table: "orders",
         },
         (payload) => {
           const updatedOrder = payload.new;
-          if (updatedOrder.status === 'ENTREGADO') {
+          if (updatedOrder.status === "ENTREGADO") {
             // Si ya está entregado, la quitamos de la lista
             setOrders((prev) =>
-              prev.filter(order => order.id_order !== updatedOrder.id_order)
+              prev.filter((order) => order.id_order !== updatedOrder.id_order)
             );
           } else {
             // Si no está entregado, actualizamos normal
@@ -111,37 +117,37 @@ export default function Request() {
   // Manejar cambios en el form
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   // Crear nueva orden
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.user_submit) {
-      alert('Nombre del solicitante es obligatorio');
+      alert("Nombre del solicitante es obligatorio");
       return;
     }
 
-    const { error } = await supabase
-      .from('orders')
-      .insert([{
+    const { error } = await supabase.from("orders").insert([
+      {
         ...formData,
         details: formData.details,
-        area: userName || 'Área no especificada',
-        status: 'SOLICITADO', // Estado inicial consistente con Card
-        date_order: new Date().toISOString()
-      }]);
+        area: userName || "Área no especificada",
+        status: "SOLICITADO", // Estado inicial consistente con Card
+        date_order: new Date().toISOString(),
+      },
+    ]);
 
     if (!error) {
       await fetchOrders();
-      setIsModalOpen(false);  // Cerrar el modal después de guardar
+      setIsModalOpen(false); // Cerrar el modal después de guardar
       setFormData({
-        area: userName ?? '',
-        user_submit: '',
+        area: userName ?? "",
+        user_submit: "",
         details: [],
-        destiny: '',
-        comments: ''
+        destiny: "",
+        comments: "",
       });
     }
   };
@@ -149,26 +155,26 @@ export default function Request() {
   useEffect(() => {
     // Actualizar el valor de 'area' cuando userName cambie
     if (userName) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        area: userName
+        area: userName,
       }));
     }
   }, [userName]);
 
   return (
-    <RoleGate allowedRoles={['LINEA']}>
+    <RoleGate allowedRoles={["LINEA"]}>
       <div className="request-container">
         <h1>Solicitudes</h1>
-        
-        <button 
+
+        <button
           onClick={() => {
             setFormData({
-              area: userName ?? '',
-              user_submit: '',
+              area: userName ?? "",
+              user_submit: "",
               details: [],
-              destiny: '',
-              comments: ''
+              destiny: "",
+              comments: "",
             });
             setIsModalOpen(true);
           }}
@@ -179,8 +185,8 @@ export default function Request() {
 
         {/* Listado de órdenes */}
         <div className="request-grid">
-          {orders.map(order => (
-            <Card 
+          {orders.map((order) => (
+            <Card
               key={`order-${order.id_order}`}
               order={order}
               variant="default"
@@ -191,7 +197,7 @@ export default function Request() {
         {/* Modal de creación */}
         <Modal
           isOpen={isModalOpen}
-          onRequestClose={() => setIsModalOpen(false)}  // Cierra el modal cuando se hace clic fuera de él
+          onRequestClose={() => setIsModalOpen(false)} // Cierra el modal cuando se hace clic fuera de él
           contentLabel="Nueva Solicitud"
           className="modal-content"
           overlayClassName="modal-overlay"
@@ -200,12 +206,7 @@ export default function Request() {
           <form onSubmit={handleSubmit}>
             <div className="form-group">
               <label>Area:</label>
-              <input
-                type="text"
-                name="area"
-                value={formData.area}
-                readOnly
-              />
+              <input type="text" name="area" value={formData.area} readOnly />
             </div>
 
             <div className="form-group">
@@ -216,7 +217,7 @@ export default function Request() {
                 value={formData.user_submit}
                 onChange={handleChange}
                 required
-                placeholder='Escriba su nombre...'
+                placeholder="Escriba su nombre..."
               />
             </div>
 
@@ -224,12 +225,14 @@ export default function Request() {
               <label>Detalles (Selección múltiple)</label>
               <Select
                 isMulti
-                options={detailOptions}  // Ahora se utilizan las opciones cargadas desde la base de datos
-                value={detailOptions.filter(opt => formData.details.includes(opt.value))}
+                options={detailOptions} // Ahora se utilizan las opciones cargadas desde la base de datos
+                value={detailOptions.filter((opt) =>
+                  formData.details.includes(opt.value)
+                )}
                 onChange={(selected) => {
-                  setFormData(prev => ({
+                  setFormData((prev) => ({
                     ...prev,
-                    details: selected.map(opt => opt.value)
+                    details: selected.map((opt) => opt.value),
                   }));
                 }}
                 placeholder="Seleccione los detalles..."
@@ -247,8 +250,10 @@ export default function Request() {
                 onChange={handleChange}
               >
                 <option value="">Seleccione...</option>
-                {destinyOptions.map(opt => (
-                  <option key={opt} value={opt}>{opt}</option>
+                {destinyOptions.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt}
+                  </option>
                 ))}
               </select>
             </div>
@@ -265,8 +270,8 @@ export default function Request() {
             </div>
 
             <div className="form-actions">
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={() => setIsModalOpen(false)}
                 className="cancel-button"
               >

@@ -100,7 +100,7 @@ const Control = () => {
 
         {/* Tabla con últimas 5 solicitudes */}
         {selectedStatus && (
-          <RequestTable requests={filteredRequests.slice(0, 5)} onRowClick={handleRowClick} />
+          <RequestTable requests={filteredRequests.slice(0, 10)} onRowClick={handleRowClick} />
         )}
 
         {/* Modal para editar la solicitud */}
