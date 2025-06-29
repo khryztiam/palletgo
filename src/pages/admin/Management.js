@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import AdminGate from '@/components/AdminGate';
 import { useAuth } from '@/context/AuthContext';
 
-const ROLE_MAPPING = { ADMIN: 1, LINEA: 2, EMBARQUE: 3 };
+const ROLE_MAPPING = { ADMIN: 1, LINEA: 2, EMBARQUE: 3, SUPERVISOR: 4 };
 const ROLE_COLORS  = { ADMIN: 'bg-red-50', LINEA: 'bg-blue-50', EMBARQUE: 'bg-green-50' };
 
 export default function Management() {
@@ -20,10 +20,10 @@ export default function Management() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [summary, setSummary] = useState({ ADMIN: 0, LINEA: 0, EMBARQUE: 0 });
+  const [summary, setSummary] = useState({ ADMIN: 0, LINEA: 0, EMBARQUE: 0 , SUPERVISOR: 0});
 
   const updateSummary = users => {
-    const s = { ADMIN:0, LINEA:0, EMBARQUE:0 };
+    const s = { ADMIN:0, LINEA:0, EMBARQUE:0 , SUPERVISOR:0 };
     users.forEach(u => s[u.rol_name]++);
     setSummary(s);
   };
@@ -267,6 +267,7 @@ const fetchUsers = async () => {
                   <option value="ADMIN">Administrador</option>
                   <option value="LINEA">Línea</option>
                   <option value="EMBARQUE">Embarque</option>
+                  <option value="SUPERVISOR">Supervisor</option>
                 </select>
               </div>
 
@@ -337,6 +338,7 @@ const fetchUsers = async () => {
                   <option value="ADMIN">Administrador</option>
                   <option value="LINEA">Línea</option>
                   <option value="EMBARQUE">Embarque</option>
+                  <option value="SUPERVISOR">Supervisor</option>
                 </select>
               </div>
 
