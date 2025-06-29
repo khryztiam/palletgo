@@ -60,6 +60,10 @@
 }
 
 .management-summary-item.embarque {
+  background-color: #991caf;
+}
+
+.management-summary-item.supervisor {
   background-color: #af4c1c;
 }
 

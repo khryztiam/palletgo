@@ -3,7 +3,7 @@ import AdminGate from '@/components/AdminGate';
 import { useAuth } from '@/context/AuthContext';
 
 const ROLE_MAPPING = { ADMIN: 1, LINEA: 2, EMBARQUE: 3, SUPERVISOR: 4 };
-const ROLE_COLORS  = { ADMIN: 'bg-red-50', LINEA: 'bg-blue-50', EMBARQUE: 'bg-green-50' };
+const ROLE_COLORS  = { ADMIN: 'bg-red-50', LINEA: 'bg-blue-50', EMBARQUE: 'bg-green-50', SUPERVISOR: 'bg-orange-50' };
 
 export default function Management() {
   const { role, loading } = useAuth();
