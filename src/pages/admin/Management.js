@@ -74,8 +74,11 @@ const fetchUsers = async () => {
         throw new Error('La contraseña debe tener al menos 6 caracteres');
       }
 
+      // 👉 Forzar formato de email con dominio fijo
+      const emailFinal = `${newUser.email}@yazaki.com`.toLowerCase();
+
       // Asegura que id_rol coincida con rol_name
-      const body = { ...newUser, id_rol:ROLE_MAPPING[newUser.rol_name] };
+      const body = { ...newUser, email:emailFinal, id_rol:ROLE_MAPPING[newUser.rol_name] };
 
       const res = await fetch('/api/admin/users', {
         method:'POST',
@@ -229,12 +232,13 @@ const fetchUsers = async () => {
               </button>
               
               <div className="management-form-group">
-                <label>Email</label>
+                <label>Usuario</label>
                 <input
-                  type="email"
+                  type="text"
                   value={newUser.email}
                   onChange={(e) => setNewUser({...newUser, email: e.target.value})}
                   required
+                  placeholder='Usuario'
                 />
               </div>
 

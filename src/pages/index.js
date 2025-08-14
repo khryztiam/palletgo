@@ -5,7 +5,7 @@ import Image from "next/image";
 export default function Login() {
   const { login } = useAuth();
 
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -16,7 +16,9 @@ export default function Login() {
     setIsLoggingIn(true);
 
     try {
-      await login(email, password);
+      const emailFinal = `${username}@yazaki.com`.toLowerCase();
+
+      await login(emailFinal, password);
       // No redirect aquí
     } catch (err) {
       setError('Correo o contraseña incorrectos.');
@@ -45,17 +47,17 @@ export default function Login() {
 
         <form onSubmit={handleSubmit} className="login-form" noValidate>
           <label htmlFor="email" className="sr-only">
-            Correo electrónico
+            Usuario
           </label>
           <input
-            id="email"
-            type="email"
-            placeholder="Correo electrónico"
+            id="username"
+            type="text"
+            placeholder="Usuario"
             className="input-field"
-            value={email}
-            onChange={(e) => setEmail(e.target.value.trim())}
+            value={username}
+            onChange={(e) => setUsername(e.target.value.trim())}
             required
-            autoComplete="email"
+            autoComplete="username"
           />
 
           <label htmlFor="password" className="sr-only">
