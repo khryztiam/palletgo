@@ -67,45 +67,37 @@ export default function Request() {
     // Configurar la suscripción en tiempo real
     const channel = supabase
       .channel("realtime-orders")
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "orders",
-        },
-        (payload) => {
-          const newOrder = payload.new;
-          if (newOrder.status !== "ENTREGADO") {
-            console.log("Nueva solicitud:", newOrder);
-            setOrders((prev) => [...prev, newOrder]);
-          }
-        }
-      )
-      .on(
-        "postgres_changes",
-        {
-          event: "UPDATE",
-          schema: "public",
-          table: "orders",
-        },
-        (payload) => {
-          const updatedOrder = payload.new;
-          if (updatedOrder.status === "ENTREGADO") {
-            // Si ya está entregado, la quitamos de la lista
-            setOrders((prev) =>
-              prev.filter((order) => order.id_order !== updatedOrder.id_order)
-            );
-          } else {
-            // Si no está entregado, actualizamos normal
-            setOrders((prev) =>
-              prev.map((order) =>
-                order.id_order === updatedOrder.id_order ? updatedOrder : order
-              )
-            );
-          }
-        }
-      )
+.on("postgres_changes",
+  { event: "INSERT", schema: "public", table: "orders" },
+  (payload) => {
+    const newOrder = payload.new;
+    if (
+      newOrder.status !== "ENTREGADO" &&
+      (role === "ADMIN" || newOrder.area === userName)
+    ) {
+      setOrders((prev) => [...prev, newOrder]);
+    }
+  }
+)
+.on("postgres_changes",
+  { event: "UPDATE", schema: "public", table: "orders" },
+  (payload) => {
+    const updatedOrder = payload.new;
+    if (role !== "ADMIN" && updatedOrder.area !== userName) return; // 🔹 Evita mostrar órdenes ajenas
+
+    if (updatedOrder.status === "ENTREGADO") {
+      setOrders((prev) =>
+        prev.filter((order) => order.id_order !== updatedOrder.id_order)
+      );
+    } else {
+      setOrders((prev) =>
+        prev.map((order) =>
+          order.id_order === updatedOrder.id_order ? updatedOrder : order
+        )
+      );
+    }
+  }
+)
       .subscribe();
 
     // Limpiar la suscripción cuando el componente se desmonte
