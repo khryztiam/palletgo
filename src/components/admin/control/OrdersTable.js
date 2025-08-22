@@ -10,6 +10,7 @@ const RequestTable = ({ requests, onRowClick }) => {
             <th>ID Solicitud</th>
             <th>Usuario</th>
             <th>Área</th>
+            <th>Encargado</th>
             <th>Fecha</th>
           </tr>
         </thead>
@@ -24,7 +25,8 @@ const RequestTable = ({ requests, onRowClick }) => {
                 <td>{request.id_order}</td>
                 <td>{request.user_submit}</td>
                 <td>{request.area}</td>
-                <td>{new Date(request.date_order).toLocaleString()}</td>
+                <td>{request.user_deliver}</td>
+                <td>{new Date(request.date_order).toLocaleString('es-MX', { dateStyle: 'short', timeStyle: 'short' })}</td>
               </tr>
             ))
           )}

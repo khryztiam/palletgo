@@ -10,6 +10,9 @@ const ExportData = ({ data, dateRange, summary }) => {
         ...order,
         date_order: order.date_order 
           ? new Date(order.date_order).toLocaleString('es-MX', { dateStyle: 'short', timeStyle: 'short' }) 
+          : '',
+        date_delivery: order.date_delivery 
+          ? new Date(order.date_delivery).toLocaleString('es-MX', { dateStyle: 'short', timeStyle: 'short' }) 
           : ''
       }));
     };
