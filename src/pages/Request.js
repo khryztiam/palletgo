@@ -75,7 +75,12 @@ export default function Request() {
       newOrder.status !== "ENTREGADO" &&
       (role === "ADMIN" || newOrder.area === userName)
     ) {
-      setOrders((prev) => [...prev, newOrder]);
+      setOrders((prev) => {
+              const exists = prev.some(
+                (o) => o.id_order === newOrder.id_order
+              );
+              return exists ? prev : [newOrder, ...prev];
+            });
     }
   }
 )
@@ -91,20 +96,20 @@ export default function Request() {
       );
     } else {
       setOrders((prev) =>
-        prev.map((order) =>
-          order.id_order === updatedOrder.id_order ? updatedOrder : order
-        )
-      );
-    }
-  }
-)
+              prev.map((o) =>
+                o.id_order === updatedOrder.id_order ? updatedOrder : o
+              )
+            );
+          }
+        }
+      )
       .subscribe();
 
     // Limpiar la suscripción cuando el componente se desmonte
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []); // Solo se ejecuta una vez, al montar el componente
+  }, []); 
 
   // Manejar cambios en el form
   const handleChange = (e) => {
@@ -132,7 +137,6 @@ export default function Request() {
     ]);
 
     if (!error) {
-      await fetchOrders();
       setIsModalOpen(false); // Cerrar el modal después de guardar
       setFormData({
         area: userName ?? "",

@@ -7,11 +7,13 @@ const RequestTable = ({ requests, onRowClick }) => {
       <table className="control-request-table">
         <thead>
           <tr>
-            <th>ID Solicitud</th>
+            <th>Solicitud</th>
+            <th>Fecha pedido</th>
             <th>Usuario</th>
             <th>Área</th>
             <th>Encargado</th>
-            <th>Fecha</th>
+            <th>Fecha entrega</th>
+            <th>Duracion</th>
           </tr>
         </thead>
         <tbody>
@@ -23,10 +25,12 @@ const RequestTable = ({ requests, onRowClick }) => {
             requests.map((request) => (
               <tr key={request.id_order} onClick={() => onRowClick(request)}>
                 <td>{request.id_order}</td>
+                <td>{new Date(request.date_order).toLocaleString('es-MX', { dateStyle: 'short', timeStyle: 'short' })}</td>
                 <td>{request.user_submit}</td>
                 <td>{request.area}</td>
                 <td>{request.user_deliver}</td>
-                <td>{new Date(request.date_order).toLocaleString('es-MX', { dateStyle: 'short', timeStyle: 'short' })}</td>
+                <td>{new Date(request.date_delivery).toLocaleString('es-MX', { dateStyle: 'short', timeStyle: 'short' })}</td>
+                <td>{request.duration}</td>
               </tr>
             ))
           )}
