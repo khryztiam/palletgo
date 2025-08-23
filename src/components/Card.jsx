@@ -1,17 +1,54 @@
 import React from 'react';
-import { MdTimer, MdLocalShipping, MdDone } from 'react-icons/md';
+import { MdTimer, MdLocalShipping, MdDone, MdWarning, MdError } from 'react-icons/md';
 
 
 export const Card = ({ 
   order,
   variant = 'default',
-  onStatusClick
+  onStatusClick,
+  showTimer = false,
+  isAlerting =false
 }) => {
+
+   // Función para formatear el tiempo en mm:ss
+  const formatTime = (seconds) => {
+    if (!seconds && seconds !== 0) return '--:--';
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // Calcular si está en alerta crítica (más de 12 minutos)
+  const isCritical = order.elapsedSeconds > 12 * 60;
+  
+  // Calcular tiempo excedido si pasa de 8 minutos
+  const exceededTime = order.elapsedSeconds > 8 * 60 
+    ? order.elapsedSeconds - 8 * 60 
+    : 0;
+  
   return (
-    <div className={`card ${variant}`}>
-      {/* Header con área (siempre visible) */}
+    <div className={`card ${variant} ${isAlerting ? 'alert-pulse' : ''} ${isCritical ? 'critical-alert' : ''}`}>
+      {/* Header con área y timer */}
       <div className="card-header">
         <h3>{order.area} - Orden # {order.id_order}</h3>
+        
+        {/* Mostrar cronómetro si está habilitado */}
+        {showTimer && (
+          <div className="card-timer">
+            <span className={`timer-text ${isAlerting ? 'timer-alert' : ''} ${isCritical ? 'timer-critical' : ''}`}>
+              <MdTimer className="timer-icon" />
+              {formatTime(order.elapsedSeconds)}
+            </span>
+            
+            {/* Mostrar tiempo excedido si aplica */}
+            {exceededTime > 0 && (
+              <span className="exceeded-time">
+                +{formatTime(exceededTime)}
+                {isCritical ? <MdError className="exceeded-icon" /> : <MdWarning className="exceeded-icon" />}
+              </span>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="card-body">
@@ -63,17 +100,18 @@ export const Card = ({
         {variant === 'dispatch' ? (
           <button
             onClick={() => onStatusClick(order)}
-            className={`status-button ${order.status.toLowerCase().replace(' ', '-')}`}
+            className={`status-button ${order.status.toLowerCase().replace(' ', '-')} ${isAlerting ? 'button-alert' : ''}`}
           >
             {order.status === 'SOLICITADO' ? 'Iniciar Despacho' : 'Marcar Entregado'}
+            {isAlerting && <MdWarning className="button-alert-icon" />}
           </button>
         ) : (
           <div className="status-indicator">
             {order.status === 'SOLICITADO' && (
-              <MdTimer className="icon" style={{ color :'#FFA726' }} />
+              <MdTimer className="icon" style={{ color: isAlerting ? '#ff4d4f' : '#FFA726' }} />
             )}
             {order.status === 'EN PROGRESO' && (
-              <MdLocalShipping className="icon" style={{ color: '#66BB6A' }} />
+              <MdLocalShipping className="icon" style={{ color: isAlerting ? '#ff4d4f' : '#66BB6A' }} />
             )}
             <span className="status-text">{order.status}</span>
           </div>

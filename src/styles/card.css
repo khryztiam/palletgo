@@ -19,10 +19,17 @@
 
   /* Header */
   .card-header {
-    padding: 12px 15px;
-    background:rgb(116, 25, 25);
-    border-bottom: 1px solid #eee;
-    flex-shrink: 0; /* Evita que se encoja */
+  padding: 12px 15px;
+  background: rgb(116, 25, 25);
+  border-bottom: 1px solid #eee;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* Centrar verticalmente */
+  margin-bottom: 12px;
+  gap: 15px;
+  flex-wrap: nowrap;
+  border-radius: 6px 6px 0 0;
   }
   
   .card-header h3 {
@@ -131,11 +138,13 @@
       gap: 12px;
     }
   }
-
-  .card.dispatch {
-    border-left: 4px solid #e94560; /* Borde izquierdo destacado */
-  }
   
+/*
+  .card.dispatch {
+    border-left: 4px solid #e94560; /* Borde izquierdo destacado 
+  }
+  */
+
   /* Botones de acción */
   .card-button {
     width: 100%;
@@ -203,3 +212,130 @@
     border-radius: 0;
     padding: 12px;
   }
+
+  .card-timer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.timer-text {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  color: #ffffff;
+}
+
+.timer-alert {
+  color: #faad14;
+  font-weight: 700;
+}
+
+.timer-critical {
+  color: #ff4d4f;
+  font-weight: 800;
+}
+
+.timer-icon {
+  font-size: 1.1rem;
+}
+
+.exceeded-time {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: #ff4d4f;
+  font-weight: bold;
+  background: rgba(255, 77, 79, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.exceeded-icon {
+  font-size: 0.9rem;
+}
+
+/* Animaciones de alerta */
+.alert-pulse {
+  animation: pulse-alert 2s infinite;
+  border-left: 4px solid #faad14;
+}
+
+.critical-alert {
+  animation: critical-pulse 1s infinite;
+  border-left: 4px solid #ff4d4f;
+  background: rgba(255, 77, 79, 0.03);
+}
+
+@keyframes pulse-alert {
+  0% {
+    box-shadow: 0 0 0 0 rgba(250, 173, 20, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(250, 173, 20, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(250, 173, 20, 0);
+  }
+}
+
+@keyframes critical-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 77, 79, 0.4);
+    background-color: rgba(255, 77, 79, 0.03);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(255, 77, 79, 0.2);
+    background-color: rgba(255, 77, 79, 0.06);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 77, 79, 0);
+    background-color: rgba(255, 77, 79, 0.03);
+  }
+}
+
+/* Estilos para el botón con alerta */
+.button-alert {
+  animation: button-pulse 1.5s infinite;
+  background: linear-gradient(45deg, #ff1418, #faad14);
+  color: white;
+  font-weight: bold;
+}
+
+.button-alert-icon {
+  margin-left: 5px;
+  animation: icon-bounce 1s infinite;
+}
+
+@keyframes button-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes icon-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .card-timer {
+    align-items: flex-start;
+    margin-top: 5px;
+  }
+  
+  .timer-text {
+    font-size: 0.85rem;
+  }
+}
