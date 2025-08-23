@@ -241,6 +241,10 @@ export default function Boarding() {
                 <span className="boarding-order-value">{currentOrder.id_order}</span>
               </div>
               <div className="boarding-order-field">
+                <span className="boarding-order-label">Entregado:</span>
+                <span className="boarding-order-value">{currentOrder.user_deliver}</span>
+              </div>
+              <div className="boarding-order-field">
                 <span className="boarding-order-label">Fecha:</span>
                 <span className="boarding-order-value">
                   {new Date(currentOrder.date_order).toLocaleString()}

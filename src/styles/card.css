@@ -138,7 +138,7 @@
       gap: 12px;
     }
   }
-  
+
 /*
   .card.dispatch {
     border-left: 4px solid #e94560; /* Borde izquierdo destacado 
@@ -263,7 +263,7 @@
 /* Animaciones de alerta */
 .alert-pulse {
   animation: pulse-alert 2s infinite;
-  border-left: 4px solid #faad14;
+  border-left: 4px solid #fa2f14;
 }
 
 .critical-alert {
@@ -274,7 +274,7 @@
 
 @keyframes pulse-alert {
   0% {
-    box-shadow: 0 0 0 0 rgba(250, 173, 20, 0.4);
+    box-shadow: 0 0 0 0 rgba(250, 35, 20, 0.4);
   }
   70% {
     box-shadow: 0 0 0 8px rgba(250, 173, 20, 0);
@@ -285,24 +285,22 @@
 }
 
 @keyframes critical-pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(255, 77, 79, 0.4);
-    background-color: rgba(255, 77, 79, 0.03);
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
+    background-color: rgba(255, 50, 50, 0.1);
+    border-color: #ff0000;
   }
   50% {
-    box-shadow: 0 0 0 6px rgba(255, 77, 79, 0.2);
-    background-color: rgba(255, 77, 79, 0.06);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(255, 77, 79, 0);
-    background-color: rgba(255, 77, 79, 0.03);
+    box-shadow: 0 0 30px 10px rgba(255, 0, 0, 0.9);
+    background-color: rgba(255, 50, 50, 0.2);
+    border-color: #ff4444;
   }
 }
 
 /* Estilos para el botón con alerta */
 .button-alert {
   animation: button-pulse 1.5s infinite;
-  background: linear-gradient(45deg, #ff1418, #faad14);
+  /*background: linear-gradient(45deg, #ff1418, #faad14);*/
   color: white;
   font-weight: bold;
 }
