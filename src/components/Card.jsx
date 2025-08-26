@@ -18,12 +18,12 @@ export const Card = ({
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Calcular si está en alerta crítica (más de 12 minutos)
-  const isCritical = order.elapsedSeconds > 12 * 60;
+  // Calcular si está en alerta crítica (más de 20 minutos)
+  const isCritical = order.elapsedSeconds > 20 * 60;
   
-  // Calcular tiempo excedido si pasa de 8 minutos
-  const exceededTime = order.elapsedSeconds > 8 * 60 
-    ? order.elapsedSeconds - 8 * 60 
+  // Calcular tiempo excedido si pasa de 15 minutos
+  const exceededTime = order.elapsedSeconds > 15 * 60 
+    ? order.elapsedSeconds - 15 * 60 
     : 0;
   
   return (

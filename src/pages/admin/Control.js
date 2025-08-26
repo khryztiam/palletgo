@@ -13,40 +13,44 @@ const Control = () => {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [orders, setOrders] = useState([]);
 
-  // Función para seleccionar el estado
-  const handleStatusSelect = (status) => {
-    setSelectedStatus(status);
-  };
+  // Selección por estado
+  const handleStatusSelect = (status) => setSelectedStatus(status);
 
-  // Función para manejar el clic en la fila y abrir el modal con los datos de la orden
-  const handleRowClick = (request) => {
-    setSelectedRequest(request);  // Abre el modal con la información de la solicitud
-  };
+  // Clic en fila → abrir modal
+  const handleRowClick = (request) => setSelectedRequest(request);
 
-  // Filtrar solicitudes por estado
+  // Filtrado por estado
   const filteredRequests = orders.filter(
-    (order) => order.status === selectedStatus
+    (order) => !selectedStatus || order.status === selectedStatus
   );
 
-  // Cargar órdenes desde Supabase
+  // --- Carga órdenes del día actual ---
   useEffect(() => {
     const fetchOrders = async () => {
-      const { data, error } = await supabase
-        .from('orders')
-        .select('*')
-        .order('date_order', { ascending: false });
+      try {
+        const today = new Date();
+        const startOfDay = new Date(today.setHours(0, 0, 0, 0)).toISOString();
+        const endOfDay = new Date(today.setHours(23, 59, 59, 999)).toISOString();
 
-      if (error) {
-        console.error('Error cargando órdenes:', error.message);
-      } else {
-        setOrders(data);
+        const { data, error } = await supabase
+          .from('orders')
+          .select('*')
+          .gte('date_order', startOfDay)
+          .lte('date_order', endOfDay)
+          .order('date_order', { ascending: false });
+
+        if (error) throw error;
+
+        setOrders(data || []);
+      } catch (err) {
+        console.error('Error cargando órdenes:', err.message);
       }
     };
 
     fetchOrders();
   }, []);
 
-  // Función para manejar la actualización de la orden
+  // --- Guardar actualización de orden ---
   const handleSaveOrder = async (updatedOrder) => {
     const updateData = {
       status: updatedOrder.status,
@@ -54,26 +58,24 @@ const Control = () => {
       comments: updatedOrder.comments,
       user_deliver: updatedOrder.user_deliver,
     };
-  
-    // Registrar fecha de entrega si cambió a ENTREGADO
+
     const originalOrder = orders.find(o => o.id_order === updatedOrder.id_order);
-  
+
     const wasDelivered = originalOrder?.status === 'ENTREGADO';
     const isNowDelivered = updatedOrder.status === 'ENTREGADO';
-  
+
     if (isNowDelivered && !wasDelivered && !originalOrder.date_delivery) {
       updateData.date_delivery = new Date().toISOString();
     }
-  
+
     const { data, error } = await supabase
       .from('orders')
       .update(updateData)
       .eq('id_order', updatedOrder.id_order);
-  
+
     if (error) {
       console.error('Error al guardar la orden:', error.message);
     } else {
-      // Actualizar el estado local
       setOrders(prev =>
         prev.map(order =>
           order.id_order === updatedOrder.id_order
@@ -81,7 +83,7 @@ const Control = () => {
             : order
         )
       );
-      setSelectedRequest(null); // Cierra el modal
+      setSelectedRequest(null);
     }
   };
 
@@ -98,22 +100,23 @@ const Control = () => {
           orders={orders}
         />
 
-        {/* Tabla con últimas 5 solicitudes */}
-        {selectedStatus && (
-          <RequestTable requests={filteredRequests.slice(0, 10)} onRowClick={handleRowClick} />
-        )}
+        {/* Tabla últimas 10 */}
+        <RequestTable
+          requests={filteredRequests.slice(0, 10)}
+          onRowClick={handleRowClick}
+        />
 
-        {/* Modal para editar la solicitud */}
+        {/* Modal para editar */}
         {selectedRequest && (
-          <OrderModal 
+          <OrderModal
             order={selectedRequest}
-            isOpen={!!selectedRequest}  
-            onSave={handleSaveOrder} 
-            onClose={() => setSelectedRequest(null)} 
+            isOpen={!!selectedRequest}
+            onSave={handleSaveOrder}
+            onClose={() => setSelectedRequest(null)}
           />
         )}
 
-        {/* Panel de gestión de opciones de detalle */}
+        {/* Panel de opciones */}
         <DetailOptionsPanel />
       </div>
     </AdminGate>

@@ -160,7 +160,7 @@ export default function Dispatch() {
                 setIsModalOpen(true);
               }}
               showTimer={true}
-              isAlerting={order.elapsedSeconds >= 8 * 60}
+              isAlerting={order.elapsedSeconds >= 15 * 60}
             />
           ))}
         </div>
