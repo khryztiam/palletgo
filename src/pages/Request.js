@@ -76,10 +76,10 @@ export default function Request() {
       (role === "ADMIN" || newOrder.area === userName)
     ) {
       setOrders((prev) => {
-              const exists = prev.some(
-                (o) => o.id_order === newOrder.id_order
-              );
-              return exists ? prev : [newOrder, ...prev];
+              // 🔹 Verificación de duplicados añadida aquí        
+              const exists = prev.some(o => o.id_order === newOrder.id_order);
+        if (exists) return prev;
+              return [newOrder, ...prev];
             });
     }
   }
