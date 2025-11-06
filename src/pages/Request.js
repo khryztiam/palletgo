@@ -14,6 +14,7 @@ export default function Request() {
   const [orders, setOrders] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [detailOptions, setDetailOptions] = useState([]); // Para opciones de detalle
+  const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     area: userName,
@@ -67,35 +68,37 @@ export default function Request() {
     // Configurar la suscripción en tiempo real
     const channel = supabase
       .channel("realtime-orders")
-.on("postgres_changes",
-  { event: "INSERT", schema: "public", table: "orders" },
-  (payload) => {
-    const newOrder = payload.new;
-    if (
-      newOrder.status !== "ENTREGADO" &&
-      (role === "ADMIN" || newOrder.area === userName)
-    ) {
-      setOrders((prev) => {
-              // 🔹 Verificación de duplicados añadida aquí        
-              const exists = prev.some(o => o.id_order === newOrder.id_order);
-        if (exists) return prev;
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "orders" },
+        (payload) => {
+          const newOrder = payload.new;
+          if (
+            newOrder.status !== "ENTREGADO" &&
+            (role === "ADMIN" || newOrder.area === userName)
+          ) {
+            setOrders((prev) => {
+              // 🔹 Verificación de duplicados añadida aquí
+              const exists = prev.some((o) => o.id_order === newOrder.id_order);
+              if (exists) return prev;
               return [newOrder, ...prev];
             });
-    }
-  }
-)
-.on("postgres_changes",
-  { event: "UPDATE", schema: "public", table: "orders" },
-  (payload) => {
-    const updatedOrder = payload.new;
-    if (role !== "ADMIN" && updatedOrder.area !== userName) return; // 🔹 Evita mostrar órdenes ajenas
+          }
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "orders" },
+        (payload) => {
+          const updatedOrder = payload.new;
+          if (role !== "ADMIN" && updatedOrder.area !== userName) return; // 🔹 Evita mostrar órdenes ajenas
 
-    if (updatedOrder.status === "ENTREGADO") {
-      setOrders((prev) =>
-        prev.filter((order) => order.id_order !== updatedOrder.id_order)
-      );
-    } else {
-      setOrders((prev) =>
+          if (updatedOrder.status === "ENTREGADO") {
+            setOrders((prev) =>
+              prev.filter((order) => order.id_order !== updatedOrder.id_order)
+            );
+          } else {
+            setOrders((prev) =>
               prev.map((o) =>
                 o.id_order === updatedOrder.id_order ? updatedOrder : o
               )
@@ -109,7 +112,7 @@ export default function Request() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []); 
+  }, []);
 
   // Manejar cambios en el form
   const handleChange = (e) => {
@@ -126,18 +129,23 @@ export default function Request() {
       return;
     }
 
+    // 1. INICIAR CARGA: Deshabilita el botón
+    setIsLoading(true);
+
     const { error } = await supabase.from("orders").insert([
       {
         ...formData,
         details: formData.details,
         area: userName || "Área no especificada",
-        status: "SOLICITADO", // Estado inicial consistente con Card
+        status: "SOLICITADO",
         date_order: new Date().toISOString(),
       },
     ]);
 
     if (!error) {
-      setIsModalOpen(false); // Cerrar el modal después de guardar
+      // Éxito
+      console.log("Solicitud enviada con éxito."); // o alert("Solicitud enviada con éxito!")
+      setIsModalOpen(false);
       setFormData({
         area: userName ?? "",
         user_submit: "",
@@ -145,7 +153,14 @@ export default function Request() {
         destiny: "",
         comments: "",
       });
+    } else {
+      // Manejo de error
+      console.error("Error al enviar solicitud:", error.message);
+      alert(`Error al enviar la solicitud: ${error.message}`); // Retroalimentación visible al usuario
     }
+
+    // 2. FINALIZAR CARGA: Habilita el botón de nuevo (se ejecuta después del if/else)
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -273,8 +288,12 @@ export default function Request() {
               >
                 Cancelar
               </button>
-              <button type="submit" className="submit-button">
-                Enviar Solicitud
+              <button
+                type="submit"
+                className="submit-button"
+                disabled={isLoading} // 👈 ¡Crucial! Deshabilita el botón durante la petición.
+              >
+                {isLoading ? "Enviando..." : "Enviar Solicitud"}
               </button>
             </div>
           </form>
