@@ -9,6 +9,10 @@ import Modal from "react-modal"; // Importa react-modal
 // Configurar el elemento de la app para el modal
 Modal.setAppElement("#__next"); // Es necesario para mejorar la accesibilidad
 
+// Constantes para los detalles que activan los nuevos campos
+const RETIRO_CONTENEDOR = "RETIRO DE CONTENEDOR";
+const RETIRO_TARIMA = "RETIRO DE TARIMA";
+
 export default function Request() {
   const { userName, role } = useAuth();
   const [orders, setOrders] = useState([]);
@@ -22,10 +26,36 @@ export default function Request() {
     details: [],
     destiny: "",
     comments: "",
+    print_label: "", // Nuevo campo
+    multilabel: [], // Nuevo campo
   });
+
+  // Estados para controlar la visibilidad de los campos
+  const [showPrintLabel, setShowPrintLabel] = useState(false);
+  const [showMultiLabel, setShowMultiLabel] = useState(false);
+
+  // Referencia para e input por escaner
+  const multiLabelInputRef = React.useRef(null);
 
   // Opciones para el select de destino
   const destinyOptions = ["EMBARQUE", "EPC"];
+
+  // Efecto para mostrar/ocultar campos basado en los detalles seleccionados
+  useEffect(() => {
+    const hasRetiroContenedor = formData.details.includes(RETIRO_CONTENEDOR);
+    const hasRetiroTarima = formData.details.includes(RETIRO_TARIMA);
+
+    setShowPrintLabel(hasRetiroContenedor);
+    setShowMultiLabel(hasRetiroTarima);
+
+    // Limpiar campos cuando se deseleccionan los detalles
+    if (!hasRetiroContenedor) {
+      setFormData(prev => ({ ...prev, print_label: "" }));
+    }
+    if (!hasRetiroTarima) {
+      setFormData(prev => ({ ...prev, multilabel: [] }));
+    }
+  }, [formData.details]);
 
   // Cargar órdenes
   const fetchOrders = async () => {
@@ -120,12 +150,45 @@ export default function Request() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Manejar cambios en el campo multilabel (array)
+  const handleMultiLabelChange = (e) => {
+    const value = e.target.value;
+    
+    // Convertir el texto en array separado por comas y limpiar espacios
+    const labelsArray = value
+      .split(',')
+      .map(item => item.trim())
+      .filter(item => item !== '')
+      .slice(0, 4); // Limitar a máximo 4 elementos
+
+    setFormData((prev) => ({ 
+      ...prev, 
+      multilabel: labelsArray 
+    }));
+  };
+
   // Crear nueva orden
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!formData.user_submit) {
       alert("Nombre del solicitante es obligatorio");
+      return;
+    }
+
+    // Validaciones específicas para los campos condicionales
+    if (showPrintLabel && !formData.print_label.trim()) {
+      alert("La etiqueta de contenedor es obligatoria cuando se selecciona 'Retiro de contenedor'");
+      return;
+    }
+
+    if (showMultiLabel && formData.multilabel.length === 0) {
+      alert("Debe ingresar al menos una etiqueta de tarima cuando se selecciona 'Retiro de tarima'");
+      return;
+    }
+
+    if (showMultiLabel && formData.multilabel.length > 4) {
+      alert("Máximo 4 etiquetas de tarima permitidas");
       return;
     }
 
@@ -139,6 +202,8 @@ export default function Request() {
         area: userName || "Área no especificada",
         status: "SOLICITADO",
         date_order: new Date().toISOString(),
+        print_label: showPrintLabel ? formData.print_label : null, // Solo enviar si está visible
+        multilabel: showMultiLabel ? formData.multilabel : [], // Solo enviar array si está visible
       },
     ]);
 
@@ -152,6 +217,8 @@ export default function Request() {
         details: [],
         destiny: "",
         comments: "",
+        print_label: "", // Nuevo campo
+        multilabel: [], // Nuevo campo
       });
     } else {
       // Manejo de error
@@ -173,6 +240,11 @@ export default function Request() {
     }
   }, [userName]);
 
+  // Función para obtener el valor de display del multilabel
+  const getMultiLabelDisplay = () => {
+    return formData.multilabel.join(', ');
+  };
+
   return (
     <RoleGate allowedRoles={["LINEA"]}>
       <div className="request-container">
@@ -186,6 +258,8 @@ export default function Request() {
               details: [],
               destiny: "",
               comments: "",
+              print_label: "", // Nuevo campo
+              multilabel: [], // Nuevo campo
             });
             setIsModalOpen(true);
           }}
@@ -268,6 +342,39 @@ export default function Request() {
                 ))}
               </select>
             </div>
+
+{/*Nuevo campo debe estar oculto por default a no ser que se seleccione en Detalles Retiro de contenedor*/}
+             
+             {showPrintLabel && (
+             <div className="form-group">
+              <label>Etiqueta Contenedor</label>
+              <input
+                type="text"
+                name="print_label"
+                value={formData.print_label}
+                onChange={handleChange}
+                placeholder="Ingrese la etiqueta del contenedor..."
+                required
+              />
+              <small>Este campo es obligatorio cuando se selecciona "Retiro de contenedor"</small>
+             </div>
+             )}
+{/* Nuevo campo debe estar oculto por default, a no ser que se seleccione en Detalles Retiro de tarima
+y ademas es un array de hasta 4 codigos posibles*/}
+  
+             {showMultiLabel && (
+             <div className="form-group">
+              <label>Etiquetas de Tarima</label>
+              <input
+                type="text"
+                name="multilabel"
+                value={getMultiLabelDisplay()}
+                onChange={handleMultiLabelChange}
+                placeholder="Ingrese hasta 4 códigos..."
+                required
+              />
+             </div>
+              )}
 
             <div className="form-group">
               <label>Comentarios</label>

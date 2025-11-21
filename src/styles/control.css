@@ -373,3 +373,96 @@
     width: 100%;
   }
 }
+
+/* Agregar a tu CSS existente */
+.control-modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.footer-left, .footer-right {
+  display: flex;
+  gap: 10px;
+}
+
+.delete-button {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.delete-button:hover:not(:disabled) {
+  background: #c82333;
+}
+
+.delete-button:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+}
+
+.cancel-button {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.cancel-button:hover:not(:disabled) {
+  background: #5a6268;
+}
+
+.save-button {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.save-button:hover:not(:disabled) {
+  background: #0056b3;
+}
+
+.cancel-button:disabled,
+.save-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.form-group input:disabled,
+.form-group select:disabled,
+.form-group textarea:disabled {
+  background-color: #f8f9fa;
+  cursor: not-allowed;
+}

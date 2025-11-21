@@ -7,7 +7,7 @@ import Select from 'react-select';
 
 Modal.setAppElement('#__next');
 
-const OrderModal = ({ order, isOpen, onClose, onSave }) => {
+const OrderModal = ({ order, isOpen, onClose, onSave, onDelete }) => {
   const [status, setStatus] = useState(order.status || '');
   const [comments, setComments] = useState(order.comments || '');
   const [destiny, setDestiny] = useState(order.destiny || '');
@@ -17,6 +17,7 @@ const OrderModal = ({ order, isOpen, onClose, onSave }) => {
   const [details, setDetails] = useState(order.details || []);
   const [userOptions, setUserOptions] = useState([]);
   const [detailOptions, setDetailOptions] = useState([]); // Para opciones de detalle
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setStatus(order.status || '');
@@ -25,9 +26,6 @@ const OrderModal = ({ order, isOpen, onClose, onSave }) => {
     setUserDeliver(order.user_deliver || '');
     setUserSubmit(order.user_submit || '');
     setArea(order.area || '');
-  }, [order]);
-
-  useEffect(() => {
     setDetails(order.details || []);
   }, [order]);
 
@@ -62,36 +60,62 @@ const OrderModal = ({ order, isOpen, onClose, onSave }) => {
   }, []);
 
   const handleSave = async () => {
-    const updatedOrder = {
-      ...order,
-      status,
-      comments,
-      destiny,
-      details,
-      user_deliver: userDeliver,
-      user_submit: userSubmit,
-      area,
-    };
+    setLoading(true);
 
-    if (
-      status === 'ENTREGADO' &&
-      order.status !== 'ENTREGADO' &&
-      !order.date_delivery
-    ) {
-      updatedOrder.date_delivery = new Date().toISOString();
+    try {
+      // Crear objeto de actualización EXCLUYENDO duration y otros campos problemáticos
+      const updateData = {
+        status,
+        comments,
+        destiny,
+        details,
+        user_deliver: userDeliver,
+        user_submit: userSubmit,
+        area,
+      };
+
+    // Solo agregar date_delivery si se está marcando como ENTREGADO
+      if (status === 'ENTREGADO' && order.status !== 'ENTREGADO' && !order.date_delivery) {
+        updateData.date_delivery = new Date().toISOString();
+      }
+
+      const { error } = await supabase
+        .from('orders')
+        .update(updateData)
+        .eq('id_order', order.id_order);
+
+      if (error) throw error;
+
+      alert('Orden actualizada con éxito');
+      
+      // Llamar onSave con los datos actualizados
+      onSave({
+        ...order,
+        ...updateData
+      });
+      
+      onClose();
+    } catch (error) {
+      console.error('Error actualizando la orden:', error.message);
+      alert('Error al actualizar la orden: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm(`¿Estás seguro de eliminar la orden #${order.id_order}? Esta acción no se puede deshacer.`)) {
+      return;
     }
 
-    const { error } = await supabase
-      .from('orders')
-      .update(updatedOrder)
-      .eq('id_order', order.id_order);
-
-    if (error) {
-      console.error('Error actualizando la orden:', error.message);
-    } else {
-      alert('Orden actualizada con éxito');
-      onSave(updatedOrder);
-      onClose();
+    setLoading(true);
+    try {
+      await onDelete(order.id_order);
+    } catch (error) {
+      console.error('Error eliminando orden:', error);
+      alert('Error al eliminar la orden: ' + error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -105,18 +129,21 @@ const OrderModal = ({ order, isOpen, onClose, onSave }) => {
     >
       <div className="control-modal-header">
         <h2>Modificar Orden #{order.id_order}</h2>
-        <button onClick={onClose}><FaTimes /></button>
+        <button onClick={onClose} disabled={loading}>
+          <FaTimes />
+        </button>
       </div>
 
       <div className="control-modal-body">
         <div>
           <label>Área:</label>
-          <input value={area} onChange={(e) => setArea(e.target.value)} />
+          <input value={area} onChange={(e) => setArea(e.target.value)} disabled={loading} />
         </div>
 
         <div>
           <label>Solicitado por:</label>
-          <input value={userSubmit} onChange={(e) => setUserSubmit(e.target.value)} />
+          <input value={userSubmit} onChange={(e) => setUserSubmit(e.target.value)}
+          disabled={loading} />
         </div>
 
         {/* Opciones de detalle - Cargar desde la base de datos */}
@@ -135,12 +162,13 @@ const OrderModal = ({ order, isOpen, onClose, onSave }) => {
             noOptionsMessage={() => "No hay más opciones"}
             className="react-select-container"
             classNamePrefix="react-select"
+            isDisabled={loading}
           />
         </div>
 
         <div>
           <label>Estado:</label>
-          <select value={status} onChange={(e) => setStatus(e.target.value)}>
+          <select value={status} onChange={(e) => setStatus(e.target.value)} disabled={loading}>
             <option value="">-- Seleccionar --</option>
             <option value="SOLICITADO">SOLICITADO</option>
             <option value="EN PROGRESO">EN PROGRESO</option>
@@ -151,7 +179,7 @@ const OrderModal = ({ order, isOpen, onClose, onSave }) => {
 
         <div>
           <label>Destino:</label>
-          <select value={destiny} onChange={(e) => setDestiny(e.target.value)}>
+          <select value={destiny} onChange={(e) => setDestiny(e.target.value)} disabled={loading}>
             <option value="">-- Seleccionar --</option>
             <option value="EPC">EPC</option>
             <option value="EMPAQUE">EMPAQUE</option>
@@ -160,7 +188,7 @@ const OrderModal = ({ order, isOpen, onClose, onSave }) => {
 
         <div>
           <label>Entregado por:</label>
-          <select value={userDeliver} onChange={(e) => setUserDeliver(e.target.value)}>
+          <select value={userDeliver} onChange={(e) => setUserDeliver(e.target.value)} disabled={loading}>
             <option value="">-- Seleccionar --</option>
             {userOptions.map((user, idx) => (
               <option key={idx} value={user}>
@@ -172,13 +200,36 @@ const OrderModal = ({ order, isOpen, onClose, onSave }) => {
 
         <div>
           <label>Comentarios:</label>
-          <textarea value={comments} onChange={(e) => setComments(e.target.value)} />
+          <textarea value={comments} onChange={(e) => setComments(e.target.value)} disabled={loading} />
         </div>
       </div>
 
       <div className="control-modal-footer">
-        <button onClick={handleSave}>Guardar cambios</button>
-        <button onClick={onClose}>Cancelar</button>
+         <div className="footer-left">
+          <button 
+            onClick={handleDelete} 
+            className="delete-button"
+            disabled={loading}
+          >
+            {loading ? 'Eliminando...' : 'Eliminar Orden'}
+          </button>
+        </div>
+        <div className="footer-right">
+          <button 
+            onClick={onClose} 
+            className="cancel-button"
+            disabled={loading}
+          >
+            Cancelar
+          </button>
+          <button 
+            onClick={handleSave} 
+            className="save-button"
+            disabled={loading}
+          >
+            {loading ? 'Guardando...' : 'Guardar cambios'}
+          </button>
+        </div>
       </div>
     </Modal>
   );

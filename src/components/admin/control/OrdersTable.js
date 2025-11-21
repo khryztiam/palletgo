@@ -14,6 +14,8 @@ const RequestTable = ({ requests, onRowClick }) => {
             <th>Encargado</th>
             <th>Fecha entrega</th>
             <th>Duracion</th>
+            <th>HU Cnt</th>
+            <th>HU Trm</th>
           </tr>
         </thead>
         <tbody>
@@ -31,6 +33,8 @@ const RequestTable = ({ requests, onRowClick }) => {
                 <td>{request.user_deliver}</td>
                 <td>{new Date(request.date_delivery).toLocaleString('es-MX', { dateStyle: 'short', timeStyle: 'short' })}</td>
                 <td>{request.duration}</td>
+                <td>{request.prin_label}</td>
+                <td>{request.multilabel}</td>
               </tr>
             ))
           )}

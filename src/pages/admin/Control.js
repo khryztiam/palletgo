@@ -87,6 +87,35 @@ const Control = () => {
     }
   };
 
+  // --- ELIMINAR ORDEN ---
+  const handleDeleteOrder = async (orderId) => {
+    if (!window.confirm('¿Estás seguro de que quieres eliminar esta orden? Esta acción no se puede deshacer.')) {
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('orders')
+        .delete()
+        .eq('id_order', orderId);
+
+      if (error) throw error;
+
+      // Actualizar estado local
+      setOrders(prev => prev.filter(order => order.id_order !== orderId));
+      
+      // Cerrar modal si estaba abierto
+      if (selectedRequest?.id_order === orderId) {
+        setSelectedRequest(null);
+      }
+
+      alert('Orden eliminada correctamente');
+    } catch (error) {
+      console.error('Error eliminando orden:', error);
+      alert('Error al eliminar la orden: ' + error.message);
+    }
+  };
+
   return (
     <AdminGate>
       <div className="control-container">
@@ -112,6 +141,7 @@ const Control = () => {
             order={selectedRequest}
             isOpen={!!selectedRequest}
             onSave={handleSaveOrder}
+            onDelete={handleDeleteOrder}
             onClose={() => setSelectedRequest(null)}
           />
         )}
