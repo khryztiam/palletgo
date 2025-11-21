@@ -354,7 +354,7 @@ export default function Request() {
                 value={formData.print_label}
                 onChange={handleChange}
                 placeholder="Ingrese la etiqueta del contenedor..."
-                required
+                //required
               />
               <small>Este campo es obligatorio cuando se selecciona "Retiro de contenedor"</small>
              </div>
@@ -371,7 +371,7 @@ y ademas es un array de hasta 4 codigos posibles*/}
                 value={getMultiLabelDisplay()}
                 onChange={handleMultiLabelChange}
                 placeholder="Ingrese hasta 4 códigos..."
-                required
+                //required
               />
              </div>
               )}
