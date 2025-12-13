@@ -6,6 +6,7 @@ import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { Navbar } from '@/components/Navbar';
 import Head from 'next/head';
 
+import Snowfall from 'react-snowfall';
 
 import '@/styles/global.css';
 import '@/styles/navbar.css';
@@ -25,6 +26,22 @@ import AdminGate from '@/components/AdminGate';
 export default function App({ Component, pageProps }) {
   return (
     <AuthProvider>
+        {/* --- Componente de Nieve: Colocado Aquí --- */}
+        <Snowfall 
+          // Estilos para cubrir toda la pantalla (viewport)
+          style={{ 
+            position: 'fixed', 
+            width: '100vw', 
+            height: '100vh',
+            zIndex: 9999, // Asegura que esté encima de todo el contenido
+            pointerEvents: 'none' // ¡Crucial! Permite clics e interacción a través de la nieve
+          }}
+          // Personalización (opcional)
+          snowflakeCount={150} // Puedes ajustar la cantidad
+          speed={[1.0, 3.0]}  // Rango de velocidad de caída
+          wind={[-0.5, 2.0]}  // Rango de movimiento lateral (viento)
+        />
+        {/* ----------------------------------------- */}
         <Head>
           <title>PalletGo App</title>
           <link rel="icon" href="/favicon.ico" />
