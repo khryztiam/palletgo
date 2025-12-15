@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { supabase } from "../lib/supabase";
 import { Card } from "../components/Card";
 import { StatusModal } from "../components/StatusModal";
+import ChristmasCountdown from "../components/countdown";
 import RoleGate from "../components/RoleGate";
 
 export default function Dispatch() {
@@ -308,6 +309,8 @@ export default function Dispatch() {
           />
         )}
       </div>
+      {/* Contador de Navidad */}
+      <ChristmasCountdown />
     </RoleGate>
   );
 }

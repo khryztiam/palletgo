@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import RoleGate from "../components/RoleGate";
 import { Card } from "../components/Card";
 import Modal from "react-modal"; // Importa react-modal
+import ChristmasCountdown from "../components/countdown";
 
 // Configurar el elemento de la app para el modal
 Modal.setAppElement("#__next"); // Es necesario para mejorar la accesibilidad
@@ -405,6 +406,7 @@ y ademas es un array de hasta 4 codigos posibles*/}
             </div>
           </form>
         </Modal>
+        <ChristmasCountdown />
       </div>
     </RoleGate>
   );

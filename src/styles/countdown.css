@@ -1,0 +1,91 @@
+/* Estilos del Widget Flotante */
+.countdown-widget.visible-always {
+    position: fixed;
+    bottom: 70px; /* Separación del botón */
+    left: 20px;
+
+    width: 250px; /* Incrementamos el ancho para acomodar el nuevo diseño */
+    padding: 25px 20px; /* Mayor relleno */
+
+    background: url('/countdown-xmas.jpg') no-repeat center center;
+    background-size: cover; /* Asegura que la imagen cubra todo el widget */
+    background-color: #1a4d3a; /* El color verde oscuro del fondo de la imagen */
+
+    border: none; /* Quitamos el borde sólido */
+    border-radius: 10px; /* Quitamos el radio */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
+    z-index: 999; /* Asegura que esté sobre otros elementos */
+    
+    color: white; 
+    text-align: center;
+}
+
+/* ========================================================= */
+/* 2. TEXTOS SUPERIOR E INFERIOR */
+/* ========================================================= */
+
+.countdown-title {
+    font-size: 1.2em;
+    font-weight: 400;
+    margin-bottom: 10px;
+    color: white;
+}
+
+.countdown-footer {
+    margin-top: 15px;
+    font-size: 1.4em;
+    font-weight: 300;
+    color: white;
+    line-height: 1.2;
+}
+.countdown-footer strong {
+    font-weight: 900;
+    font-size: 1.2em; /* Hace que 'Navidad!' sea más grande */
+}
+/* Estilo del mensaje final */
+.christmas-finished-message {
+    font-size: 2em;
+    font-weight: bold;
+    color: white;
+    padding: 30px 0;
+}
+
+/* ========================================================= */
+/* 3. BLOQUES DEL CONTADOR (DISPLAY DE NÚMEROS) */
+/* ========================================================= */
+
+.countdown-display {
+    display: flex;
+    justify-content: space-between;
+    gap: 5px; /* Pequeño espacio entre bloques */
+}
+
+.time-unit.block {
+    flex-grow: 1; /* Distribuye el espacio equitativamente */
+    background-color: white; /* Fondo Blanco del Bloque */
+    border-radius: 4px;
+    overflow: hidden; /* Importante para el efecto de barra inferior */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo del Número (9, 12, 1, 30) */
+.time-unit.block .value {
+    display: block;
+    font-size: 1.6em; /* Tamaño grande para los números */
+    font-weight: 900; /* Extra-bold */
+    line-height: 1.2; /* Espacio vertical */
+    color: #333; /* Color oscuro para el número */
+    padding: 2px 0;
+}
+
+/* Estilo de la Etiqueta (Días, Horas, Minutos, Segundos) */
+.time-unit.block small {
+    display: block;
+    font-size: 0.75em;
+    font-weight: 500;
+    color: white;
+    
+    /* Fondo semitransparente para la etiqueta */
+    background-color: rgba(0, 0, 0, 0.65); 
+    padding: 6px 0;
+}

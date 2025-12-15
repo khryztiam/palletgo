@@ -21,6 +21,7 @@ import '@/styles/admingate.css';
 import '@/styles/dashboard.css';
 import '@/styles/control.css';
 import '@/styles/timeline.css';
+import '@/styles/countdown.css';
 import AdminGate from '@/components/AdminGate';
 
 export default function App({ Component, pageProps }) {
