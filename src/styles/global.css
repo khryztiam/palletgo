@@ -27,52 +27,13 @@
 body {
   margin: 0;
   font-family: 'Arial', sans-serif;
-  background: linear-gradient(
-    to bottom,
-    #1b2d45,  /* Azul muy oscuro (casi negro) en la parte superior */
-    #3b526d,  /* Azul petróleo medio */
-    #5c7b99   /* Gris azulado oscuro en la parte inferior */
-  );
-  
-  /* Asegura que el gradiente se extienda por toda la altura y esté fijo */
-  background-attachment: fixed;
-  background-color: #1b2d45; /* Color de respaldo */
-  /*background-color:rgb(218, 220, 223); /* bg-gray-50 Descomentar para regresar al diseño anterior*/
-  min-height: 100vh;
 
-  /* Asegura que el gradiente se extienda por toda la altura y esté fijo */
-  background-attachment: fixed;
-  background-color: #1b2d45; /* Color de respaldo */
-  min-height: 100vh;
+  background-color:rgb(218, 220, 223); /* bg-gray-50 Descomentar para regresar al diseño anterior*/
   
   /* --- AÑADIR ESTO PARA POSICIONAR LOS ELEMENTOS FIJOS --- */
   position: relative;
 }
-/* ------------------------------------------------------------------- */
-/* --- SIMULACIÓN DE SUELO O CÚMULO DE NIEVE (Fijo al viewport) --- */
-/* ------------------------------------------------------------------- */
 
-body::after {
-  content: '';
-  position: fixed; 
-  bottom: 0; 
-  left: 0;
-  width: 100%;
-  height: 80px; /* Altura del cúmulo de nieve. Ajusta este valor. */
-  z-index: 10000; 
-
-  /* Gradiente para simular la forma del cúmulo y el contraste con el fondo oscuro. */
-  /* Va de blanco opaco (abajo) a blanco muy transparente (arriba). */
-  background: linear-gradient(
-    to top,
-    rgba(240, 248, 255, 1) 0%, /* Blanco Nieve Sólido en el borde inferior */
-    rgba(240, 248, 255, 0.7) 50%, /* Blanco semitransparente a la mitad */
-    rgba(240, 248, 255, 0) 100% /* Transparente en la parte superior para la transición */
-  );
-
-  /* Opcional: Un toque de "nieve" irregular con box-shadow para textura. */
-  box-shadow: 0 -5px 15px rgba(240, 248, 255, 0.3);
-}
 
 .container {
   width: 100%;

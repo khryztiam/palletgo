@@ -6,11 +6,7 @@
   }
   
 .dispatch-container h1 {
-/* --- Texto: Blanco Nieve --- */
-  color: #f0f8ff; /* Blanco ligeramente azulado (Snow) */
-  
-  /* --- Línea: Oro Suave (Soft Gold) --- */
-  border-bottom: 2px solid #e1b30280; /* Tono dorado con ligera transparencia */
+  color: rgb(115, 18, 18);
   font-size: 1.8rem;
   border-bottom: 2px solid #e2e8f0;
   padding-bottom: 10px;

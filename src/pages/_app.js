@@ -27,7 +27,7 @@ import AdminGate from '@/components/AdminGate';
 export default function App({ Component, pageProps }) {
   return (
     <AuthProvider>
-        {/* --- Componente de Nieve: Colocado Aquí --- */}
+        {/* --- Componente de Nieve: Colocado Aquí --- 
         <Snowfall 
           // Estilos para cubrir toda la pantalla (viewport)
           style={{ 
@@ -42,7 +42,7 @@ export default function App({ Component, pageProps }) {
           speed={[1.0, 3.0]}  // Rango de velocidad de caída
           wind={[-0.5, 2.0]}  // Rango de movimiento lateral (viento)
         />
-        {/* ----------------------------------------- */}
+         ----------------------------------------- */}
         <Head>
           <title>PalletGo App</title>
           <link rel="icon" href="/favicon.ico" />

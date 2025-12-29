@@ -406,7 +406,7 @@ y ademas es un array de hasta 4 codigos posibles*/}
             </div>
           </form>
         </Modal>
-        <ChristmasCountdown />
+        {/*<ChristmasCountdown />*/}
       </div>
     </RoleGate>
   );
