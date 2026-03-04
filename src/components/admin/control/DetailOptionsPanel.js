@@ -1,42 +1,41 @@
-// /src/components/admin/control/DetailOptionsPanel.js
-import React, { useState, useEffect } from 'react';
+// src/components/admin/control/DetailOptionsPanel.js
+import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import Modal from 'react-modal';
+import styles from '@/styles/Control.module.css';
 
 Modal.setAppElement('#__next');
 
+// ─── DetailOptionsPanel ───────────────────────────────────────────────────────
 const DetailOptionsPanel = () => {
-  const [options, setOptions] = useState([]);
-  const [newOption, setNewOption] = useState('');
+  const [options,       setOptions]       = useState([]);
+  const [newOption,     setNewOption]     = useState('');
   const [editingOption, setEditingOption] = useState(null);
-  const [editedOption, setEditedOption] = useState('');
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [mode, setMode] = useState(''); // 'add' | 'manage'
+  const [editedOption,  setEditedOption]  = useState('');
+  const [modalIsOpen,   setModalIsOpen]   = useState(false);
+  const [mode,          setMode]          = useState(''); // 'add' | 'manage'
 
-  // Fetch
-  useEffect(() => {
-    async function fetchOptions() {
-      const { data, error } = await supabase
-        .from('detail_options')
-        .select('*')
-        .order('label', { ascending: true });
-      if (error) {
-        console.error('Error cargando opciones:', error.message);
-      } else {
-        setOptions(data);
-      }
-    }
-  
-    fetchOptions();
+  // ── Fetch ──────────────────────────────────────────────────────────────────
+  const fetchOptions = useCallback(async () => {
+    const { data, error } = await supabase
+      .from('detail_options')
+      .select('*')
+      .order('label', { ascending: true });
+
+    if (error) console.error('Error cargando opciones:', error.message);
+    else setOptions(data);
   }, []);
 
-  // Open modal
+  useEffect(() => { fetchOptions(); }, [fetchOptions]);
+
+  // ── Modal helpers ──────────────────────────────────────────────────────────
   const openAddModal = () => {
     setMode('add');
     setNewOption('');
     setEditingOption(null);
     setModalIsOpen(true);
   };
+
   const openManageModal = (option) => {
     setMode('manage');
     setEditingOption(option);
@@ -52,12 +51,14 @@ const DetailOptionsPanel = () => {
     setNewOption('');
   };
 
-  // Handlers
+  // ── Handlers CRUD ──────────────────────────────────────────────────────────
   const handleAdd = async () => {
     if (!newOption.trim()) return;
     const { data, error } = await supabase
       .from('detail_options')
-      .insert([{ label: newOption.trim() }]);
+      .insert([{ label: newOption.trim() }])
+      .select(); // Retorna el registro insertado
+
     if (error) console.error('Error agregando:', error.message);
     else {
       setOptions(prev => [...prev, ...data]);
@@ -71,6 +72,7 @@ const DetailOptionsPanel = () => {
       .from('detail_options')
       .update({ label: editedOption.trim() })
       .eq('id', editingOption.id);
+
     if (error) console.error('Error editando:', error.message);
     else {
       setOptions(prev =>
@@ -87,6 +89,7 @@ const DetailOptionsPanel = () => {
       .from('detail_options')
       .delete()
       .eq('id', editingOption.id);
+
     if (error) console.error('Error eliminando:', error.message);
     else {
       setOptions(prev => prev.filter(opt => opt.id !== editingOption.id));
@@ -94,88 +97,95 @@ const DetailOptionsPanel = () => {
     }
   };
 
+  // ── Render ─────────────────────────────────────────────────────────────────
   return (
-    <div className="detail-options-panel">
+    <div className={styles.detailOptionsPanel}>
       <h2>Opciones de Detalles</h2>
-      <div className="options-buttons">
-      <button onClick={openAddModal} className="add-button">
-        + Agregar Opción
-      </button>
+
+      <div className={styles.optionsButtons}>
+        <button onClick={openAddModal}>+ Agregar Opción</button>
       </div>
-      <ul className="options-list">
+
+      <ul className={styles.optionsList}>
         {options.length > 0 ? (
           options.map(option => (
             <li
               key={option.id}
-              className={`option-item ${
-                editingOption?.id === option.id ? 'selected' : ''
-              }`}
+              className={styles.optionItem}
               onClick={() => openManageModal(option)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => e.key === 'Enter' && openManageModal(option)}
             >
-              {option.label}
+              <span>{option.label}</span>
+              <button
+                className={styles.editOptionBtn}
+                onClick={(e) => { e.stopPropagation(); openManageModal(option); }}
+                aria-label={`Editar ${option.label}`}
+              >
+                Editar
+              </button>
             </li>
           ))
         ) : (
-          <p>No hay opciones disponibles.</p>
+          <p style={{ color: '#718096', fontStyle: 'italic' }}>
+            No hay opciones disponibles.
+          </p>
         )}
       </ul>
 
+      {/* Modal de agregar / editar */}
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
-        overlayClassName="control-modal-overlay"
-        className="control-modal-content"
+        overlayClassName={styles.modalOverlay}
+        className={styles.modalContent}
+        contentLabel={mode === 'add' ? 'Agregar Opción' : 'Gestionar Opción'}
       >
-        {mode === 'add' ? (
-          <>
-            <h2>Agregar Opción</h2>
-            <div className='control-modal'>
-            <div className='control-form-group'>
+        <div className={styles.modalHeader}>
+          <h2>{mode === 'add' ? 'Agregar Opción' : 'Gestionar Opción'}</h2>
+          <button onClick={closeModal} className={styles.modalClose} aria-label="Cerrar">
+            &times;
+          </button>
+        </div>
+
+        <div className={styles.modalBody}>
+          <div className={styles.formGroup}>
+            <label>{mode === 'add' ? 'Nueva opción:' : 'Editar opción:'}</label>
             <input
               type="text"
-              value={newOption}
-              onChange={e => setNewOption(e.target.value)}
-              placeholder="Escribe la nueva opción"
-              className='control-form-control'
+              value={mode === 'add' ? newOption : editedOption}
+              onChange={(e) =>
+                mode === 'add'
+                  ? setNewOption(e.target.value)
+                  : setEditedOption(e.target.value)
+              }
+              placeholder={mode === 'add' ? 'Escribe la nueva opción...' : 'Edita la opción...'}
+              autoFocus
             />
-            </div>
-            <div className="control-actions">
-              <button onClick={handleAdd} className="submit-button">
-                Guardar
-              </button>
-              <button onClick={closeModal} className="cancel-button">
-                Cancelar
-              </button>
-            </div>
-            </div>
-          </>
-        ) : (
-          <>
-            <h2>Gestionar Opción</h2>
-            <div className='control-modal'>
-            <div className='control-form-group'>
-            <input
-              type="text"
-              value={editedOption}
-              onChange={e => setEditedOption(e.target.value)}
-              placeholder="Edita la opción"
-              className='control-form-control'
-            />
-            </div>
-            <div className="control-actions">
-              <button onClick={handleEdit} className="management-primary-btn">
-                Guardar
-              </button>
-              <button onClick={handleDelete} className="management-secondary-btn">
+          </div>
+        </div>
+
+        <div className={styles.modalFooter}>
+          {mode === 'manage' && (
+            <div className={styles.footerLeft}>
+              <button onClick={handleDelete} className={styles.deleteBtn}>
                 Eliminar
               </button>
-              <button onClick={closeModal} className="management-danger-btn">
-                Cancelar
-              </button>
             </div>
-            </div>
-          </>
-        )}
+          )}
+          <div className={styles.footerRight}>
+            <button onClick={closeModal} className={styles.cancelBtn}>
+              Cancelar
+            </button>
+            <button
+              onClick={mode === 'add' ? handleAdd : handleEdit}
+              className={styles.saveBtn}
+            >
+              Guardar
+            </button>
+          </div>
+        </div>
       </Modal>
     </div>
   );

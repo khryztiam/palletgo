@@ -1,0 +1,408 @@
+/* ======= Container ======= */
+.container {
+  width: 10 0%;
+  max-width: 1200px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.container h1 {
+  color: rgb(115, 18, 18);
+  font-size: 1.8rem;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 10px;
+  position: relative;
+  margin-bottom: 8px;
+}
+
+.container h1::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100px;
+  height: 2px;
+  background: #731212;
+}
+
+.container > p {
+  color: #555;
+  margin-bottom: 20px;
+}
+
+/* ======= Status Cards ======= */
+.statusCardsContainer {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.statusCard {
+  background-color: #fff;
+  width: 22%;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.statusCard:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.statusCardSelected {
+  border: 2px solid #731212;
+}
+
+.statusIcon {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 10px;
+}
+
+.statusInfo h3 {
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.statusInfo p {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #731212;
+}
+
+/* ======= Table ======= */
+.tableContainer {
+  margin-top: 30px;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 30px;
+}
+
+.table th,
+.table td {
+  padding: 12px;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+
+.table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.table tr:hover {
+  background-color: #f0f0f0;
+  cursor: pointer;
+}
+
+.actionBtn {
+  background-color: #731212;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.actionBtn:hover { background-color: #a63131; }
+
+/* ======= Order Modal ======= */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modalContent {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  animation: slideIn 0.3s ease-out;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.modalHeader h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.modalClose {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #718096;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.modalClose:hover { color: #2d3748; }
+
+.modalBody {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.formGroup {
+  margin-bottom: 0; /* gap del padre lo maneja */
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: #555;
+}
+
+.formGroup input,
+.formGroup select,
+.formGroup textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border 0.3s ease;
+}
+
+.formGroup input:focus,
+.formGroup select:focus,
+.formGroup textarea:focus {
+  border-color: #1976d2;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+}
+
+.formGroup input:disabled,
+.formGroup select:disabled,
+.formGroup textarea:disabled {
+  background-color: #f8f9fa;
+  cursor: not-allowed;
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-top: 1px solid #eee;
+}
+
+.footerLeft,
+.footerRight {
+  display: flex;
+  gap: 10px;
+}
+
+/* ======= Shared Buttons (usados en modal footer) ======= */
+.deleteBtn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.deleteBtn:hover:not(:disabled)  { background: #c82333; }
+.deleteBtn:disabled               { background: #6c757d; cursor: not-allowed; }
+
+.cancelBtn {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.cancelBtn:hover:not(:disabled)  { background: #5a6268; }
+.cancelBtn:disabled               { opacity: 0.6; cursor: not-allowed; }
+
+.saveBtn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.saveBtn:hover:not(:disabled) { background: #0056b3; }
+.saveBtn:disabled              { opacity: 0.6; cursor: not-allowed; }
+
+/* ======= Confirm Delete Modal ======= */
+.confirmModal {
+  background: white;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 380px;
+  padding: 24px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  border-top: 4px solid #dc3545;
+  text-align: center;
+  animation: slideIn 0.3s ease-out;
+}
+
+.confirmModal h3 { margin-top: 0; color: #333; }
+.confirmModal p  { color: #555; margin-bottom: 24px; }
+
+.confirmButtons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* ======= DetailOptionsPanel ======= */
+.detailOptionsPanel {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.optionsButtons {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: flex-end;
+  margin-bottom: 16px;
+}
+
+.optionsButtons button {
+  padding: 8px 12px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.optionsButtons button:hover { background-color: #45a049; }
+
+.optionsList {
+  list-style-type: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.optionItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+  padding: 10px;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.optionItem span { font-size: 16px; }
+
+.optionItem button {
+  margin-left: 8px;
+  padding: 6px 10px;
+  background-color: #008CBA;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.optionItem button:hover { opacity: 0.8; }
+
+.editOptionBtn   { background-color: #ff9800 !important; }
+.deleteOptionBtn { background-color: #f44336 !important; }
+
+/* ======= Animations ======= */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+
+/* ======= Responsive ======= */
+@media (max-width: 1024px) {
+  .statusCard { width: 45%; }
+}
+
+@media (max-width: 768px) {
+  .container { width: 95%; padding: 15px; }
+
+  .statusCardsContainer {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .statusCard { width: calc(50% - 10px); }
+
+  .table th,
+  .table td { padding: 8px; font-size: 0.9rem; }
+
+  .actionBtn { padding: 5px 10px; font-size: 0.9rem; }
+
+  .optionsList       { grid-template-columns: 1fr; }
+
+  .optionsButtons {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .optionsButtons button { width: 100%; }
+
+  .optionItem {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .optionItem span   { margin-bottom: 8px; }
+  .optionItem button { width: 100%; margin-left: 0; }
+}

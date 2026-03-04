@@ -1,4 +1,3 @@
-// Componente BarChart.js
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
 import {
@@ -7,74 +6,54 @@ import {
   LinearScale,
   BarElement,
   Tooltip,
-  Legend
+  Legend,
 } from 'chart.js';
+import styles from '@/styles/Dashboard.module.css';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 const BarChart = ({ areaData }) => {
   const chartData = {
     labels: Object.keys(areaData),
-    datasets: [
-      {
-        label: '# Requests',
-        data: Object.values(areaData),
-        backgroundColor: '#3498db', // Color de las barras
-        borderColor: '#2980b9', // Color del borde de las barras
-        borderWidth: 1,
-        hoverBackgroundColor: '#2980b9',
-        hoverBorderColor: '#1f6d99',
-      }
-    ]
+    datasets: [{
+      label: '# Requests',
+      data: Object.values(areaData),
+      backgroundColor:      '#3498db',
+      borderColor:          '#2980b9',
+      borderWidth:           1,
+      hoverBackgroundColor: '#2980b9',
+      hoverBorderColor:     '#1f6d99',
+    }],
   };
-    const options = {
-      responsive: true,
-      maintainAspectRatio: false, // Evitar que el aspecto se mantenga fijo
-      plugins: {
-        legend: {
-          position: 'top',
-          labels: {
-            font: {
-              size: 14,
-            },
-          },
-        },
-        tooltip: {
-          callbacks: {
-            label: function (context) {
-              return `${context.dataset.label}: ${context.raw}`; // Mostrar el valor sobre la barra
-            },
-          },
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top',
+        labels: { font: { size: 14 } },
+      },
+      tooltip: {
+        callbacks: {
+          label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}`,
         },
       },
-      scales: {
-        x: {
-          grid: {
-            display: false,
-          },
-          ticks: {
-            font: {
-              size: 14,
-            },
-          },
-        },
-        y: {
-          beginAtZero: true,
-          ticks: {
-            font: {
-              size: 14,
-            },
-          },
-        },
-      },
-    };
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { font: { size: 14 } } },
+      y: { beginAtZero: true,        ticks: { font: { size: 14 } } },
+    },
+  };
+
   return (
-    <div className="barchart-container">
+    <div className={styles.barchartContainer}>
       <h3>Solicitudes por Área</h3>
-      <div className="barchart-wrapper">
+      <div className={styles.barchartWrapper}>
         <Bar data={chartData} options={options} />
       </div>
     </div>
   );
 };
+
 export default BarChart;

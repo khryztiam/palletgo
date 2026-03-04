@@ -1,5 +1,5 @@
-/* --- General Container --- */
-.login-container {
+/* ======= Container ======= */
+.container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -10,18 +10,12 @@
 }
 
 @keyframes fadeInUp {
-  0% {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* --- Login Box --- */
-.login-box {
+/* ======= Box ======= */
+.box {
   background: #ffffff;
   padding: 2rem;
   border-radius: 12px;
@@ -31,14 +25,14 @@
   text-align: center;
 }
 
-/* --- Logo --- */
-.login-logo {
+/* ======= Logo ======= */
+.logoWrapper {
   display: flex;
   justify-content: center;
   margin-bottom: 1rem;
 }
 
-.logo-wrapper {
+.logoCircle {
   background-color: #e0ecf7;
   border-radius: 50%;
   padding: 10px;
@@ -50,38 +44,60 @@
   height: 80px;
 }
 
-/* --- Título --- */
-.navbar-title2 {
+/* ======= Título ======= */
+.title {
   font-size: 2rem;
   font-weight: bold;
   letter-spacing: 0.5px;
   background: linear-gradient(90deg, #2A5CAA, #4CAF50);
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  margin-bottom: 0.25rem;
 }
 
-/* --- Formulario --- */
-.login-form {
+.box h2 {
+  font-size: 1.1rem;
+  color: #444;
+  margin-bottom: 1.25rem;
+  font-weight: 500;
+}
+
+/* ======= Form ======= */
+.form {
   display: flex;
   flex-direction: column;
 }
 
-.input-field {
+/* Accesibilidad: label visible solo para lectores de pantalla */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.inputField {
   width: 100%;
   padding: 10px 14px;
-  margin: 10px 0;
+  margin: 8px 0;
   border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 15px;
-  transition: border-color 0.3s;
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-.input-field:focus {
+.inputField:focus {
   border-color: #4ca1af;
   outline: none;
+  box-shadow: 0 0 0 3px rgba(76, 161, 175, 0.2);
 }
 
-.login-button {
+.loginButton {
   width: 100%;
   padding: 10px;
   background: #4ca1af;
@@ -95,37 +111,16 @@
   margin-top: 1rem;
 }
 
-.login-button:hover {
-  background: #357d92;
-}
+.loginButton:hover:not(:disabled) { background: #357d92; }
 
-.login-button:disabled {
+.loginButton:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-/* --- Errores --- */
-.error-message {
-  color: #b90000;
-  background: #ffe3e3;
-  border: 1px solid #ffaaaa;
-  border-radius: 6px;
-  padding: 10px;
-  margin-bottom: 1rem;
-  font-size: 0.95rem;
-}
-
-/* Animación tipo "temblor" */
-@keyframes shake {
-  0% { transform: translateX(0); }
-  20% { transform: translateX(-8px); }
-  40% { transform: translateX(8px); }
-  60% { transform: translateX(-6px); }
-  80% { transform: translateX(6px); }
-  100% { transform: translateX(0); }
-}
-
-.error-message {
+/* ======= Error ======= */
+/* FIX: el original tenía .error-message declarado dos veces — unificado aquí */
+.error {
   color: #b90000;
   background: #ffe3e3;
   border: 1px solid #ffaaaa;
@@ -136,3 +131,11 @@
   animation: shake 0.4s ease-in-out;
 }
 
+@keyframes shake {
+  0%   { transform: translateX(0);   }
+  20%  { transform: translateX(-8px);}
+  40%  { transform: translateX(8px); }
+  60%  { transform: translateX(-6px);}
+  80%  { transform: translateX(6px); }
+  100% { transform: translateX(0);   }
+}

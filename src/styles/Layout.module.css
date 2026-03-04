@@ -1,0 +1,108 @@
+/* =====================================================================
+   Layout.module.css
+   Wrapper principal: sidebar fijo izquierda + área de contenido derecha.
+   ===================================================================== */
+
+/* ── Wrapper global ─────────────────────────────────────────────────── */
+.wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── Área de contenido ──────────────────────────────────────────────── */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* Evita overflow cuando el contenido es muy ancho */
+  background: #dadcdf;
+}
+
+/* ── Page Header (barra superior fija del contenido) ────────────────── */
+.pageHeader {
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 0 28px;
+  height: 64px;                         /* +4px para acomodar el título mayor */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  flex-shrink: 0;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Botón hamburguesa — visible solo en móvil */
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #475569;
+  padding: 4px;
+  border-radius: 6px;
+  line-height: 0;
+  transition: background 0.15s, color 0.15s;
+}
+
+.hamburger:hover {
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+/* Bloque título + subtítulo con línea acento izquierda */
+.titleBlock {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-left: 12px;
+  border-left: 3px solid #731212;
+  gap: 2px;
+}
+
+.pageTitle {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #731212;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+.pageSubtitle {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #94a3b8;
+  line-height: 1;
+  font-weight: 400;
+}
+
+/* ── Contenido scrolleable ──────────────────────────────────────────── */
+.content {
+  flex: 1;
+  padding: 24px 28px;
+  overflow-y: auto;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .hamburger {
+    display: flex;
+  }
+
+  .pageHeader {
+    padding: 0 16px;
+  }
+
+  .content {
+    padding: 16px;
+  }
+}

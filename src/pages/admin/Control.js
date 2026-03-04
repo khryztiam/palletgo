@@ -1,74 +1,143 @@
-// /src/pages/admin/Control.js
+// /src/pages/admin/Control.jsx
 import AdminGate from '@/components/AdminGate';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
-// Components
 import StatusCards from '@/components/admin/control/StatusCards';
 import RequestTable from '@/components/admin/control/OrdersTable';
 import OrderModal from '@/components/admin/control/OrderModal';
 import DetailOptionsPanel from '@/components/admin/control/DetailOptionsPanel';
+import styles from '@/styles/Control.module.css';
 
-const Control = () => {
-  const [selectedStatus, setSelectedStatus] = useState(null);
-  const [selectedRequest, setSelectedRequest] = useState(null);
-  const [orders, setOrders] = useState([]);
+// ─── Subcomponente: ConfirmDeleteModal ────────────────────────────────────────
+// Reemplaza window.confirm() y alert() de handleDeleteOrder
+const ConfirmDeleteModal = ({ isOpen, orderId, onConfirm, onCancel }) => {
+  if (!isOpen) return null;
 
-  // Selección por estado
-  const handleStatusSelect = (status) => setSelectedStatus(status);
-
-  // Clic en fila → abrir modal
-  const handleRowClick = (request) => setSelectedRequest(request);
-
-  // Filtrado por estado
-  const filteredRequests = orders.filter(
-    (order) => !selectedStatus || order.status === selectedStatus
+  return (
+    <div className={styles.modalOverlay}>
+      <div className={styles.confirmModal}>
+        <h3>¿Eliminar orden?</h3>
+        <p>
+          La orden <strong>#{orderId}</strong> será eliminada permanentemente.
+          Esta acción no se puede deshacer.
+        </p>
+        <div className={styles.confirmButtons}>
+          <button onClick={onCancel}  className={styles.cancelBtn}>Cancelar</button>
+          <button onClick={onConfirm} className={styles.deleteBtn}>Sí, eliminar</button>
+        </div>
+      </div>
+    </div>
   );
+};
 
-  // --- Carga órdenes del día actual ---
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const today = new Date();
-        const startOfDay = new Date(today.setHours(0, 0, 0, 0)).toISOString();
-        const endOfDay = new Date(today.setHours(23, 59, 59, 999)).toISOString();
+// ─── Subcomponente: FeedbackToast ─────────────────────────────────────────────
+// Reemplaza alert() para resultados de operaciones
+const FeedbackToast = ({ message, type, onClose }) => {
+  if (!message) return null;
 
-        const { data, error } = await supabase
-          .from('orders')
-          .select('*')
-          .gte('date_order', startOfDay)
-          .lte('date_order', endOfDay)
-          .order('date_order', { ascending: false });
+  return (
+    <div
+      className={styles.modalOverlay}
+      style={{ background: 'transparent', pointerEvents: 'none' }}
+    >
+      <div
+        style={{
+          position: 'fixed',
+          top: '70px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          padding: '12px 24px',
+          borderRadius: '8px',
+          background: type === 'success' ? '#38a169' : '#e53e3e',
+          color: 'white',
+          zIndex: 1200,
+          display: 'flex',
+          gap: '12px',
+          alignItems: 'center',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          pointerEvents: 'all',
+          minWidth: '280px',
+        }}
+      >
+        <span>{message}</span>
+        <button
+          onClick={onClose}
+          style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', fontSize: '1.1rem' }}
+          aria-label="Cerrar"
+        >
+          &times;
+        </button>
+      </div>
+    </div>
+  );
+};
 
-        if (error) throw error;
+// ─── Control Page ─────────────────────────────────────────────────────────────
+const Control = () => {
+  const [selectedStatus,  setSelectedStatus]  = useState(null);
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [orders,          setOrders]          = useState([]);
 
-        setOrders(data || []);
-      } catch (err) {
-        console.error('Error cargando órdenes:', err.message);
-      }
-    };
+  // Estado para el modal de confirmación de eliminación
+  const [confirmDelete,   setConfirmDelete]   = useState({ open: false, orderId: null });
+  // Estado para el toast de feedback (reemplaza alert)
+  const [toast,           setToast]           = useState({ message: '', type: '' });
 
-    fetchOrders();
+  const showToast = useCallback((message, type = 'success', duration = 4000) => {
+    setToast({ message, type });
+    setTimeout(() => setToast({ message: '', type: '' }), duration);
   }, []);
 
-  // --- Guardar actualización de orden ---
+  // Filtrado reactivo por status
+  const filteredRequests = orders.filter(
+    order => !selectedStatus || order.status === selectedStatus
+  );
+
+  // ── Carga de órdenes del día ───────────────────────────────────────────────
+  const fetchOrders = useCallback(async () => {
+    try {
+      const today      = new Date();
+      const startOfDay = new Date(today.setHours(0,  0,  0,   0)).toISOString();
+      const endOfDay   = new Date(today.setHours(23, 59, 59, 999)).toISOString();
+
+      const { data, error } = await supabase
+        .from('orders')
+        .select('*')
+        .gte('date_order', startOfDay)
+        .lte('date_order', endOfDay)
+        .order('date_order', { ascending: false });
+
+      if (error) throw error;
+      setOrders(data || []);
+    } catch (err) {
+      console.error('Error cargando órdenes:', err.message);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
+
+  // ── Guardar orden ──────────────────────────────────────────────────────────
   const handleSaveOrder = async (updatedOrder) => {
-    const updateData = {
-      status: updatedOrder.status,
-      destiny: updatedOrder.destiny,
-      comments: updatedOrder.comments,
+    const updateData    = {
+      status:       updatedOrder.status,
+      destiny:      updatedOrder.destiny,
+      comments:     updatedOrder.comments,
       user_deliver: updatedOrder.user_deliver,
     };
-
     const originalOrder = orders.find(o => o.id_order === updatedOrder.id_order);
 
-    const wasDelivered = originalOrder?.status === 'ENTREGADO';
-    const isNowDelivered = updatedOrder.status === 'ENTREGADO';
-
-    if (isNowDelivered && !wasDelivered && !originalOrder.date_delivery) {
+    // Asignar fecha de entrega solo si transiciona a ENTREGADO por primera vez
+    if (
+      updatedOrder.status === 'ENTREGADO' &&
+      originalOrder?.status !== 'ENTREGADO' &&
+      !originalOrder?.date_delivery
+    ) {
       updateData.date_delivery = new Date().toISOString();
     }
 
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('orders')
       .update(updateData)
       .eq('id_order', updatedOrder.id_order);
@@ -87,11 +156,16 @@ const Control = () => {
     }
   };
 
-  // --- ELIMINAR ORDEN ---
-  const handleDeleteOrder = async (orderId) => {
-    if (!window.confirm('¿Estás seguro de que quieres eliminar esta orden? Esta acción no se puede deshacer.')) {
-      return;
-    }
+  // ── Eliminar orden ─────────────────────────────────────────────────────────
+  // FIX: reemplaza window.confirm() + alert() por modales propios
+  const handleDeleteOrder = (orderId) => {
+    setSelectedRequest(null);             // Cerrar modal de edición
+    setConfirmDelete({ open: true, orderId }); // Abrir confirmación
+  };
+
+  const handleConfirmDelete = async () => {
+    const { orderId } = confirmDelete;
+    setConfirmDelete({ open: false, orderId: null });
 
     try {
       const { error } = await supabase
@@ -101,41 +175,29 @@ const Control = () => {
 
       if (error) throw error;
 
-      // Actualizar estado local
       setOrders(prev => prev.filter(order => order.id_order !== orderId));
-      
-      // Cerrar modal si estaba abierto
-      if (selectedRequest?.id_order === orderId) {
-        setSelectedRequest(null);
-      }
-
-      alert('Orden eliminada correctamente');
-    } catch (error) {
-      console.error('Error eliminando orden:', error);
-      alert('Error al eliminar la orden: ' + error.message);
+      showToast('Orden eliminada correctamente', 'success');
+    } catch (err) {
+      console.error('Error eliminando orden:', err);
+      showToast('Error al eliminar la orden: ' + err.message, 'error');
     }
   };
 
+  // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <AdminGate>
-      <div className="control-container">
-        <h1>Control de Solicitudes</h1>
-        <p>Bienvenido a Control, aquí podrás modificar la información de las solicitudes.</p>
-
-        {/* Tarjetas por estado */}
+      <div className={styles.container}>
         <StatusCards
           selected={selectedStatus}
           onSelect={setSelectedStatus}
           orders={orders}
         />
 
-        {/* Tabla últimas 10 */}
         <RequestTable
           requests={filteredRequests.slice(0, 10)}
-          onRowClick={handleRowClick}
+          onRowClick={setSelectedRequest}
         />
 
-        {/* Modal para editar */}
         {selectedRequest && (
           <OrderModal
             order={selectedRequest}
@@ -146,8 +208,22 @@ const Control = () => {
           />
         )}
 
-        {/* Panel de opciones */}
         <DetailOptionsPanel />
+
+        {/* Modal de confirmación de eliminación */}
+        <ConfirmDeleteModal
+          isOpen={confirmDelete.open}
+          orderId={confirmDelete.orderId}
+          onConfirm={handleConfirmDelete}
+          onCancel={() => setConfirmDelete({ open: false, orderId: null })}
+        />
+
+        {/* Toast de feedback (reemplaza alert) */}
+        <FeedbackToast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast({ message: '', type: '' })}
+        />
       </div>
     </AdminGate>
   );

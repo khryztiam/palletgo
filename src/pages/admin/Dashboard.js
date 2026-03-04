@@ -1,69 +1,59 @@
-// /src/pages/admin/dashboard.js
+// /src/pages/admin/Dashboard.jsx
 import AdminGate from "@/components/AdminGate";
 import React, { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/lib/supabase";
-
-// Components
 import DashboardHeader from "@/components/admin/DashboardHeader";
 import DonutChart from "@/components/admin/DonutChart";
 import BarChart from "@/components/admin/BarChart";
 import Timeline from "@/components/admin/Timeline";
 import ExportData from "@/components/admin/ExportData";
+import styles from "@/styles/Dashboard.module.css";
 
-// --- Utils de fecha ---
-function formatDateInput(d) {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
+// ─── Utils de fecha ───────────────────────────────────────────────────────────
+const formatDateInput = (d) => {
+  const y   = d.getFullYear();
+  const m   = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");
   return `${y}-${m}-${day}`;
-}
+};
 
-function getDateBounds(dateRange) {
-  const today = new Date();
-  // Si no hay fecha de inicio, usa hoy. Si hay inicio pero no fin, usa inicio como fin.
+const getDateBounds = (dateRange) => {
+  const today    = new Date();
   const startStr = dateRange.start || formatDateInput(today);
-  const endStr = dateRange.end || startStr;
-
-  const startDate = new Date(`${startStr}T00:00:00.000Z`);
-  const endDate = new Date(`${endStr}T23:59:59.999Z`);
+  const endStr   = dateRange.end   || startStr;
 
   return {
-    startISO: startDate.toISOString(),
-    endISO: endDate.toISOString(),
+    startISO: new Date(`${startStr}T00:00:00.000Z`).toISOString(),
+    endISO:   new Date(`${endStr}T23:59:59.999Z`).toISOString(),
   };
-}
+};
 
-// Función para procesar todos los datos en un solo lugar
+// ─── Procesador de datos ──────────────────────────────────────────────────────
+// Fuera del componente: no se recrea en cada render.
+const STATUS_MAP = {
+  SOLICITADO:   "request",
+  "EN PROGRESO":"in_progress",
+  ENTREGADO:    "delivered",
+  CANCELADO:    "canceled",
+};
+
 const processOrdersData = (orders) => {
-  const nextSummary = { request: 0, in_progress: 0, delivered: 0, canceled: 0 };
+  const nextSummary  = { request: 0, in_progress: 0, delivered: 0, canceled: 0 };
   const nextUserBars = {};
   const nextTimeline = [];
 
-  const statusMap = {
-    SOLICITADO: "request",
-    "EN PROGRESO": "in_progress",
-    ENTREGADO: "delivered",
-    CANCELADO: "canceled",
-  };
-
-  // 1. Recorrido único
   (orders || []).forEach((order, index) => {
-    // Resumen
-    const statusKey = statusMap[order.status];
+    const statusKey = STATUS_MAP[order.status];
     if (statusKey) nextSummary[statusKey]++;
 
-    // Barras (por área)
     const areaKey = order.area || "—";
     nextUserBars[areaKey] = (nextUserBars[areaKey] || 0) + 1;
 
-    // Timeline (últimos 10, ya vienen ordenados si la API lo hace)
     if (index < 10) {
       nextTimeline.push({
         date: new Date(order.date_order),
-        description: `Orden ${order.id_order} ${order.status} por ${
-          order.user_submit || "—"
-        } en ${order.area || "—"}`,
-        area: order.area, // Pasamos el área para el ícono
+        description: `Orden ${order.id_order} ${order.status} por ${order.user_submit || "—"} en ${order.area || "—"}`,
+        area: order.area,
       });
     }
   });
@@ -71,25 +61,17 @@ const processOrdersData = (orders) => {
   return { nextSummary, nextUserBars, nextTimeline };
 };
 
+// ─── Dashboard Page ───────────────────────────────────────────────────────────
 export default function DashboardPage() {
   const todayStr = useMemo(() => formatDateInput(new Date()), []);
-  // Se inicializa con hoy para asegurar un filtro por defecto
-  const [dateRange, setDateRange] = useState({
-    start: todayStr,
-    end: todayStr,
-  });
 
-  const [summary, setSummary] = useState({
-    request: 0,
-    in_progress: 0,
-    delivered: 0,
-    canceled: 0,
-  });
-  const [userBars, setUserBars] = useState({});
-  const [timeline, setTimeline] = useState([]);
-  const [ordersData, setOrdersData] = useState([]); // Datos para exportación
-  const [loading, setLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
+  const [dateRange, setDateRange] = useState({ start: todayStr, end: todayStr });
+  const [summary,   setSummary]   = useState({ request: 0, in_progress: 0, delivered: 0, canceled: 0 });
+  const [userBars,  setUserBars]  = useState({});
+  const [timeline,  setTimeline]  = useState([]);
+  const [ordersData,setOrdersData]= useState([]);
+  const [loading,   setLoading]   = useState(false);
+  const [errorMsg,  setErrorMsg]  = useState("");
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -99,65 +81,57 @@ export default function DashboardPage() {
       try {
         const { startISO, endISO } = getDateBounds(dateRange);
 
-        // --- Consulta Única: Obtener TODAS las órdenes del rango ordenadas por fecha ---
         const { data: allOrders, error } = await supabase
           .from("orders")
           .select("*")
           .gte("date_order", startISO)
           .lte("date_order", endISO)
-          .order("date_order", { ascending: false }); // Ordenar para que el timeline sea fácil
+          .order("date_order", { ascending: false });
 
         if (error) throw error;
 
-        // --- Procesar y consolidar datos localmente ---
-        const { nextSummary, nextUserBars, nextTimeline } =
-          processOrdersData(allOrders);
+        const { nextSummary, nextUserBars, nextTimeline } = processOrdersData(allOrders);
 
-        // --- Commit de estado ---
         setSummary(nextSummary);
         setUserBars(nextUserBars);
         setTimeline(nextTimeline);
-        setOrdersData(allOrders); // Guardar los datos completos para exportar
+        setOrdersData(allOrders);
       } catch (err) {
         console.error("Error cargando dashboard:", err);
-        setErrorMsg(
-          "Error al cargar datos: " + (err.message || "Error desconocido.")
-        );
+        setErrorMsg("Error al cargar datos: " + (err.message || "Error desconocido."));
       } finally {
         setLoading(false);
       }
     };
 
     fetchDashboardData();
-  }, [dateRange.start, dateRange.end]); // Dependencias: solo cambian si el rango de fecha cambia
+  }, [dateRange.start, dateRange.end]);
+
+  // ── Handlers de fecha ────────────────────────────────────────────────────
+  const handleDateChange = (type, value) => {
+    if (type === "start" && !value) {
+      setDateRange({ start: "", end: "" });
+    } else {
+      setDateRange(prev => ({ ...prev, [type]: value || prev.start }));
+    }
+  };
 
   return (
     <AdminGate>
-      <div className="dashboard-container">
+      <div className={styles.container}>
         <DashboardHeader
           dateRange={dateRange}
-          onDateChange={(type, value) => {
-            // Limpia el 'end' si el 'start' se vacía, o lo asigna al 'start' si el 'end' está vacío.
-            if (type === "start" && !value) {
-              setDateRange({ start: "", end: "" });
-            } else {
-              setDateRange((prev) => ({
-                ...prev,
-                [type]: value || prev.start,
-              }));
-            }
-          }}
+          onDateChange={handleDateChange}
           onQuickToday={() => setDateRange({ start: todayStr, end: todayStr })}
-          onClearAll={() => setDateRange({ start: "", end: "" })} // Permite limpiar ambos, lo que activaría la regla de hoy
+          onClearAll={()  => setDateRange({ start: "", end: "" })}
         />
 
-        {loading && <div style={{ padding: 12 }}>Cargando…</div>}
-        {errorMsg && (
-          <div style={{ color: "crimson", padding: 12 }}>{errorMsg}</div>
-        )}
+        {/* Estados de carga y error: antes eran style={{}} inline */}
+        {loading  && <div className={styles.loading}>Cargando…</div>}
+        {errorMsg && <div className={styles.error}>{errorMsg}</div>}
 
         {!loading && (
-          <div className="dashboard-visuals">
+          <div className={styles.visuals}>
             <DonutChart data={summary} />
             <ExportData
               data={ordersData}
@@ -168,10 +142,10 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* Solo mostramos la línea de tiempo si hay eventos */}
         {timeline.length > 0 && <Timeline events={timeline} />}
+
         {timeline.length === 0 && !loading && (
-          <p style={{ textAlign: "center", marginTop: "20px" }}>
+          <p className={styles.empty}>
             No hay movimientos en este rango de fechas.
           </p>
         )}

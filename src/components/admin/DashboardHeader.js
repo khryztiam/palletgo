@@ -1,8 +1,9 @@
-const DashboardHeader = ({ dateRange, area, onDateChange, onAreaChange }) => (
-  <div className="dashboard-header">
-    <h1>📈 Panel de Administración</h1>
-    <div className="dashboard-filters">
-      <div className="filter-group">
+import styles from '@/styles/Dashboard.module.css';
+
+const DashboardHeader = ({ dateRange, onDateChange, onQuickToday, onClearAll }) => (
+  <div className={styles.header}>
+    <div className={styles.filters}>
+      <div className={styles.filterGroup}>
         <label>Desde:</label>
         <input
           type="date"
@@ -10,7 +11,7 @@ const DashboardHeader = ({ dateRange, area, onDateChange, onAreaChange }) => (
           onChange={(e) => onDateChange('start', e.target.value)}
         />
       </div>
-      <div className="filter-group">
+      <div className={styles.filterGroup}>
         <label>Hasta:</label>
         <input
           type="date"
@@ -18,19 +19,22 @@ const DashboardHeader = ({ dateRange, area, onDateChange, onAreaChange }) => (
           onChange={(e) => onDateChange('end', e.target.value)}
         />
       </div>
-      {/*  //No implementado debido a que solo existe area  Linea
-
-      <div className="filter-group">
-        <label>Área:</label>
-        <select value={area} onChange={(e) => onAreaChange(e.target.value)}>
-          <option value="">Todas</option>
-          <option value="LINEA">Línea</option>
-          <option value="EMBARQUE">Embarque</option>
-          <option value="ALMACÉN">Almacén</option>
-        </select>
-      </div>
-      
-      */}
+      {onQuickToday && (
+        <div className={styles.filterGroup}>
+          <label>&nbsp;</label>
+          <button onClick={onQuickToday} style={{ padding: '8px 12px', cursor: 'pointer', borderRadius: 4, border: '1px solid #ccc' }}>
+            Hoy
+          </button>
+        </div>
+      )}
+      {onClearAll && (
+        <div className={styles.filterGroup}>
+          <label>&nbsp;</label>
+          <button onClick={onClearAll} style={{ padding: '8px 12px', cursor: 'pointer', borderRadius: 4, border: '1px solid #ccc' }}>
+            Limpiar
+          </button>
+        </div>
+      )}
     </div>
   </div>
 );

@@ -1,47 +1,128 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import Modal from 'react-modal';
 import RoleGate from '../components/RoleGate';
+import styles from '@/styles/Boarding.module.css';
 
-// Configurar el elemento de la app para el modal
-Modal.setAppElement('#__next');  // Es necesario para mejorar la accesibilidad
+Modal.setAppElement('#__next');
 
+// ─── Constantes ───────────────────────────────────────────────────────────────
+const EMPTY_DELIVERER = { user_deliver: '' };
+
+/**
+ * Mapea el status de una orden al className del badge correspondiente.
+ * Centralizado para evitar lógica inline en el JSX.
+ */
+const STATUS_CLASS = {
+  'SOLICITADO':  styles.statusSolicitado,
+  'EN PROGRESO': styles.statusEnProgreso,
+  'ENTREGADO':   styles.statusEntregado,
+  'CANCELADO':   styles.statusCancelado,
+};
+
+// ─── Subcomponente: ConfirmDeleteModal ────────────────────────────────────────
+// Reemplaza window.confirm() — no bloquea el hilo principal y es estilizable.
+const ConfirmDeleteModal = ({ isOpen, onConfirm, onCancel, name }) => (
+  <Modal
+    isOpen={isOpen}
+    onRequestClose={onCancel}
+    className={styles.confirmModal}
+    overlayClassName={styles.modalOverlay}
+    contentLabel="Confirmar eliminación"
+  >
+    <h3>¿Eliminar entregador?</h3>
+    <p>
+      Esta acción eliminará a <strong>{name}</strong> permanentemente y no se
+      puede deshacer.
+    </p>
+    <div className={styles.confirmButtons}>
+      <button onClick={onCancel}  className={styles.cancelButton}>Cancelar</button>
+      <button onClick={onConfirm} className={styles.deleteButton}>Sí, eliminar</button>
+    </div>
+  </Modal>
+);
+
+// ─── Boarding Page ────────────────────────────────────────────────────────────
 export default function Boarding() {
-  const [deliverers, setDeliverers] = useState([]);
-  const [orders, setOrders] = useState([]);
+  const [deliverers,           setDeliverers]           = useState([]);
+  const [orders,               setOrders]               = useState([]);
+  const [loading,              setLoading]              = useState(true);
+
+  // Modal de entregador (crear / editar)
   const [isDelivererModalOpen, setIsDelivererModalOpen] = useState(false);
-  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
-  const [currentDeliverer, setCurrentDeliverer] = useState({ user_deliver: '' });
-  const [currentOrder, setCurrentOrder] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [hasChanges, setHasChanges] = useState(false);
+  const [currentDeliverer,     setCurrentDeliverer]     = useState(EMPTY_DELIVERER);
+  const [hasChanges,           setHasChanges]           = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Fetch deliverers
-        const { data: deliverersData } = await supabase
-          .from('list_users')
-          .select('*');
-        setDeliverers(deliverersData);
+  // Modal de confirmación de eliminación
+  const [isConfirmOpen,        setIsConfirmOpen]        = useState(false);
 
-        // Fetch last 25 orders
-        const { data: ordersData } = await supabase
-          .from('orders')
-          .select('*')
-          .order('date_order', { ascending: false })
-          .limit(25);
-        setOrders(ordersData);
+  // Modal de detalle de orden
+  const [isOrderModalOpen,     setIsOrderModalOpen]     = useState(false);
+  const [currentOrder,         setCurrentOrder]         = useState(null);
 
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+  // ── Carga inicial ──────────────────────────────────────────────────────────
+  const fetchDeliverers = useCallback(async () => {
+    const { data, error } = await supabase.from('list_users').select('*');
+    if (!error && data) setDeliverers(data);
   }, []);
+
+  const fetchOrders = useCallback(async () => {
+    const { data, error } = await supabase
+      .from('orders')
+      .select('*')
+      .order('date_order', { ascending: false })
+      .limit(25);
+    if (!error && data) setOrders(data);
+  }, []);
+
+  // ── Realtime: órdenes ──────────────────────────────────────────────────────
+  // MEJORA: La versión original cargaba las órdenes solo una vez (sin realtime).
+  // Ahora se actualizan automáticamente cuando otro usuario cambia el estado.
+  useEffect(() => {
+    const init = async () => {
+      await Promise.all([fetchDeliverers(), fetchOrders()]);
+      setLoading(false);
+    };
+    init();
+
+    const channel = supabase
+      .channel('boarding-realtime')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'orders' },
+        (payload) => {
+          setOrders(prev => {
+            const exists = prev.some(o => o.id_order === payload.new.id_order);
+            if (exists) return prev;
+            // Mantener solo las últimas 25
+            return [payload.new, ...prev].slice(0, 25);
+          });
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'orders' },
+        (payload) => {
+          setOrders(prev =>
+            prev.map(o => o.id_order === payload.new.id_order ? payload.new : o)
+          );
+          // Si el modal de orden está abierto y es la misma orden → actualizar
+          setCurrentOrder(prev =>
+            prev?.id_order === payload.new.id_order ? payload.new : prev
+          );
+        }
+      )
+      .subscribe();
+
+    return () => supabase.removeChannel(channel);
+  }, [fetchDeliverers, fetchOrders]);
+
+  // ── Handlers: Deliverer Modal ──────────────────────────────────────────────
+  const handleOpenNewDeliverer = () => {
+    setCurrentDeliverer(EMPTY_DELIVERER);
+    setHasChanges(false);
+    setIsDelivererModalOpen(true);
+  };
 
   const handleRowClick = (deliverer) => {
     setCurrentDeliverer(deliverer);
@@ -49,16 +130,8 @@ export default function Boarding() {
     setIsDelivererModalOpen(true);
   };
 
-  const handleOrderRowClick = (order) => {
-    setCurrentOrder(order);
-    setIsOrderModalOpen(true);
-  };
-
   const handleDelivererChange = (e) => {
-    setCurrentDeliverer({
-      ...currentDeliverer,
-      user_deliver: e.target.value
-    });
+    setCurrentDeliverer(prev => ({ ...prev, user_deliver: e.target.value }));
     setHasChanges(true);
   };
 
@@ -74,211 +147,213 @@ export default function Boarding() {
           .from('list_users')
           .insert([{ user_deliver: currentDeliverer.user_deliver }]);
       }
-
-      // Refresh data
-      const { data } = await supabase.from('list_users').select('*');
-      setDeliverers(data);
+      await fetchDeliverers();
       setIsDelivererModalOpen(false);
-    } catch (error) {
-      console.error('Error saving deliverer:', error);
+    } catch (err) {
+      console.error('Error saving deliverer:', err);
     }
   };
 
-  const handleDeleteDeliverer = async () => {
-    if (window.confirm('¿Estás seguro de eliminar este entregador?')) {
-      try {
-        await supabase
-          .from('list_users')
-          .delete()
-          .eq('id', currentDeliverer.id);
+  // ── Handlers: Confirm Delete ───────────────────────────────────────────────
+  // MEJORA: reemplaza window.confirm() por un modal propio no bloqueante.
+  const handleDeleteClick = () => {
+    setIsDelivererModalOpen(false); // Cierra el modal de edición
+    setIsConfirmOpen(true);         // Abre el de confirmación
+  };
 
-        const { data } = await supabase.from('list_users').select('*');
-        setDeliverers(data);
-        setIsDelivererModalOpen(false);
-      } catch (error) {
-        console.error('Error deleting deliverer:', error);
-      }
+  const handleConfirmDelete = async () => {
+    try {
+      await supabase
+        .from('list_users')
+        .delete()
+        .eq('id', currentDeliverer.id);
+
+      await fetchDeliverers();
+      setIsConfirmOpen(false);
+    } catch (err) {
+      console.error('Error deleting deliverer:', err);
     }
   };
 
-  if (loading) return <div className="boarding-container">Loading...</div>;
+  // ── Handlers: Order Modal ──────────────────────────────────────────────────
+  const handleOrderRowClick = (order) => {
+    setCurrentOrder(order);
+    setIsOrderModalOpen(true);
+  };
 
+  // ── Render: Loading ────────────────────────────────────────────────────────
+  if (loading) {
+    return <div className={styles.loading}>Cargando datos...</div>;
+  }
+
+  // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <RoleGate allowedRoles={['EMBARQUE']}>
-    <div className="boarding-container">
-      <h1 className="boarding-title">Embarque</h1>
-      <p className="boarding-description">Registro de embarques programados.</p>
+      <div className={styles.container}>
 
-      <div className="boarding-panels-container">
-        {/* Deliverers Panel - Más compacto */}
-        <div className="boarding-panel boarding-deliverers-panel">
-          <div className="boarding-panel-header">
-            <h2 className="boarding-panel-title">Entregadores</h2>
-            <button 
-              onClick={() => {
-                setCurrentDeliverer({ user_deliver: '' });
-                setHasChanges(false);
-                setIsDelivererModalOpen(true);
-              }} 
-              className="boarding-add-button"
-            >
-              + Agregar
-            </button>
-          </div>
-          <div className="boarding-panel-content">
-            <table className="boarding-table">
-              <thead>
-                <tr>
-                  <th>Nombre</th>
-                </tr>
-              </thead>
-              <tbody>
-                {deliverers.map((deliverer) => (
-                  <tr 
-                    key={deliverer.id} 
-                    onClick={() => handleRowClick(deliverer)}
-                    className="boarding-clickable-row"
-                  >
-                    <td>{deliverer.user_deliver}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <div className={styles.panelsContainer}>
 
-        {/* Orders Panel - Más espacio */}
-        <div className="boarding-panel boarding-orders-panel">
-          <div className="boarding-panel-header">
-            <h2 className="boarding-panel-title">Últimas 25 solicitudes</h2>
-          </div>
-          <div className="boarding-panel-content">
-            <table className="boarding-table">
-              <thead>
-                <tr>
-                  <th>Fecha</th>
-                  <th>Área</th>
-                  <th>Estado</th>
-                  <th>Destino</th>
-                </tr>
-              </thead>
-              <tbody>
-                {orders.map((order) => (
-                  <tr 
-                    key={order.id_order} 
-                    onClick={() => handleOrderRowClick(order)}
-                    className="boarding-clickable-row"
-                  >
-                    <td>{new Date(order.date_order).toLocaleDateString()}</td>
-                    <td>{order.area}</td>
-                    <td>{order.status}</td>
-                    <td>{order.destiny}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      {/* Deliverer Modal */}
-      <Modal
-        isOpen={isDelivererModalOpen}
-        onRequestClose={() => setIsDelivererModalOpen(false)}
-        className="boarding-modal"
-        overlayClassName="boarding-modal-overlay"
-      >
-        <h2>{currentDeliverer?.id ? 'Editar Entregador' : 'Nuevo Entregador'}</h2>
-        <div className="boarding-modal-form">
-          <div className="boarding-form-group">
-            <label>Nombre del entregador:</label>
-            <input
-              type="text"
-              value={currentDeliverer?.user_deliver || ''}
-              onChange={handleDelivererChange}
-              autoFocus
-            />
-          </div>
-          <div className="boarding-modal-buttons">
-            {currentDeliverer?.id && (
-              <button 
-                onClick={handleDeleteDeliverer}
-                className="boarding-delete-button"
-              >
-                Eliminar
+          {/* ── Panel: Entregadores ─────────────────────────────────────── */}
+          <div className={`${styles.panel} ${styles.deliverersPanel}`}>
+            <div className={styles.panelHeader}>
+              <h2 className={styles.panelTitle}>Entregadores</h2>
+              <button onClick={handleOpenNewDeliverer} className={styles.addButton}>
+                + Agregar
               </button>
-            )}
-            <button 
-              onClick={() => setIsDelivererModalOpen(false)}
-              className="boarding-cancel-button"
-            >
-              Cancelar
-            </button>
-            <button 
-              onClick={handleSaveDeliverer}
-              className="boarding-save-button"
-              disabled={!hasChanges && !!currentDeliverer?.id}
-            >
-              Guardar
-            </button>
+            </div>
+            <div className={styles.panelContent}>
+              <table className={styles.table}>
+                <thead>
+                  <tr><th>Nombre</th></tr>
+                </thead>
+                <tbody>
+                  {deliverers.map(deliverer => (
+                    <tr
+                      key={deliverer.id}
+                      onClick={() => handleRowClick(deliverer)}
+                      className={styles.clickableRow}
+                    >
+                      <td>{deliverer.user_deliver}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* ── Panel: Últimas Órdenes ──────────────────────────────────── */}
+          <div className={`${styles.panel} ${styles.ordersPanel}`}>
+            <div className={styles.panelHeader}>
+              <h2 className={styles.panelTitle}>Últimas 25 solicitudes</h2>
+            </div>
+            <div className={styles.panelContent}>
+              <table className={styles.table}>
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th>Área</th>
+                    <th>Estado</th>
+                    <th>Destino</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {orders.map(order => (
+                    <tr
+                      key={order.id_order}
+                      onClick={() => handleOrderRowClick(order)}
+                      className={styles.clickableRow}
+                    >
+                      <td>{new Date(order.date_order).toLocaleDateString('es-MX')}</td>
+                      <td>{order.area}</td>
+                      <td>{order.status}</td>
+                      <td>{order.destiny}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-      </Modal>
 
+        {/* ── Modal: Crear / Editar Entregador ────────────────────────────── */}
+        <Modal
+          isOpen={isDelivererModalOpen}
+          onRequestClose={() => setIsDelivererModalOpen(false)}
+          className={styles.modal}
+          overlayClassName={styles.modalOverlay}
+          contentLabel={currentDeliverer?.id ? 'Editar Entregador' : 'Nuevo Entregador'}
+        >
+          <h2>{currentDeliverer?.id ? 'Editar Entregador' : 'Nuevo Entregador'}</h2>
+          <div className={styles.modalForm}>
+            <div className={styles.formGroup}>
+              <label>Nombre del entregador:</label>
+              <input
+                type="text"
+                value={currentDeliverer?.user_deliver || ''}
+                onChange={handleDelivererChange}
+                autoFocus
+              />
+            </div>
+            <div className={styles.modalButtons}>
+              {currentDeliverer?.id && (
+                <button onClick={handleDeleteClick} className={styles.deleteButton}>
+                  Eliminar
+                </button>
+              )}
+              <button
+                onClick={() => setIsDelivererModalOpen(false)}
+                className={styles.cancelButton}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleSaveDeliverer}
+                className={styles.saveButton}
+                disabled={!hasChanges && !!currentDeliverer?.id}
+              >
+                Guardar
+              </button>
+            </div>
+          </div>
+        </Modal>
 
-      {/* Order Modal */}
-      <Modal
-        isOpen={isOrderModalOpen}
-        onRequestClose={() => setIsOrderModalOpen(false)}
-        className="boarding-modal boarding-order-modal"
-        overlayClassName="boarding-modal-overlay"
-      >
-        <h2>Detalles de la Orden</h2>
+        {/* ── Modal: Confirmar Eliminación ─────────────────────────────────── */}
+        <ConfirmDeleteModal
+          isOpen={isConfirmOpen}
+          onConfirm={handleConfirmDelete}
+          onCancel={() => setIsConfirmOpen(false)}
+          name={currentDeliverer?.user_deliver}
+        />
+
+        {/* ── Modal: Detalle de Orden ──────────────────────────────────────── */}
+        <Modal
+          isOpen={isOrderModalOpen}
+          onRequestClose={() => setIsOrderModalOpen(false)}
+          className={styles.orderModal}
+          overlayClassName={styles.modalOverlay}
+          contentLabel="Detalles de la Orden"
+        >
+          <h2>Detalles de la Orden</h2>
           {currentOrder && (
-            <div className="boarding-order-content">
-              <div className="boarding-order-field">
-                <span className="boarding-order-label">ID:</span>
-                <span className="boarding-order-value">{currentOrder.id_order}</span>
-              </div>
-              <div className="boarding-order-field">
-                <span className="boarding-order-label">Entregado:</span>
-                <span className="boarding-order-value">{currentOrder.user_deliver}</span>
-              </div>
-              <div className="boarding-order-field">
-                <span className="boarding-order-label">Fecha:</span>
-                <span className="boarding-order-value">
-                  {new Date(currentOrder.date_order).toLocaleString()}
-                </span>
-              </div>
-              <div className="boarding-order-field">
-                <span className="boarding-order-label">Área:</span>
-                <span className="boarding-order-value">{currentOrder.area}</span>
-              </div>
-              <div className="boarding-order-field">
-                <span className="boarding-order-label">Solicitante:</span>
-                <span className="boarding-order-value">{currentOrder.user_submit}</span>
-              </div>
-              <div className="boarding-order-field">
-                <span className="boarding-order-label">Destino:</span>
-                <span className="boarding-order-value">{currentOrder.destiny}</span>
-              </div>
-              <div className="boarding-order-field">
-                <span className="boarding-order-label">Estado:</span>
-                <span className={`boarding-order-status boarding-status-${currentOrder.status.toLowerCase().replace(' ', '-')}`}>
+            <div className={styles.orderContent}>
+
+              {/* Campos de la orden */}
+              {[
+                { label: 'ID',          value: currentOrder.id_order },
+                { label: 'Entregado',   value: currentOrder.user_deliver },
+                { label: 'Fecha',       value: new Date(currentOrder.date_order).toLocaleString('es-MX') },
+                { label: 'Área',        value: currentOrder.area },
+                { label: 'Solicitante', value: currentOrder.user_submit },
+                { label: 'Destino',     value: currentOrder.destiny },
+              ].map(({ label, value }) => (
+                <div key={label} className={styles.orderField}>
+                  <span className={styles.orderLabel}>{label}:</span>
+                  <span className={styles.orderValue}>{value || '—'}</span>
+                </div>
+              ))}
+
+              {/* Status con badge */}
+              <div className={styles.orderField}>
+                <span className={styles.orderLabel}>Estado:</span>
+                <span className={`${styles.statusBadge} ${STATUS_CLASS[currentOrder.status] ?? ''}`}>
                   {currentOrder.status}
                 </span>
               </div>
-              <div className="boarding-order-details">
-                <span className="boarding-order-label">Detalles:</span>
-                <ul className="boarding-order-list">
-                  {currentOrder.details.map((detail, index) => (
-                    <li key={index}>{detail}</li>
+
+              {/* Detalles (lista) */}
+              <div className={styles.orderDetailsSection}>
+                <span className={styles.orderLabel}>Detalles:</span>
+                <ul className={styles.orderList}>
+                  {(currentOrder.details || []).map((detail, i) => (
+                    <li key={i}>{detail}</li>
                   ))}
                 </ul>
               </div>
-              <div className="boarding-order-buttons">
-                <button 
-                  className="boarding-order-close"
+
+              {/* Botones */}
+              <div className={styles.orderButtons}>
+                <button
+                  className={styles.closeButton}
                   onClick={() => setIsOrderModalOpen(false)}
                 >
                   Cerrar
@@ -287,7 +362,7 @@ export default function Boarding() {
             </div>
           )}
         </Modal>
-    </div>
+      </div>
     </RoleGate>
   );
 }

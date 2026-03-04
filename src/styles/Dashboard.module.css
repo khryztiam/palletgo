@@ -1,0 +1,321 @@
+/* ======= Container ======= */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.container h1 {
+  color: rgb(115, 18, 18);
+  margin-bottom: 25px;
+  font-size: 1.8rem;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 10px;
+  position: relative;
+}
+
+.container h1::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100px;
+  height: 2px;
+  background: #731212;
+}
+
+/* ======= Loading / Error ======= */
+.loading {
+  padding: 12px 20px;
+  color: #555;
+  font-style: italic;
+}
+
+.error {
+  padding: 12px 20px;
+  color: crimson;
+  background: #fff5f5;
+  border-left: 4px solid crimson;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.empty {
+  text-align: center;
+  margin-top: 20px;
+  color: #718096;
+}
+
+/* ======= Header / Filters ======= */
+.header {
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 10px;
+}
+
+.filters {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: flex-end;
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  min-width: 150px;
+}
+
+.filterGroup label {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.filterGroup input,
+.filterGroup select {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.95rem;
+}
+
+/* ======= Visuals Grid ======= */
+.visuals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-bottom: 10px;
+}
+
+.visuals > * {
+  flex: 1 1 45%;
+  min-width: 280px;
+}
+
+/* ======= Dashboard Card ======= */
+.card {
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 500px;
+}
+
+/* ======= Timeline ======= */
+.timelineContainer {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+  width: 100%;
+}
+
+.timelineContainer h3 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: #333;
+  font-weight: 600;
+  border-bottom: 2px solid #d61313;
+}
+
+.timeline {
+  position: relative;
+  margin: 0;
+  padding-left: 30px;
+  list-style: none;
+  border-left: 2px solid #3498db;
+}
+
+.timelineItem {
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.timelineIcon {
+  position: absolute;
+  left: -17px;
+  top: 0;
+  width: 35px;
+  height: 35px;
+  background-color: #3498db;
+  color: white;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 20px;
+  font-size: 29px;
+}
+
+.timelineContent {
+  padding-left: 10px;
+}
+
+.timelineDate {
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: #807d7d;
+  margin-bottom: 5px;
+}
+
+.timelineDescription {
+  font-size: 1rem;
+  color: #333;
+}
+
+/* ======= BarChart ======= */
+.barchartContainer {
+  background-color: white;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.barchartContainer h3 {
+  font-size: 1.5rem;
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 15px;
+  text-align: center;
+  border-bottom: 2px solid #d61313;
+}
+
+.barchartWrapper {
+  position: relative;
+  width: 100%;
+  height: 300px;
+}
+
+.bar {
+  animation: barAnimation 0.8s ease-in-out;
+}
+
+@keyframes barAnimation {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+
+/* ======= DonutChart ======= */
+.donutchartContainer {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.donutchartContainer h3 {
+  font-size: 1.5rem;
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 15px;
+  text-align: center;
+  border-bottom: 2px solid #d61313;
+}
+
+.donutchartWrapper {
+  position: relative;
+  width: 100%;
+  height: 300px;
+}
+
+/* ======= ExportData ======= */
+.exportPanel {
+  margin-bottom: 10px;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  gap: 12px;
+}
+
+.exportSummary {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.exportSummary h4 {
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.summaryBox {
+  background-color: #fff;
+  border-radius: 6px;
+  padding: 0.75rem;
+  text-align: center;
+  border-left: 4px solid #ddd;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.2s;
+}
+
+.summaryLabel {
+  display: block;
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 0.25rem;
+}
+
+.summaryValue {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #222;
+}
+
+/* Colores por tipo de status */
+.solicitado { border-color: #ffc107; }
+.progreso   { border-color: #17a2b8; }
+.entregado  { border-color: #28a745; }
+.cancelado  { border-color: #dc3545; }
+
+.csvExportBtn {
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s;
+}
+
+.csvExportBtn:hover  { background-color: #218838; }
+.csvExportBtn:focus  { outline: none; }
+
+/* ======= Responsive ======= */
+@media (max-width: 600px) {
+  .filters {
+    justify-content: space-between;
+  }
+
+  .header h1 {
+    font-size: 1.5rem;
+  }
+
+  .summaryGrid {
+    grid-template-columns: 1fr;
+  }
+}

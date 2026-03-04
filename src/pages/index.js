@@ -1,13 +1,14 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import Image from "next/image";
+import styles from "@/styles/Login.module.css";
 
 export default function Login() {
   const { login } = useAuth();
 
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [username,    setUsername]    = useState('');
+  const [password,    setPassword]    = useState('');
+  const [error,       setError]       = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -17,20 +18,21 @@ export default function Login() {
 
     try {
       const emailFinal = `${username}@yazaki.com`.toLowerCase();
-
       await login(emailFinal, password);
-      // No redirect aquí
-    } catch (err) {
+      // Redirect lo maneja AuthContext
+    } catch {
       setError('Correo o contraseña incorrectos.');
       setIsLoggingIn(false);
     }
   };
 
   return (
-    <div className="login-container">
-      <div className="login-box">
-        <div className="login-logo">
-          <div className="logo-wrapper">
+    <div className={styles.container}>
+      <div className={styles.box}>
+
+        {/* Logo */}
+        <div className={styles.logoWrapper}>
+          <div className={styles.logoCircle}>
             <Image
               src="/logo_app.svg"
               alt="Logo PalletGo"
@@ -40,34 +42,38 @@ export default function Login() {
           </div>
         </div>
 
-        <h1 className="navbar-title">PalletGo</h1>
+        {/* Título */}
+        <h1 className={styles.title}>PalletGo</h1>
         <h2>Iniciar sesión</h2>
 
-        {error && <div className="error-message">{error}</div>}
+        {/* Error con animación shake */}
+        {error && <div className={styles.error}>{error}</div>}
 
-        <form onSubmit={handleSubmit} className="login-form" noValidate>
-          <label htmlFor="email" className="sr-only">
+        {/* Formulario */}
+        <form onSubmit={handleSubmit} className={styles.form} noValidate>
+
+          <label htmlFor="username" className={styles.srOnly}>
             Usuario
           </label>
           <input
             id="username"
             type="text"
             placeholder="Usuario"
-            className="input-field"
+            className={styles.inputField}
             value={username}
             onChange={(e) => setUsername(e.target.value.trim())}
             required
             autoComplete="username"
           />
 
-          <label htmlFor="password" className="sr-only">
+          <label htmlFor="password" className={styles.srOnly}>
             Contraseña
           </label>
           <input
             id="password"
             type="password"
             placeholder="Contraseña"
-            className="input-field"
+            className={styles.inputField}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -77,10 +83,11 @@ export default function Login() {
           <button
             type="submit"
             disabled={isLoggingIn}
-            className="login-button"
+            className={styles.loginButton}
           >
             {isLoggingIn ? "Ingresando..." : "Ingresar"}
           </button>
+
         </form>
       </div>
     </div>

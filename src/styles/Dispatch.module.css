@@ -1,0 +1,56 @@
+/* ======= Container ======= */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  /* FIX: eliminado margin-top: 80px — el Layout ya maneja el espaciado */
+  padding: 0 4px 20px;
+}
+
+/* ======= Orders Grid ======= */
+.ordersGrid {
+  display: grid;
+  /* FIX: minmax subido a 360px — evita cards aplastadas en 2 col */
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 20px;
+  /* FIX: margin-top: 0 — el padding del Layout.content cubre el espacio */
+  margin-top: 0;
+}
+
+/* ======= Interaction Prompt ======= */
+/* FIX: top ajustado al page header (64px) y left al ancho del sidebar (240px) */
+.interactionPrompt {
+  position: fixed;
+  top: 64px;
+  left: 240px;
+  right: 0;
+  background: #ffc107;
+  color: #1a1a1a;
+  padding: 10px 20px;
+  text-align: center;
+  z-index: 19;        /* por debajo del page header (z-index: 20) */
+  font-weight: 500;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* ======= Responsive ======= */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 2px 16px;
+  }
+
+  /* En móvil el sidebar es drawer → el banner ocupa todo el ancho */
+  .interactionPrompt {
+    left: 0;
+    top: 64px;
+  }
+
+  /* 1 columna en móvil — evita aplastar las cards */
+  .ordersGrid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+}

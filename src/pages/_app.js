@@ -3,24 +3,13 @@
 //import { useEffect } from 'react';
 //import AuthGate from '@/components/AuthGate';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
-import { Navbar } from '@/components/Navbar';
+import { Navbar } from '@/components/Sidebar';
+import Layout from '@/components/Layout';
 import Head from 'next/head';
 
 import Snowfall from 'react-snowfall';
 
 import '@/styles/global.css';
-import '@/styles/navbar.css';
-import '@/styles/login.css';
-import '@/styles/request.css';
-import '@/styles/card.css';
-import '@/styles/dispatch.css';
-import '@/styles/status-modal.css';
-import '@/styles/boarding.css';
-import '@/styles/management.css';
-import '@/styles/admingate.css';
-import '@/styles/dashboard.css';
-import '@/styles/control.css';
-import '@/styles/timeline.css';
 import '@/styles/countdown.css';
 import AdminGate from '@/components/AdminGate';
 
@@ -58,9 +47,10 @@ export default function App({ Component, pageProps }) {
             content="Web site created for send request to boarding area from production"
           />
         </Head>
-        <Navbar />
         <AdminGate>
-      <Component {...pageProps} />
+          <Layout>
+             <Component {...pageProps} />
+          </Layout>
         </AdminGate>
     </AuthProvider>
   );
