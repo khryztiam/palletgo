@@ -178,6 +178,8 @@ export default function Request() {
   const [isLoading,     setIsLoading]     = useState(false);
   const [formData,      setFormData]      = useState(INITIAL_FORM(userName));
   const [toast,         setToast]         = useState({ msg: "", type: "" });
+  // FIX duplicidad: ref síncrona — bloquea doble submit antes de que React re-renderice
+  const isSubmitting = useRef(false);
 
   // FIX: reemplaza alert() por toast no bloqueante
   const showToast = useCallback((msg, type = "error", ms = 4000) => {
@@ -299,14 +301,21 @@ export default function Request() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // FIX duplicidad: bloqueo síncrono — si ya hay un insert en vuelo, ignorar
+    if (isSubmitting.current) return;
+    isSubmitting.current = true;
+
     if (!formData.user_submit.trim()) {
-      showToast("Nombre del solicitante es obligatorio"); return;
+      showToast("Nombre del solicitante es obligatorio");
+      isSubmitting.current = false; return;
     }
     if (showPrintLabel && !formData.print_label.trim()) {
-      showToast("La etiqueta de contenedor es obligatoria al seleccionar 'Retiro de contenedor'"); return;
+      showToast("La etiqueta de contenedor es obligatoria al seleccionar 'Retiro de contenedor'");
+      isSubmitting.current = false; return;
     }
     if (showMultiLabel && formData.multilabel.length === 0) {
-      showToast("Debe ingresar al menos una etiqueta de tarima al seleccionar 'Retiro de tarima'"); return;
+      showToast("Debe ingresar al menos una etiqueta de tarima al seleccionar 'Retiro de tarima'");
+      isSubmitting.current = false; return;
     }
 
     setIsLoading(true);
@@ -326,7 +335,9 @@ export default function Request() {
       console.error("Error al enviar solicitud:", error.message);
       showToast(`Error al enviar la solicitud: ${error.message}`);
     }
+
     setIsLoading(false);
+    isSubmitting.current = false; // liberar para permitir nueva solicitud
   };
 
   // ── Render ──────────────────────────────────────────────────────────────────
