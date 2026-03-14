@@ -12,7 +12,10 @@
   --space-md: 1rem;
   --space-lg: 1.5rem;
   --space-xl: 2rem;
-  --navbar-height: 70px; /* Nueva variable específica para el navbar */
+  
+  /* Navbar height - adaptativo */
+  --navbar-height: 70px;     /* Desktop */
+  --navbar-height-mobile: 60px; /* Mobile */
 
   /* Bordes */
   --radius-sm: 4px;

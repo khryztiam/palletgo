@@ -46,11 +46,30 @@
   .interactionPrompt {
     left: 0;
     top: 64px;
+    padding: 8px 16px;
   }
 
   /* 1 columna en móvil — evita aplastar las cards */
   .ordersGrid {
     grid-template-columns: 1fr;
     gap: 14px;
+  }
+}
+
+/* Ultra-small screens (< 480px) */
+@media (max-width: 478px) {
+  .container {
+    padding: 0 2px 12px;
+  }
+
+  .interactionPrompt {
+    top: 56px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+
+  .ordersGrid {
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
 }

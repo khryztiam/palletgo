@@ -34,10 +34,24 @@
   flex-shrink: 0;
 }
 
+/* Mobile: reducir altura y padding del header */
+@media (max-width: 478px) {
+  .pageHeader {
+    padding: 0 12px;
+    height: 56px;
+  }
+}
+
 .headerLeft {
   display: flex;
   align-items: center;
   gap: 14px;
+}
+
+@media (max-width: 478px) {
+  .headerLeft {
+    gap: 8px;
+  }
 }
 
 /* Botón hamburguesa — visible solo en móvil */
@@ -104,5 +118,37 @@
 
   .content {
     padding: 16px;
+  }
+
+  .pageTitle {
+    font-size: 1.1rem;
+  }
+
+  .pageSubtitle {
+    font-size: 0.7rem;
+  }
+}
+
+/* Ultra-small screens (< 480px) */
+@media (max-width: 478px) {
+  .pageHeader {
+    padding: 0 12px;
+  }
+
+  .content {
+    padding: 12px;
+  }
+
+  .titleBlock {
+    padding-left: 8px;
+    border-left-width: 2px;
+  }
+
+  .pageTitle {
+    font-size: 1rem;
+  }
+
+  .pageSubtitle {
+    font-size: 0.65rem;
   }
 }

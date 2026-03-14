@@ -359,3 +359,102 @@
 
   .modalActions { flex-direction: column; }
 }
+
+/* Ultra-small screens (< 480px) */
+@media (max-width: 478px) {
+  .container {
+    width: 98%;
+    padding: 10px;
+  }
+
+  .container h1 {
+    font-size: 1.3rem;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+  }
+
+  .container h2 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+
+  .summaryCompact {
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .summaryItem {
+    padding: 8px 10px;
+    font-size: 0.9rem;
+    min-width: unset;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .summaryItem strong {
+    font-size: 1.1rem;
+    margin-top: 4px;
+  }
+
+  .actionBar {
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .primaryBtn,
+  .secondaryBtn,
+  .dangerBtn {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+
+  .tableContainer {
+    padding: 8px;
+    max-height: 60vh;
+  }
+
+  .table th,
+  .table td {
+    padding: 6px;
+    font-size: 0.8rem;
+    border: 1px solid #ddd;
+  }
+
+  .table {
+    min-width: 100%;
+  }
+
+  .modalContent {
+    max-width: 95%;
+    padding: 20px;
+  }
+
+  .formGroup {
+    margin-bottom: 15px;
+  }
+
+  .formGroup label {
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+  }
+
+  .formGroup input,
+  .formGroup select {
+    font-size: 16px; /* Evita zoom en iOS */
+    padding: 10px;
+  }
+
+  .modalActions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .feedback {
+    top: 56px;
+    max-width: 95%;
+    min-width: auto;
+  }
+}

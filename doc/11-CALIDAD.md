@@ -13,6 +13,7 @@
 Estado General:           🟡 INTERMEDIO
 Problemas Críticos:       4 (🔴 URGENTES)
 Problemas Importantes:    9 (🟡 PRIORIZAR)
+Responsivity Mobile:      ✅ COMPLETADO (27 Mar 2026)
 Test Coverage:            0% ❌
 Documentación:            Completa ✅ (nuevo)
 Deuda Técnica:            MEDIA
@@ -428,6 +429,63 @@ channel.on('postgres_changes', (payload) => {
 ```
 
 **Priority:** 🟡 SI ESCALAN USUARIOS
+
+---
+
+### 14. Responsivity Incompleta en Móvil/Tablet
+**Severidad:** 🟡 IMPORTANTE
+**Componente:** CSS Modules (Layout, Sidebar, Control, Management, Request, Dispatch)
+**Riesgo:** UX pobre en dispositivos móviles (iPhone SE: 375px, iPad: 768px)
+
+**Problemas Identificados:**
+- Layout navbar 70px → deja solo 250px en iPhone SE (inutilizable)
+- Sidebar drawer en 100dvh → URL bar de móvil queda oculta
+- Tablas con padding 12px → texto comprimido en <480px
+- Botón flotante fixed: bottom 50px, right 30px → puede salirse de viewport
+- Breakpoints inconsistentes (600px, 640px, 768px, 1024px)
+- Cards de grillas no se adaptan a pantallas ultra-pequeñas
+
+**Soluciones Implementadas (27 Mar 2026):**
+```css
+✅ Viewport meta tag: adicionar max-scale=5.0, viewport-fit=cover
+✅ Global.css: Variables --navbar-height-mobile: 60px vs 70px desktop
+✅ Layout.module.css: Header 56px en <480px, padding adaptativo 12px
+✅ Sidebar.module.css: Cambiar de 100dvh a 100vh + max-height limitada
+✅ Control.module.css: Tablas padding 6px en <480px, status cards 100%
+✅ Management.module.css: Formularios con font-size 16px (iOS zoom), padding reducido
+✅ Request.module.css: Botón flotante 60px en <480px (bottom 20px, right 12px)
+✅ Dispatch.module.css: Grid 1 columna en móvil, gaps 10px en ultra-pequeño
+```
+
+**Archivos Modificados:**
+- `src/pages/_app.js` - Viewport mejorado
+- `src/styles/global.css` - Altura navbar adaptativa
+- `src/styles/Layout.module.css` - Header responsive
+- `src/styles/Sidebar.module.css` - Drawer con altura máxima
+- `src/styles/Control.module.css` - Tablas y cards responsivas
+- `src/styles/Management.module.css` - Formularios accesibles móvil
+- `src/styles/Request.module.css` - Botón flotante seguro, campos de entrada 16px
+- `src/styles/Dispatch.module.css` - Grid adaptativo
+
+**Breakpoints Unificados:**
+```css
+/* Desktop */
+@media (min-width: 1024px) { ... }
+
+/* Tablet */
+@media (max-width: 768px) { ... }
+
+/* Teléfono */
+@media (max-width: 478px) { ... }
+```
+
+**Testing Recomendado:**
+- iPhone SE (375px) - Navbar 60px, botón 60px, padding 12px
+- iPhone 13 (390px) - Same como SE
+- iPad (768px) - Tablet layout, sidebar drawer
+- Desktop (1200px) - Layout normal
+
+**Priority:** ✅ COMPLETADO (Testing en localhost)
 
 ---
 
