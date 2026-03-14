@@ -418,38 +418,38 @@
   }
 
   .statusCardsContainer {
-    gap: 8px;
+    gap: 10px;
     margin-bottom: 12px;
   }
 
   .statusCard {
-    width: calc(50% - 4px);
-    padding: 8px;
+    width: calc(50% - 5px);
+    padding: 10px;
   }
 
   .statusIcon {
-    width: 40px;
-    height: 40px;
-    margin-bottom: 6px;
+    width: 45px;
+    height: 45px;
+    margin-bottom: 8px;
   }
 
   .statusInfo h3 {
-    font-size: 0.85rem;
-    margin-bottom: 3px;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
   }
 
   .statusInfo p {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
   }
 
   .table th,
   .table td {
     padding: 6px;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
   }
 
   .actionBtn {
-    padding: 4px 8px;
+    padding: 5px 10px;
     font-size: 0.8rem;
   }
 
@@ -459,5 +459,22 @@
 
   .optionsList {
     grid-template-columns: 1fr;
+  }
+
+  /* Mejorar DetailOptionsPanel */
+  .detailOptionsPanel {
+    margin-top: 12px;
+    padding: 12px;
+  }
+
+  .optionsButtons {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .optionsButtons button {
+    width: 100%;
+    padding: 8px;
+    font-size: 0.85rem;
   }
 }

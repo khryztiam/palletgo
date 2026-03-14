@@ -380,22 +380,25 @@
 
   .summaryCompact {
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
     margin-bottom: 12px;
   }
 
   .summaryItem {
-    padding: 8px 10px;
-    font-size: 0.9rem;
+    padding: 10px 12px;
+    font-size: 0.95rem;
     min-width: unset;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 10px;
   }
 
   .summaryItem strong {
-    font-size: 1.1rem;
-    margin-top: 4px;
+    font-size: 1.3rem;
+    grid-column: 2;
+    grid-row: 1 / 3;
+    text-align: right;
   }
 
   .actionBar {
@@ -407,8 +410,9 @@
   .primaryBtn,
   .secondaryBtn,
   .dangerBtn {
-    padding: 8px 12px;
-    font-size: 0.9rem;
+    padding: 10px 14px;
+    font-size: 0.95rem;
+    width: 100%;
   }
 
   .tableContainer {
@@ -419,7 +423,7 @@
   .table th,
   .table td {
     padding: 6px;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     border: 1px solid #ddd;
   }
 

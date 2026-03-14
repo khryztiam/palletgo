@@ -59,17 +59,24 @@
 /* Ultra-small screens (< 480px) */
 @media (max-width: 478px) {
   .container {
-    padding: 0 2px 12px;
+    padding: 0 4px 10px;
   }
 
   .interactionPrompt {
     top: 56px;
     padding: 6px 12px;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
   }
 
+  /* Reducir tamaño de cards en móvil */
   .ordersGrid {
     grid-template-columns: 1fr;
     gap: 10px;
+    /* Forzar cards más pequeñas */
+  }
+
+  /* Reducir padding en cards (heredado de Card.jsx) */
+  .ordersGrid > * {
+    max-height: 350px;
   }
 }

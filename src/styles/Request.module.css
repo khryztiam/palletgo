@@ -658,7 +658,43 @@
   .myOrderBody    { flex-direction: column; gap: 12px; }
   .colDivider     { border-left: none; border-top: 1px solid #eee; margin: 4px 0; }
   .myOrderTitle   { font-size: 0.875rem; }
+  
+  /* Tabla de cola: reducir tamaños y espacios */
+  .queueRow {
+    gap: 8px;
+    padding: 8px 4px;
+  }
+
+  .queuePosition {
+    width: 24px;
+    height: 24px;
+    font-size: 0.7rem;
+  }
+
+  .queueInfo { gap: 4px; }
+  .queueOrderId { font-size: 0.8rem; }
+  .queueArea    { font-size: 0.7rem; }
+  .queueTime {
+    font-size: 0.65rem;
+    min-width: auto;
+    white-space: nowrap;
+  }
+
+  .queueStatus {
+    padding: 2px 6px;
+    font-size: 0.65rem;
+    min-width: auto;
+    gap: 2px;
+  }
+
+  .queueTableHead {
+    padding: 6px 10px;
+    gap: 8px;
+  }
+
+  .queueColPos    { width: 20px; }
   .queueColTime   { display: none; }
+  .queueColStatus { min-width: auto; font-size: 0.6rem; }
 }
 
 /* Optimizaciones adicionales para pequeños dispositivos */
@@ -683,5 +719,52 @@
 
   .panelLabel {
     font-size: 0.65rem;
+  }
+
+  /* Mejorar tabla de cola */
+  .queueSection { margin-bottom: 70px; }
+
+  .queueTableBody {
+    gap: 3px;
+    padding: 6px;
+  }
+
+  .queueRow {
+    gap: 6px;
+    padding: 6px 3px;
+    border-radius: 6px;
+  }
+
+  .queuePosition {
+    width: 22px;
+    height: 22px;
+    font-size: 0.65rem;
+  }
+
+  .queueOrderId { font-size: 0.75rem; }
+  .queueArea    { font-size: 0.65rem; }
+
+  .queueStatus {
+    padding: 2px 4px;
+    font-size: 0.6rem;
+    border-radius: 12px;
+  }
+
+  .queueTableHead {
+    padding: 5px 8px;
+    gap: 6px;
+  }
+
+  .queueColPos    { width: 18px; font-size: 0.6rem; }
+  .queueColInfo   { font-size: 0.6rem; }
+  .queueColStatus { min-width: auto; font-size: 0.55rem; text-align: center; }
+
+  /* Botón Solicitar más pequeño */
+  .floatingBtn {
+    width: 54px;
+    height: 54px;
+    font-size: 14px;
+    bottom: 16px;
+    right: 10px;
   }
 }

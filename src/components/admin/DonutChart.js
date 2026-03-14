@@ -5,6 +5,15 @@ import styles from '@/styles/Dashboard.module.css';
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const DonutChart = ({ data }) => {
+  // Detectar si es mobile
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  const isUltraSmall = typeof window !== 'undefined' && window.innerWidth < 478;
+  
+  const legendFontSize = isUltraSmall ? 10 : isMobile ? 11 : 12;
+  const tooltipFontSize = isUltraSmall ? 10 : isMobile ? 10 : 11;
+  const legendPadding = isUltraSmall ? 12 : isMobile ? 12 : 15;
+  const boxWidth = isUltraSmall ? 10 : isMobile ? 11 : 12;
+
   const chartData = {
     labels: ['SOLICITADO', 'EN PROGRESO', 'ENTREGADO', 'CANCELADO'],
     datasets: [{
@@ -26,8 +35,17 @@ const DonutChart = ({ data }) => {
         position: 'bottom',
         labels: {
           color: '#444',
-          font: { size: 10, weight: '500' },
+          font: { size: legendFontSize, weight: '500' },
+          padding: legendPadding,
+          boxWidth: boxWidth,
+          boxHeight: boxWidth,
         },
+        maxWidth: isUltraSmall ? 280 : isMobile ? 280 : 300,
+      },
+      tooltip: {
+        padding: 8,
+        titleFont: { size: tooltipFontSize },
+        bodyFont: { size: tooltipFontSize - 1 },
       },
     },
   };

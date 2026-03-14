@@ -271,9 +271,27 @@
    la card tiene espacio suficiente para mantener el timer horizontal.
    Solo colapsa en pantallas muy pequeñas (<480px). */
 @media (max-width: 768px) {
+  .card {
+    margin-bottom: 12px;
+    max-height: 340px;
+  }
+
+  .header {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+
+  .header h3 {
+    font-size: 0.95rem;
+  }
+
   .columns {
     flex-direction: column;
     gap: 12px;
+  }
+
+  .column {
+    padding: 0 8px;
   }
 
   .timerText {
@@ -281,14 +299,76 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 478px) {
+  .card {
+    margin-bottom: 10px;
+    max-height: 300px;
+  }
+
   .header {
+    padding: 8px 10px;
     flex-direction: column;
     align-items: flex-start;
+    gap: 6px;
+  }
+
+  .header h3 {
+    font-size: 0.85rem;
+    line-height: 1.2;
+  }
+
+  .body {
+    padding: 0 3px;
+    font-size: 0.85rem;
+    overflow: hidden;
+  }
+
+  .columns {
+    gap: 8px;
+  }
+
+  .column {
+    padding: 0 6px;
+    font-size: 0.8rem;
+  }
+
+  .columnDivider {
+    margin: 0 6px;
   }
 
   .timer {
     align-items: flex-start;
-    margin-top: 4px;
+    margin-top: 2px;
+  }
+
+  .timerText {
+    font-size: 0.75rem;
+    gap: 2px;
+  }
+
+  .timerIcon {
+    font-size: 0.9rem;
+  }
+
+  .exceededTime {
+    font-size: 0.7rem;
+    padding: 1px 4px;
+  }
+
+  .footer {
+    padding: 8px 0;
+  }
+
+  .cardButton {
+    padding: 8px 10px;
+    font-size: 0.75rem;
+  }
+
+  .statusButton {
+    padding: 8px 10px;
+  }
+
+  .statusIcon {
+    font-size: 1.5rem;
   }
 }

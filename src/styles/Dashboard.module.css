@@ -57,22 +57,31 @@
 
 .filters {
   display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.filtersRow {
+  display: flex;
+  gap: 12px;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 20px;
   align-items: flex-end;
 }
 
 .filterGroup {
   display: flex;
   flex-direction: column;
-  min-width: 150px;
+  min-width: 140px;
+  flex: 1;
 }
 
 .filterGroup label {
   font-size: 0.9rem;
   color: #666;
   margin-bottom: 5px;
+  font-weight: 500;
 }
 
 .filterGroup input,
@@ -83,17 +92,38 @@
   font-size: 0.95rem;
 }
 
+.filterGroup button {
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background: white;
+  font-size: 0.95rem;
+  transition: background 0.2s;
+}
+
+.filterGroup button:hover {
+  background: #f5f5f5;
+}
+
 /* ======= Visuals Grid ======= */
 .visuals {
   display: flex;
   flex-wrap: wrap;
   gap: 0.8rem;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
+  width: 100%;
 }
 
 .visuals > * {
-  flex: 1 1 45%;
-  min-width: 280px;
+  flex: 1 1 100%;
+  min-width: 0;
+}
+
+@media (min-width: 768px) {
+  .visuals > * {
+    flex: 1 1 calc(50% - 0.4rem);
+  }
 }
 
 /* ======= Dashboard Card ======= */
@@ -102,7 +132,7 @@
   padding: 1rem;
   border-radius: 8px;
   width: 100%;
-  max-width: 500px;
+  box-sizing: border-box;
 }
 
 /* ======= Timeline ======= */
@@ -111,7 +141,7 @@
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
+  margin-top: 8px;
   width: 100%;
 }
 
@@ -139,15 +169,50 @@
 .timelineIcon {
   position: absolute;
   left: -17px;
-  top: 0;
+  top: 2px;
   width: 35px;
   height: 35px;
   background-color: #3498db;
   color: white;
   border-radius: 50%;
   text-align: center;
-  line-height: 20px;
-  font-size: 29px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .timelineIcon {
+    width: 32px;
+    height: 32px;
+    left: -16px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 478px) {
+  .timelineIcon {
+    width: 28px;
+    height: 28px;
+    left: -14px;
+    top: 3px;
+    font-size: 14px;
+  }
+
+  .timeline {
+    padding-left: 24px;
+    border-left: 2px solid #3498db;
+  }
+
+  .timelineItem {
+    margin-bottom: 8px;
+  }
+
+  .timelineContent {
+    padding-left: 6px;
+  }
 }
 
 .timelineContent {
@@ -172,7 +237,7 @@
   padding: 10px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  margin-bottom: 10px;
+  margin-bottom: 6px;
   width: 100%;
   overflow: hidden;
 }
@@ -192,6 +257,37 @@
   height: 300px;
 }
 
+@media (max-width: 768px) {
+  .barchartContainer h3 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+
+  .barchartContainer {
+    padding: 10px;
+  }
+
+  .barchartWrapper {
+    height: 300px;
+  }
+}
+
+@media (max-width: 478px) {
+  .barchartContainer {
+    padding: 8px;
+    margin-bottom: 6px;
+  }
+
+  .barchartContainer h3 {
+    font-size: 1rem;
+    margin-bottom: 6px;
+  }
+
+  .barchartWrapper {
+    height: 240px;
+  }
+}
+
 .bar {
   animation: barAnimation 0.8s ease-in-out;
 }
@@ -208,7 +304,7 @@
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 100%;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 .donutchartContainer h3 {
@@ -226,9 +322,39 @@
   height: 300px;
 }
 
+@media (max-width: 768px) {
+  .donutchartContainer h3 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+
+  .donutchartContainer {
+    padding: 14px;
+  }
+
+  .donutchartWrapper {
+    height: 240px;
+  }
+}
+
+@media (max-width: 478px) {
+  .donutchartContainer {
+    padding: 14px;
+  }
+
+  .donutchartContainer h3 {
+    font-size: 1rem;
+    margin-bottom: 8px;
+  }
+
+  .donutchartWrapper {
+    height: 220px;
+  }
+}
+
 /* ======= ExportData ======= */
 .exportPanel {
-  margin-bottom: 10px;
+  margin-bottom: 6px;
   padding: 20px;
   border-radius: 8px;
   background-color: #f5f5f5;
@@ -237,6 +363,8 @@
   align-items: stretch;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .exportSummary {
@@ -256,17 +384,43 @@
 .summaryGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 0.75rem;
+  gap: 10px;
+}
+
+@media (max-width: 768px) {
+  .summaryGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+}
+
+@media (max-width: 478px) {
+  .summaryGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
 }
 
 .summaryBox {
   background-color: #fff;
   border-radius: 6px;
-  padding: 0.75rem;
+  padding: 10px 8px;
   text-align: center;
   border-left: 4px solid #ddd;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   transition: box-shadow 0.2s;
+}
+
+@media (max-width: 768px) {
+  .summaryBox {
+    padding: 8px 6px;
+  }
+}
+
+@media (max-width: 478px) {
+  .summaryBox {
+    padding: 6px 4px;
+  }
 }
 
 .summaryLabel {
@@ -276,10 +430,34 @@
   margin-bottom: 0.25rem;
 }
 
+@media (max-width: 768px) {
+  .summaryLabel {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 478px) {
+  .summaryLabel {
+    font-size: 0.75rem;
+  }
+}
+
 .summaryValue {
   font-size: 1.4rem;
   font-weight: 700;
   color: #222;
+}
+
+@media (max-width: 768px) {
+  .summaryValue {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 478px) {
+  .summaryValue {
+    font-size: 1rem;
+  }
 }
 
 /* Colores por tipo de status */
@@ -306,16 +484,171 @@
 .csvExportBtn:focus  { outline: none; }
 
 /* ======= Responsive ======= */
-@media (max-width: 600px) {
-  .filters {
-    justify-content: space-between;
+@media (max-width: 768px) {
+  .container {
+    max-width: 100%;
+    padding: 0 8px;
+  }
+
+  .header {
+    padding: 14px;
   }
 
   .header h1 {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
   }
 
-  .summaryGrid {
-    grid-template-columns: 1fr;
+  .filtersRow {
+    gap: 10px;
+  }
+
+  .filterGroup {
+    flex: 1;
+    min-width: 120px;
+  }
+
+  .filterGroup label {
+    font-size: 0.85rem;
+  }
+
+  .filterGroup input,
+  .filterGroup select,
+  .filterGroup button {
+    padding: 6px 8px;
+    font-size: 0.9rem;
+  }
+
+  .visuals > * {
+    flex: 1 1 100%;
+    min-width: 100%;
+    max-height: 240px;
+  }
+
+  .csvExportBtn {
+    padding: 8px 16px;
+    font-size: 0.95rem;
+  }
+
+  .exportPanel {
+    padding: 16px;
+    gap: 10px;
+  }
+
+  .timelineContainer {
+    padding: 12px;
+    margin-top: 8px;
+  }
+
+  .timelineContainer h3 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+
+  .timelineDescription {
+    font-size: 0.95rem;
+  }
+}
+
+/* Ultra-small screens (< 480px) */
+@media (max-width: 478px) {
+  .container h1 {
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+  }
+
+  .container {
+    padding: 0 6px;
+  }
+
+  .header {
+    padding: 10px;
+  }
+
+  .filters {
+    gap: 8px;
+  }
+
+  .filtersRow {
+    gap: 8px;
+  }
+
+  .filterGroup {
+    flex: 1 1 calc(50% - 4px);
+    min-width: unset;
+  }
+
+  .filterGroup label {
+    font-size: 0.8rem;
+  }
+
+  .filterGroup input,
+  .filterGroup select,
+  .filterGroup button {
+    padding: 5px 6px;
+    font-size: 0.85rem;
+  }
+
+  .visuals {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .visuals > * {
+    flex: 1 1 100%;
+    min-width: 100%;
+    max-height: 300px;
+  }
+
+  .donutchartContainer {
+    padding: 14px;
+  }
+
+  .barchartContainer {
+    padding: 10px;
+  }
+
+  .card {
+    padding: 0.75rem;
+  }
+
+  .timelineContainer {
+    padding: 8px;
+    margin-top: 6px;
+  }
+
+  .timelineContainer h3 {
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }
+
+  .timelineDate {
+    font-size: 0.75rem;
+    margin-bottom: 3px;
+  }
+
+  .timelineDescription {
+    font-size: 0.9rem;
+  }
+
+  .exportPanel {
+    padding: 14px;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .csvExportBtn {
+    width: 100%;
+    justify-content: center;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+
+  .exportSummary {
+    padding: 8px;
+  }
+
+  .exportSummary h4 {
+    font-size: 0.9rem;
+    margin-bottom: 6px;
   }
 }
