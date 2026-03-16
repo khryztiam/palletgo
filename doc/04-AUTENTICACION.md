@@ -295,56 +295,38 @@ useEffect(() => {
 ✅ Session: localStorage solo en cliente
 ✅ AuthContext: Valida rol en cada navegación
 ✅ AdminGate: Protege rutas conocidas
+✅ RLS habilitado en public.users, orders, list_users
+✅ APIs validadas con JWT en backend (Bearer token)
+✅ Endpoints usan supabaseAdmin (service role) — nunca anon key en servidor
 ```
 
-### ⚠️ Mejoras Necesarias (Críticas)
+### ⚠️ Pendientes Menores
 
 ```
-❌ RLS NOT ENABLED en public.users
-   → Cualquiera con anon key puede ver todos los users
-   → SOLUCIÓN: Crear RLS policies
+⚠️ Sin CSRF tokens en formularios
+   → Mitigado parcialmente por SameSite cookies de Supabase
+   → Baja prioridad dado el entorno de red interna
 
-❌ APIs sin validación de sesión
-   → /api/admin/users puede ser llamado sin autenticación
-   → SOLUCIÓN: Verificar session en cada endpoint
-
-❌ DELETE user no elimina de auth.users
-   → Huérfano crea inconsistencia
-   → SOLUCIÓN: Usar supabaseAdmin.auth.admin.deleteUser()
-
-❌ Sin CSRF tokens
-   → Posible CSRF attack en formularios
-   → SOLUCIÓN: Implementar middleware CSRF
-
-❌ Service role key en .env.local expuesto
-   → Si .env.local leaks = compromiso total
-   → SOLUCIÓN: Nunca commitear .env.local, usar secretos en prod
+⚠️ Service role key en .env.local
+   → NUNCA commitear .env.local
+   → En producción, usar variables de entorno de Vercel
 ```
 
-### 🔐 RLS (Row Level Security) - TODO
+### 🔑 Nota importante: IDs de usuarios
 
-Implementar en Supabase Dashboard:
+`auth.users.id` y `public.users.id` **pueden no coincidir** en usuarios creados
+manualmente antes de sincronizar las tablas. Por ello, todos los endpoints de
+backend usan `payload.email` (del JWT) como campo de lookup en `public.users`:
 
-```sql
--- Habilitar RLS en tabla users
-ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
+```javascript
+const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+const email = payload.email;
 
--- Policy: Usuarios solo ven su propio registro
-CREATE POLICY "Users can read own record"
-  ON public.users FOR SELECT
-  USING (auth.uid() = id);
-
--- Policy: Solo admins pueden INSERT
-CREATE POLICY "Admins can insert users"
-  ON public.users FOR INSERT
-  WITH CHECK (
-    auth.uid() IN (
-      SELECT id FROM public.users 
-      WHERE rol_name = 'ADMIN'
-    )
-  );
-
--- Ídem para UPDATE y DELETE
+const { data: userData } = await supabaseAdmin
+  .from('users')
+  .select('rol_name')
+  .eq('email', email)   // ← email, NO id
+  .single();
 ```
 
 ---

@@ -185,12 +185,37 @@ export default function Dispatch() {
 
   // ── Update status ──────────────────────────────────────────────────────────
   const handleStatusUpdate = async (orderId, updates) => {
-    const { error } = await supabase
-      .from("orders")
-      .update(updates)
-      .eq("id_order", orderId);
+    const { data: { session } } = await supabase.auth.getSession();
 
-    if (error) console.error("Error actualizando:", error.message);
+    const res = await fetch('/api/orders/updateStatus', {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${session.access_token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ id_order: orderId, updates }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      console.error("Error actualizando:", err.error);
+      return;
+    }
+
+    // Actualizar estado local inmediatamente (sin esperar realtime)
+    const terminalStatuses = ["ENTREGADO", "CANCELADO"];
+    if (terminalStatuses.includes(updates.status)) {
+      stopTimer(orderId);
+      setOrders(prev => prev.filter(o => o.id_order !== orderId));
+    } else {
+      setOrders(prev =>
+        prev.map(order =>
+          order.id_order === orderId
+            ? { ...order, ...updates }
+            : order
+        )
+      );
+    }
   };
 
   // ── Render ─────────────────────────────────────────────────────────────────

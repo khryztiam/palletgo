@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import AdminGate from '@/components/AdminGate';
 import { useAuth } from '@/context/AuthContext';
+import { supabase } from '@/lib/supabase';
 import styles from '@/styles/Management.module.css';
 
 // ─── Constantes ───────────────────────────────────────────────────────────────
@@ -105,10 +106,27 @@ export default function Management() {
   const fetchUsers = useCallback(async () => {
     try {
       setIsLoading(true);
-      const res  = await fetch('/api/admin/users');
-      const data = await res.json();
+      
+      // Get the current session token
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !session?.access_token) {
+        throw new Error('No authenticated session found');
+      }
 
-      if (!res.ok)         throw new Error(data.error || 'Error al obtener usuarios');
+      // Send request with Authorization header
+      const res = await fetch('/api/admin/users', {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      const result = await res.json();
+
+      if (!res.ok) throw new Error(result.error || 'Error al obtener usuarios');
+      
+      const data = result.data ?? result; // Support both { data: [] } and [] formats
       if (!Array.isArray(data)) throw new Error('La respuesta del servidor no es una lista de usuarios.');
 
       setUsers(data);
@@ -141,6 +159,13 @@ export default function Management() {
         throw new Error('La contraseña debe tener al menos 6 caracteres');
       }
 
+      // Get the current session token
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !session?.access_token) {
+        throw new Error('No authenticated session found');
+      }
+
       const emailFinal = `${newUser.email}@yazaki.com`.toLowerCase();
       const body = {
         ...newUser,
@@ -148,9 +173,12 @@ export default function Management() {
         id_rol: ROLE_MAPPING[newUser.rol_name],
       };
 
-      const res    = await fetch('/api/admin/users', {
+      const res = await fetch('/api/admin/users', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
         body: JSON.stringify(body),
       });
       const result = await res.json();
@@ -171,14 +199,25 @@ export default function Management() {
       if (!editingUser.user_name || !editingUser.rol_name) {
         throw new Error('Nombre y rol son requeridos');
       }
+
+      // Get the current session token
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !session?.access_token) {
+        throw new Error('No authenticated session found');
+      }
+
       const payload = {
         user_name: editingUser.user_name,
         rol_name:  editingUser.rol_name,
         id_rol:    ROLE_MAPPING[editingUser.rol_name],
       };
-      const res    = await fetch(`/api/admin/users/${editingUser.id}`, {
+      const res = await fetch(`/api/admin/users/${editingUser.id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
         body: JSON.stringify(payload),
       });
       const result = await res.json();
@@ -201,7 +240,19 @@ export default function Management() {
 
   const handleConfirmDelete = async () => {
     try {
-      const res    = await fetch(`/api/admin/users/${editingUser.id}`, { method: 'DELETE' });
+      // Get the current session token
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !session?.access_token) {
+        throw new Error('No authenticated session found');
+      }
+
+      const res = await fetch(`/api/admin/users/${editingUser.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+      });
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || 'Error al eliminar usuario');
 

@@ -1,4 +1,4 @@
-.status-modal-overlay {
+.overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -11,7 +11,7 @@
     z-index: 1000;
   }
   
-  .status-modal-content {
+  .content {
     background: white;
     padding: 25px;
     border-radius: 8px;
@@ -20,14 +20,50 @@
     box-shadow: 0 4px 20px rgba(0,0,0,0.2);
   }
   
-  .status-modal-content h3 {
+  .content h3 {
     color: #333;
     margin-bottom: 15px;
     border-bottom: 1px solid #eee;
     padding-bottom: 10px;
   }
   
-  .modal-actions {
+  .formGroup {
+    margin-bottom: 15px;
+  }
+  
+  .formGroup label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .formGroup select,
+  .formGroup input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+  
+  .formGroup select:focus,
+  .formGroup input:focus {
+    outline: none;
+    border-color: #28a745;
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.3);
+  }
+  
+  .deliveryInfo {
+    background: #f0f8ff;
+    padding: 10px;
+    border-left: 4px solid #1E90FF;
+    margin-bottom: 15px;
+    color: #333;
+    font-size: 13px;
+  }
+  
+  .actions {
     display: flex;
     justify-content: flex-end;
     gap: 10px;
@@ -46,7 +82,7 @@
     background: #f0f0f0;
   }
 
-  .confirm-btn {
+  .confirmBtn {
     background: #28a745;
     color: white;
     padding: 8px 15px;
@@ -55,7 +91,7 @@
     cursor: pointer;
   }
   
-  .cancel-btn {
+  .cancelBtn {
     background: #dc3545;
     color: white;
     padding: 8px 15px;

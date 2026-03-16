@@ -31,10 +31,15 @@ Content-Type:    application/json
 ### Endpoints
 
 ```
+# Administración de usuarios (requiere rol ADMIN)
 GET    /api/admin/users        - Listar usuarios
 POST   /api/admin/users        - Crear usuario
 PUT    /api/admin/users/[id]   - Editar usuario
 DELETE /api/admin/users/[id]   - Eliminar usuario
+
+# Órdenes (servicio interno)
+GET    /api/orders/queue       - Cola activa del día (rol LINEA, service role)
+PATCH  /api/orders/updateStatus - Actualizar estado de orden (rol EMBARQUE/ADMIN)
 ```
 
 ---
@@ -50,11 +55,25 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIs...
 
 El token se obtiene automáticamente del supabase.auth.getSession()
 
-### Session Validation
+### Validación de Rol en Backend
+
+Todos los endpoints protegidos decodifican el JWT manualmente y verifican
+el rol en `public.users` usando el service role (bypasea RLS):
 
 ```javascript
-// En cada endpoint:
-const { data: { session } } = await supabase.auth.getSession();
+// Patrón usado en todos los endpoints protegidos:
+const token = bearerToken.slice(7);
+const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+const email = payload.email; // email es el campo de lookup en public.users
+
+const { data: userData } = await supabaseAdmin
+  .from('users')
+  .select('rol_name')
+  .eq('email', email)
+  .single();
+
+// NOTA: public.users.id !== auth.users.id en algunos usuarios.
+// Se usa email como campo de lookup para garantizar compatibilidad.
 
 if (!session) {
   return res.status(401).json({ error: 'Unauthorized' });

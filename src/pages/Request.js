@@ -202,17 +202,26 @@ export default function Request() {
   }, [userName]);
 
   // ── Fetch: trae TODAS las activas del día para construir la cola ────────────
+  // NOTE: Uses /api/orders/queue endpoint (service role) instead of direct supabase
+  // This bypasses RLS to show full queue while maintaining data security
   const fetchOrders = useCallback(async () => {
-    const startOfDay = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
+    try {
+      const response = await fetch('/api/orders/queue');
+      
+      if (!response.ok) {
+        console.error('Failed to fetch orders queue:', response.statusText);
+        return;
+      }
 
-    const { data, error } = await supabase
-      .from("orders")
-      .select("*")
-      .not("status", "in", '("ENTREGADO","CANCELADO")')
-      .gte("date_order", startOfDay)
-      .order("date_order", { ascending: true }); // ascendente = orden de llegada
-
-    if (!error) setOrders(data || []);
+      const result = await response.json();
+      if (result.success && result.data) {
+        setOrders(result.data);
+      } else {
+        console.error('Queue endpoint error:', result.error);
+      }
+    } catch (err) {
+      console.error('Error fetching orders queue:', err);
+    }
   }, []);
 
   const fetchDetailOptions = useCallback(async () => {

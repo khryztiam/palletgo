@@ -297,8 +297,40 @@ if (error) {
 
 ---
 
-## 📡 Realtime (WebSockets)
+## � Row Level Security (RLS)
 
+RLS está **habilitado** en las 3 tablas desde marzo 2026. El script de migración aplicado es `migrations/001_enable_rls_adapted.sql`.
+
+### Políticas activas
+
+| Tabla | Operación | Rol permitido | Condición |
+|-------|-----------|---------------|-----------|
+| `users` | SELECT | authenticated | Todos |
+| `users` | INSERT | ADMIN | Solo admin |
+| `users` | UPDATE | authenticated | Propio registro o ADMIN |
+| `users` | DELETE | ADMIN | Solo admin |
+| `orders` | SELECT | authenticated | Todos (necesario para cola LINEA) |
+| `orders` | INSERT | LINEA, ADMIN, EMBARQUE | — |
+| `orders` | UPDATE | ADMIN, SUPERVISOR | Cualquier orden |
+| `orders` | UPDATE | LINEA | Solo propias en estado SOLICITADO |
+| `orders` | UPDATE | EMBARQUE | Cualquier orden activa |
+| `orders` | DELETE | ADMIN | Solo admin |
+| `list_users` | SELECT | authenticated | Todos |
+| `list_users` | INSERT/UPDATE/DELETE | ADMIN | Solo admin |
+
+### Nota de diseño
+
+`orders` SELECT usa `USING (true)` (todos los autenticados pueden leer) porque el rol LINEA necesita ver **todas** las órdenes activas para calcular su posición en la cola. El control de acceso real se hace via `RoleGate` en el frontend y en los endpoints de backend que usan `supabaseAdmin`.
+
+### Service Role vs Anon Key
+
+Para operaciones que deben bypassear RLS (endpoints de backend), se usa `supabaseAdmin` (service role):
+- `src/lib/supabaseAdmin.js` — **solo usar en `pages/api/`**, nunca en el cliente
+- `src/lib/supabase.js` — cliente frontend con anon key, respeta RLS
+
+---
+
+## �📡 Realtime (WebSockets)
 ### Configuración
 
 ```javascript

@@ -1,7 +1,7 @@
 # 📦 PalletGo - Sistema de Gestión Logística
 
 [![Estado](https://img.shields.io/badge/Estado-Producción-green.svg)](#)
-[![Versión](https://img.shields.io/badge/Versión-0.2.0-blue.svg)](#)
+[![Versión](https://img.shields.io/badge/Versión-0.3.0-blue.svg)](#)
 [![Licencia](https://img.shields.io/badge/Licencia-Privada-red.svg)](#)
 
 > **PalletGo** es una solución web para gestión integral de solicitudes logísticas, despacho y embarques en tiempo real. Cuenta con notificaciones de voz, realtime updates y análisis de datos en vivo.
@@ -105,7 +105,8 @@ Backend:
 - **20+ componentes** reutilizables
 - **25,000+ órdenes** procesadas
 - **27 usuarios** activos
-- **4 APIs** REST CRUD
+- **6 APIs** REST
+- **12 políticas RLS** activas
 
 ---
 
@@ -114,12 +115,18 @@ Backend:
 ```
 palletgo/
 ├── doc/                    ← 📚 DOCUMENTACIÓN PROFESIONAL
-│   └── 00-INDICE.md        (12 documentos completos)
+│   └── 00-INDICE.md        (documentos completos)
+├── migrations/             ← Scripts SQL de base de datos
+│   ├── 000_disable_rls_reset.sql
+│   └── 001_enable_rls_adapted.sql
 ├── src/
-│   ├── pages/              ← Rutas principales
+│   ├── pages/              ← Rutas principales + API endpoints
+│   │   └── api/
+│   │       ├── admin/users/  ← CRUD usuarios (requiere ADMIN)
+│   │       └── orders/       ← Cola y actualización de órdenes
 │   ├── components/         ← Componentes React
 │   ├── context/            ← AuthContext global
-│   ├── lib/                ← Clientes Supabase
+│   ├── lib/                ← Clientes Supabase (anon + service role)
 │   └── styles/             ← CSS Modules
 └── package.json            ← Dependencias NPM
 ```
@@ -129,11 +136,12 @@ palletgo/
 ## 🔐 Seguridad
 
 ✅ Autenticación JWT  
-✅ Control de acceso por rol  
+✅ Control de acceso por rol (RoleGate + AdminGate)  
+✅ Row Level Security (RLS) en todas las tablas  
+✅ Validación de sesión en todos los endpoints de API  
+✅ Service role (server-only) para operaciones privilegiadas  
 ✅ Sesión persistente  
 ✅ HTTPS en producción
-
-⚠️ **A mejorar:** Ver [doc/11-CALIDAD.md](./doc/11-CALIDAD.md)
 
 ---
 
@@ -151,10 +159,12 @@ palletgo/
 
 ## 🚀 Próximos Pasos
 
-- ✅ Documentación profesional ← YA HECHO
-- ⏳ Implementar RLS en Supabase
-- ⏳ Validación de sesión en APIs
+- ✅ Documentación profesional
+- ✅ RLS en Supabase (12 políticas activas)
+- ✅ Validación de sesión en APIs backend
+- ✅ Endpoints de servicio para operaciones privilegiadas
 - ⏳ Tests unitarios
+- ⏳ `.env.example` para onboarding de devs
 
 Ver [Roadmap Completo](./doc/11-CALIDAD.md#-roadmap-recomendado)
 
