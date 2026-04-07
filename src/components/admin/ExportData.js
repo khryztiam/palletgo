@@ -7,6 +7,7 @@ import styles from '@/styles/Dashboard.module.css';
 const formatDateTime = (isoString) => {
   if (!isoString) return '';
   return new Date(isoString).toLocaleString('es-MX', {
+    timeZone: 'America/El_Salvador',
     year: 'numeric', month: '2-digit', day: '2-digit',
     hour: '2-digit', minute: '2-digit', second: '2-digit',
     hour12: true,

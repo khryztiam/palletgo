@@ -17,14 +17,17 @@ const formatDateInput = (d) => {
   return `${y}-${m}-${day}`;
 };
 
+// El Salvador es UTC-6 y no tiene horario de verano
+const SV_OFFSET = '-06:00';
+
 const getDateBounds = (dateRange) => {
   const today    = new Date();
   const startStr = dateRange.start || formatDateInput(today);
   const endStr   = dateRange.end   || startStr;
 
   return {
-    startISO: new Date(`${startStr}T00:00:00.000Z`).toISOString(),
-    endISO:   new Date(`${endStr}T23:59:59.999Z`).toISOString(),
+    startISO: new Date(`${startStr}T00:00:00.000${SV_OFFSET}`).toISOString(),
+    endISO:   new Date(`${endStr}T23:59:59.999${SV_OFFSET}`).toISOString(),
   };
 };
 

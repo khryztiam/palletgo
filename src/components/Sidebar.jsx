@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useAuth } from '@/context/AuthContext';
 import {
   FaHome, FaClipboardList, FaShippingFast, FaUserCog,
-  FaSignOutAlt, FaTimes, FaChartBar, FaTruck, FaLayerGroup,
+  FaSignOutAlt, FaTimes, FaChartBar, FaTruck, FaLayerGroup, FaUsers,
 } from 'react-icons/fa';
 import styles from '@/styles/Sidebar.module.css';
 
@@ -19,13 +19,14 @@ const ROLE_COLOR = {
 
 // Mapeo de nombre de icono → componente (evita pasar JSX en constantes)
 const ICONS = {
-  dashboard:  <FaChartBar />,
-  clipboard:  <FaClipboardList />,
-  users:      <FaUserCog />,
-  request:    <FaHome />,
-  dispatch:   <FaTruck />,
-  boarding:   <FaLayerGroup />,
-  shipping:   <FaShippingFast />,
+  dashboard:    <FaChartBar />,
+  clipboard:    <FaClipboardList />,
+  users:        <FaUserCog />,
+  globalusers:  <FaUsers />,
+  request:      <FaHome />,
+  dispatch:     <FaTruck />,
+  boarding:     <FaLayerGroup />,
+  shipping:     <FaShippingFast />,
 };
 
 // ─── Navegación por rol ───────────────────────────────────────────────────────
@@ -37,7 +38,8 @@ const NAV_BY_ROLE = {
       links: [
         { href: '/admin/Dashboard', icon: 'dashboard', label: 'Dashboard'       },
         { href: '/admin/Control',   icon: 'clipboard', label: 'Request Control' },
-        { href: '/admin/Management',icon: 'users',     label: 'Administration'  },
+        { href: '/admin/Management',  icon: 'users',       label: 'Administration'  },
+        { href: '/admin/GlobalUsers', icon: 'globalusers', label: 'Global Users'     },
       ],
     },
     {
