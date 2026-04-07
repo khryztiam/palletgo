@@ -58,10 +58,13 @@
 }
 
 /* Color por rol */
+.summarySuperAdmin { background-color: #0f172a; }
 .summaryAdmin      { background-color: #005792; }
 .summaryLinea      { background-color: #0e6e30; }
 .summaryEmbarque   { background-color: #991caf; }
 .summarySupervisor { background-color: #af4c1c; }
+.summaryTecnico    { background-color: #be185d; }
+.summaryAdminTec   { background-color: #7c3aed; }
 
 /* ======= Action Bar ======= */
 .actionBar {
@@ -113,9 +116,12 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+.rowSuperAdmin td { background-color: #e2e8f0; }
 .rowAdmin    td { background-color: #dbeafe; }
 .rowLinea    td { background-color: #dcfce7; }
 .rowEmbarque td { background-color: #fce7f3; }
+.rowTecnico  td { background-color: #fbcfe8; }
+.rowAdminTec td { background-color: #f3e8ff; }
 
 /* ======= Loading / Empty ======= */
 .loading {

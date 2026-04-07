@@ -23,7 +23,7 @@ const RoleGate = ({ allowedRoles, children }) => {
     );
   }
 
-  if (role === 'ADMIN' || allowedRoles.includes(role)) {
+  if (role === 'SUPERADMIN' || allowedRoles.includes(role)) {
     return children;
   }
 

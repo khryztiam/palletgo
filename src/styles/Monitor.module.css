@@ -1,0 +1,694 @@
+/* Monitor.module.css - Maintenance Monitor View */
+
+.container {
+  padding: 40px 20px;
+  max-width: 1600px;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+  min-height: 100vh;
+  position: relative;
+}
+
+/* ======= FULLSCREEN MODE ======= */
+.container.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  background: white;
+  overflow: auto;
+  z-index: 9999;
+}
+
+.container.fullscreen .monitorLayout {
+  width: 100vw;
+  min-height: 100vh;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr 320px;
+}
+
+.container.fullscreen .mainPanel {
+  min-height: 100vh;
+  padding: 12px 16px;
+  overflow: visible;
+}
+
+.container.fullscreen .techniciansSidebar {
+  min-height: 100vh;
+  padding: 12px 12px;
+}
+
+/* ======= FULLSCREEN TV RESOLUTION ======= */
+.container.fullscreen .cardsGrid {
+  grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
+  gap: 28px;
+}
+
+.container.fullscreen .maintenanceCard {
+  padding: 32px;
+  border-left: 8px solid #059669;
+}
+
+.container.fullscreen .cardTitle {
+  font-size: 1.5rem;
+}
+
+.container.fullscreen .cardMeta {
+  font-size: 1.1rem;
+}
+
+.container.fullscreen .cardDescription {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  margin: 16px 0;
+}
+
+.container.fullscreen .cardInfo {
+  font-size: 1.05rem;
+}
+
+.container.fullscreen .statusBadge {
+  padding: 10px 16px;
+  font-size: 1rem;
+}
+
+.container.fullscreen .actionBtn {
+  padding: 16px 20px;
+  font-size: 1.1rem;
+}
+
+.container.fullscreen .sectionTitle {
+  font-size: 1.8rem;
+  margin: 0 0 20px 0;
+}
+
+.container.fullscreen .sidebarTitle {
+  font-size: 1.5rem;
+}
+
+.container.fullscreen .technicianName {
+  font-size: 1.2rem;
+}
+
+.container.fullscreen .supportCount {
+  font-size: 1.1rem;
+}
+
+.fullscreenToggle {
+  position: fixed;
+bottom: 30px;
+  right: 40px;
+  z-index: 10000;
+  padding: 12px 24px;
+  background: #059669;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  letter-spacing: 0.5px;
+}
+
+.fullscreenToggle:hover {
+  background: #047857;
+  box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4);
+  transform: translateY(-2px);
+}
+
+.fullscreenToggle:active {
+  transform: translateY(0);
+}
+
+/* Header */
+.header {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: #6b7280;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Feedback Toast */
+.feedback {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 500;
+  animation: slideInDown 0.3s ease-out;
+}
+
+.feedbackSuccess {
+  background-color: #d1fae5;
+  color: #065f46;
+  border-left: 4px solid #059669;
+}
+
+.feedbackError {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border-left: 4px solid #dc2626;
+}
+
+.feedbackInfo {
+  background-color: #dbeafe;
+  color: #0c2340;
+  border-left: 4px solid #2563eb;
+}
+
+.feedback button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: inherit;
+  padding: 0;
+  font-weight: bold;
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Monitor Layout: Grid with Sidebar */
+.monitorLayout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 24px;
+  align-items: start;
+}
+
+/* Main Panel */
+.mainPanel {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+/* Filter Bar */
+.filterBar {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 16px 0;
+}
+
+.filterButtons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filterBtn {
+  padding: 8px 16px;
+  border: 2px solid #e5e7eb;
+  background-color: white;
+  color: #6b7280;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.filterBtn:hover {
+  border-color: #059669;
+  color: #059669;
+}
+
+.filterBtnActive {
+  border-color: #059669;
+  background-color: #059669;
+  color: white;
+}
+
+/* Cards Grid */
+.cardsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.maintenanceCard {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 16px;
+  transition: all 0.3s ease;
+  border-left: 4px solid #059669;
+}
+
+.maintenanceCard:hover {
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.15);
+  transform: translateY(-2px);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.cardTitle {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.cardMeta {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin: 4px 0 0 0;
+}
+
+.statusBadge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.statusPENDIENTE {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.statusEN\\ PROGRESO {
+  background-color: #dbeafe;
+  color: #0c2340;
+}
+
+.statusCOMPLETADO {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.cardDescription {
+  font-size: 0.95rem;
+  color: #4b5563;
+  margin: 12px 0;
+  line-height: 1.4;
+}
+
+.cardFooter {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 12px 0;
+  padding: 12px 0;
+  border-top: 1px solid #f3f4f6;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.cardInfo {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.cardInfo strong {
+  color: #1f2937;
+}
+
+.cardActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.actionBtn {
+  flex: 1;
+  padding: 10px 12px;
+  background-color: #059669;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.actionBtn:hover {
+  background-color: #047857;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.3);
+}
+
+.actionBtn:active {
+  transform: scale(0.98);
+}
+
+.completeBtn {
+  background-color: #10b981;
+}
+
+.completeBtn:hover {
+  background-color: #059669;
+}
+
+/* Loading & Empty States */
+.loading,
+.emptyState {
+  text-align: center;
+  padding: 60px 20px;
+  color: #6b7280;
+  font-size: 1.1rem;
+}
+
+/* Technicians Sidebar */
+.techniciansSidebar {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  height: fit-content;
+  position: sticky;
+  top: 20px;
+}
+
+.sidebarTitle {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 4px 0;
+}
+
+.sidebarSubtitle {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin: 0 0 16px 0;
+}
+
+.techniciansList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.technicianItem {
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-left: 3px solid #e5e7eb;
+}
+
+.technicianItem:hover {
+  border-color: #059669;
+  background-color: #f0fdf4;
+  border-left-color: #059669;
+}
+
+.technicianItem.selected {
+  background-color: #f0fdf4;
+  border-color: #059669;
+  border-left-color: #059669;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.15);
+}
+
+.technicianItem.inactive {
+  opacity: 0.6;
+}
+
+.technicianHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.technicianStatus {
+  font-size: 0.7rem;
+}
+
+.technicianName {
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 0.95rem;
+}
+
+.technicianMetrics {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+}
+
+.supportCount {
+  color: #059669;
+  font-weight: 600;
+}
+
+.availableBadge {
+  background-color: #d1fae5;
+  color: #065f46;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+/* Modals */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+}
+
+.modalContent {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 12px;
+  padding: 32px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  z-index: 101;
+}
+
+.modalContent h2 {
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 20px 0;
+}
+
+.modalBody {
+  margin: 0 0 24px 0;
+}
+
+.modalBody p {
+  color: #4b5563;
+  margin: 8px 0;
+  font-size: 0.95rem;
+}
+
+.modalBody strong {
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.modalDescription {
+  color: #6b7280;
+  font-size: 0.9rem !important;
+}
+
+.confirmText {
+  color: #6b7280;
+  font-size: 0.95rem;
+  margin-top: 16px !important;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* Technician Selection in Modal */
+.techniciansSelection {
+  margin-top: 16px;
+}
+
+.selectionLabel {
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 12px 0;
+  font-size: 0.95rem;
+}
+
+.technicianOption {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border: 2px solid #e5e7eb;
+  background-color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.technicianOption:hover {
+  border-color: #059669;
+  background-color: #f0fdf4;
+}
+
+.technicianOption.selected {
+  border-color: #059669;
+  background-color: #f0fdf4;
+  color: #059669;
+}
+
+.optionStatus {
+  font-size: 0.8rem;
+}
+
+.optionName {
+  flex: 1;
+  color: #1f2937;
+}
+
+.optionCount {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* Modal Actions */
+.modalActions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.cancelBtn,
+.submitBtn {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+}
+
+.cancelBtn {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.cancelBtn:hover {
+  background-color: #d1d5db;
+}
+
+.submitBtn {
+  background-color: #059669;
+  color: white;
+}
+
+.submitBtn:hover:not(:disabled) {
+  background-color: #047857;
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+}
+
+.submitBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .monitorLayout {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .techniciansSidebar {
+    position: static;
+    top: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 24px 16px;
+  }
+
+  .header h1 {
+    font-size: 1.5rem;
+  }
+
+  .cardsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .filterButtons {
+    flex-direction: column;
+  }
+
+  .filterBtn {
+    width: 100%;
+  }
+
+  .modalContent {
+    width: 95%;
+    padding: 24px;
+  }
+}
+
+/* ======= GLOBAL FULLSCREEN STYLES ======= */
+/* Estos estilos actúan a nivel global cuando Monitor está en fullscreen */
+:global(.monitor-fullscreen) {
+  overflow: hidden;
+}

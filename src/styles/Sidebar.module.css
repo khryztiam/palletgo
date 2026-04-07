@@ -34,6 +34,24 @@
   overflow: hidden;
 }
 
+/* ── Mtto palette override ─────────────────────────────────────────── */
+.sidebarMtto {
+  background: #0a2a1a;
+  border-right-color: #1a5c35;
+}
+
+.sidebarMtto .brand {
+  border-bottom-color: #1a5c35;
+}
+
+.sidebarMtto .footer {
+  border-top-color: #1a5c35;
+}
+
+.sidebarMtto .section .sectionLabel {
+  color: #6ee7b7;
+}
+
 /* ── Brand ──────────────────────────────────────────────────────────── */
 .brand {
   padding: 18px 20px 16px;

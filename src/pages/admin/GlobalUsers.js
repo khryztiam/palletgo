@@ -1,4 +1,4 @@
-// /src/pages/admin/Management.jsx
+// src/pages/admin/GlobalUsers.js
 import { useState, useEffect, useCallback } from 'react';
 import AdminGate from '@/components/AdminGate';
 import { useAuth } from '@/context/AuthContext';
@@ -6,71 +6,65 @@ import { supabase } from '@/lib/supabase';
 import styles from '@/styles/Management.module.css';
 
 // ─── Constantes ───────────────────────────────────────────────────────────────
-const ROLE_MAPPING = { SUPERADMIN: 7, ADMIN: 1, LINEA: 2, EMBARQUE: 3, SUPERVISOR: 4, TECNICO: 5, ADMIN_TEC: 6 };
+const ROLE_MAPPING = {
+  SUPERADMIN: 7, ADMIN: 1, LINEA: 2, EMBARQUE: 3,
+  SUPERVISOR: 4, TECNICO: 5, ADMIN_TEC: 6,
+};
 
+// TECNICO = usuarios que acceden al monitor de mtto, se muestran como "Home Position"
+// list_tec es un catálogo separado de nombres de soporte (sin cuenta de auth)
 const ROLE_OPTIONS = [
   { value: 'SUPERADMIN', label: 'Super Administrador' },
   { value: 'ADMIN',      label: 'Administrador'       },
   { value: 'LINEA',      label: 'Línea'               },
   { value: 'EMBARQUE',   label: 'Embarque'            },
   { value: 'SUPERVISOR', label: 'Supervisor'          },
-  { value: 'HOME_POSITION',    label: 'Home Position'       },
+  { value: 'TECNICO',    label: 'Home Position'       },
   { value: 'ADMIN_TEC',  label: 'Admin Técnico'       },
 ];
 
-// Roles que cada perfil puede ver y asignar
-// TECNICO = usuarios del monitor de mtto ("Home Position"); list_tec es catálogo separado
-const ROLE_DOMAIN = {
-  SUPERADMIN: ['SUPERADMIN', 'ADMIN', 'LINEA', 'EMBARQUE', 'SUPERVISOR', 'TECNICO', 'ADMIN_TEC'],
-  ADMIN:      ['ADMIN', 'LINEA', 'EMBARQUE', 'SUPERVISOR'],
-  ADMIN_TEC:  ['HOME_POSITION', 'ADMIN_TEC'],
+const ROLE_ORDER = ['SUPERADMIN', 'ADMIN', 'ADMIN_TEC', 'SUPERVISOR', 'LINEA', 'EMBARQUE', 'TECNICO'];
+
+const ROLE_LABEL = {
+  SUPERADMIN: 'Super Administrador',
+  ADMIN:      'Administrador',
+  LINEA:      'Línea',
+  EMBARQUE:   'Embarque',
+  SUPERVISOR: 'Supervisor',
+  TECNICO:    'Home Position',
+  ADMIN_TEC:  'Admin Técnico',
 };
 
-// Mapea rol → clase CSS del item de resumen
+const ROLE_COLOR_ACCENT = {
+  SUPERADMIN: '#0f172a',
+  ADMIN:      '#3b82f6',
+  ADMIN_TEC:  '#d946ef',
+  SUPERVISOR: '#f59e0b',
+  LINEA:      '#22c55e',
+  EMBARQUE:   '#991caf',
+  TECNICO:    '#ec4899',
+};
+
 const SUMMARY_CLASS = {
   SUPERADMIN: styles.summarySuperAdmin,
   ADMIN:      styles.summaryAdmin,
   LINEA:      styles.summaryLinea,
   EMBARQUE:   styles.summaryEmbarque,
   SUPERVISOR: styles.summarySupervisor,
-  HOME_POSITION:    styles.summaryHomePosition,
+  TECNICO:    styles.summaryTecnico,
   ADMIN_TEC:  styles.summaryAdminTec,
 };
 
-// Mapea rol → clase CSS de la fila de tabla
-const ROW_CLASS = {
-  SUPERADMIN: styles.rowSuperAdmin,
-  ADMIN:      styles.rowAdmin,
-  LINEA:      styles.rowLinea,
-  EMBARQUE:   styles.rowEmbarque,
-  SUPERVISOR: '',
-  HOME_POSITION:    styles.rowHomePosition,
-  ADMIN_TEC:  styles.rowAdminTec,
-};
+const INITIAL_SUMMARY = { SUPERADMIN: 0, ADMIN: 0, LINEA: 0, EMBARQUE: 0, SUPERVISOR: 0, TECNICO: 0, ADMIN_TEC: 0 };
 
-const EMPTY_NEW_USER = {
-  email:     '',
-  password:  '',
-  user_name: '',
-  rol_name:  'LINEA',
-  id_rol:    ROLE_MAPPING['LINEA'],
-};
-
-const INITIAL_SUMMARY = { SUPERADMIN: 0, ADMIN: 0, LINEA: 0, EMBARQUE: 0, SUPERVISOR: 0, HOME_POSITION: 0, ADMIN_TEC: 0 };
-
-// ─── Subcomponente: ConfirmDeleteModal ────────────────────────────────────────
-// Reemplaza window.confirm() — no bloquea el hilo principal.
+// ─── ConfirmDeleteModal ───────────────────────────────────────────────────────
 const ConfirmDeleteModal = ({ isOpen, userName, onConfirm, onCancel }) => {
   if (!isOpen) return null;
-
   return (
     <div className={styles.modalOverlay}>
       <div className={styles.confirmModal}>
         <h3>¿Eliminar usuario?</h3>
-        <p>
-          Esta acción eliminará a <strong>{userName}</strong> permanentemente y
-          no se puede deshacer.
-        </p>
+        <p>Esta acción eliminará a <strong>{userName}</strong> permanentemente y no se puede deshacer.</p>
         <div className={styles.confirmButtons}>
           <button onClick={onCancel}  className={styles.secondaryBtn}>Cancelar</button>
           <button onClick={onConfirm} className={styles.dangerBtn}>Sí, eliminar</button>
@@ -80,11 +74,9 @@ const ConfirmDeleteModal = ({ isOpen, userName, onConfirm, onCancel }) => {
   );
 };
 
-// ─── Subcomponente: FeedbackToast ─────────────────────────────────────────────
-// Antes usaba alert() para errores. Ahora es un toast no bloqueante.
+// ─── FeedbackToast ────────────────────────────────────────────────────────────
 const FeedbackToast = ({ feedback, onClose }) => {
   if (!feedback.show) return null;
-
   return (
     <div className={`${styles.feedback} ${feedback.type === 'success' ? styles.feedbackSuccess : styles.feedbackError}`}>
       <span>{feedback.message}</span>
@@ -93,27 +85,20 @@ const FeedbackToast = ({ feedback, onClose }) => {
   );
 };
 
-// ─── Management Page ──────────────────────────────────────────────────────────
-export default function Management() {
-  const { role, loading: authLoading } = useAuth();
-
-  // Roles que este usuario puede ver/asignar (filtrado por dominio)
-  const allowedRoleOptions = ROLE_OPTIONS.filter(o =>
-    (ROLE_DOMAIN[role] || []).includes(o.value)
-  );
-  const defaultRole = allowedRoleOptions[0]?.value || 'LINEA';
+// ─── GlobalUsers ──────────────────────────────────────────────────────────────
+export default function GlobalUsers() {
+  const { loading: authLoading } = useAuth();
 
   const [users,             setUsers]             = useState([]);
-  const [newUser,           setNewUser]           = useState({ ...EMPTY_NEW_USER, rol_name: defaultRole, id_rol: ROLE_MAPPING[defaultRole] });
-  const [editingUser,       setEditingUser]       = useState(null);
   const [summary,           setSummary]           = useState(INITIAL_SUMMARY);
+  const [newUser,           setNewUser]           = useState({ email: '', password: '', user_name: '', rol_name: 'LINEA' });
+  const [editingUser,       setEditingUser]       = useState(null);
   const [isLoading,         setIsLoading]         = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isConfirmOpen,     setIsConfirmOpen]     = useState(false);
   const [feedback,          setFeedback]          = useState({ show: false, message: '', type: '' });
 
-  // ── Helpers ────────────────────────────────────────────────────────────────
   const showFeedback = useCallback((msg, type = 'error', duration = 5000) => {
     setFeedback({ show: true, message: msg, type });
     setTimeout(() => setFeedback(f => ({ ...f, show: false })), duration);
@@ -125,90 +110,55 @@ export default function Management() {
     setSummary(s);
   };
 
-  // ── Fetch usuarios ─────────────────────────────────────────────────────────
+  // ── Fetch ──────────────────────────────────────────────────────────────────
   const fetchUsers = useCallback(async () => {
     try {
       setIsLoading(true);
-      
-      // Get the current session token
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError || !session?.access_token) {
-        throw new Error('No authenticated session found');
-      }
-
-      // Send request with Authorization header
+      if (sessionError || !session?.access_token) throw new Error('Sin sesión autenticada');
       const res = await fetch('/api/admin/users', {
         headers: {
           'Authorization': `Bearer ${session.access_token}`,
           'Content-Type': 'application/json',
         },
       });
-      
       const result = await res.json();
-
       if (!res.ok) throw new Error(result.error || 'Error al obtener usuarios');
-      
-      const data = result.data ?? result; // Support both { data: [] } and [] formats
-      if (!Array.isArray(data)) throw new Error('La respuesta del servidor no es una lista de usuarios.');
-
+      const data = result.data ?? result;
+      if (!Array.isArray(data)) throw new Error('Respuesta inesperada del servidor');
       setUsers(data);
       updateSummary(data);
     } catch (err) {
-      console.error('Error cargando usuarios:', err);
-      showFeedback(err.message || 'Error desconocido al cargar usuarios');
+      showFeedback(err.message || 'Error al cargar usuarios');
       setUsers([]);
     } finally {
       setIsLoading(false);
     }
   }, [showFeedback]);
 
-  useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
-
-  // Re-fetch cuando el rol del auth cambia (ya estaba en el original)
-  useEffect(() => {
-    if (role === 'ADMIN' || role === 'ADMIN_TEC' || role === 'SUPERADMIN') fetchUsers();
-  }, [role, fetchUsers]);
+  useEffect(() => { fetchUsers(); }, [fetchUsers]);
 
   // ── Registro ───────────────────────────────────────────────────────────────
   const handleRegister = async () => {
     try {
-      if (!newUser.email || !newUser.password || !newUser.user_name) {
-        throw new Error('Todos los campos son requeridos');
-      }
-      if (newUser.password.length < 6) {
-        throw new Error('La contraseña debe tener al menos 6 caracteres');
-      }
-
-      // Get the current session token
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError || !session?.access_token) {
-        throw new Error('No authenticated session found');
-      }
-
-      const emailFinal = `${newUser.email}@yazaki.com`.toLowerCase();
-      const body = {
-        ...newUser,
-        email:  emailFinal,
-        id_rol: ROLE_MAPPING[newUser.rol_name],
-      };
-
+      if (!newUser.email || !newUser.password || !newUser.user_name) throw new Error('Todos los campos son requeridos');
+      if (newUser.password.length < 6) throw new Error('La contraseña debe tener al menos 6 caracteres');
+      const { data: { session } } = await supabase.auth.getSession();
       const res = await fetch('/api/admin/users', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify(body),
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
+        body: JSON.stringify({
+          email:     `${newUser.email}@yazaki.com`.toLowerCase(),
+          password:  newUser.password,
+          user_name: newUser.user_name,
+          rol_name:  newUser.rol_name,
+          id_rol:    ROLE_MAPPING[newUser.rol_name],
+        }),
       });
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || 'Error al crear usuario');
-
-      showFeedback('Usuario registrado exitosamente!', 'success');
-      setNewUser(EMPTY_NEW_USER);
+      showFeedback('✅ Usuario registrado exitosamente', 'success');
+      setNewUser({ email: '', password: '', user_name: '', rol_name: 'LINEA' });
       setIsCreateModalOpen(false);
       fetchUsers();
     } catch (err) {
@@ -219,20 +169,9 @@ export default function Management() {
   // ── Actualización ──────────────────────────────────────────────────────────
   const handleUpdate = async () => {
     try {
-      if (!editingUser.user_name || !editingUser.rol_name) {
-        throw new Error('Nombre y rol son requeridos');
-      }
-
-      // Get the current session token
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError || !session?.access_token) {
-        throw new Error('No authenticated session found');
-      }
-
-      if (editingUser.new_password && editingUser.new_password.length < 6) {
-        throw new Error('La contraseña debe tener al menos 6 caracteres');
-      }
+      if (!editingUser.user_name || !editingUser.rol_name) throw new Error('Nombre y rol son requeridos');
+      if (editingUser.new_password && editingUser.new_password.length < 6) throw new Error('La contraseña debe tener al menos 6 caracteres');
+      const { data: { session } } = await supabase.auth.getSession();
       const payload = {
         user_name: editingUser.user_name,
         rol_name:  editingUser.rol_name,
@@ -241,16 +180,12 @@ export default function Management() {
       if (editingUser.new_password) payload.new_password = editingUser.new_password;
       const res = await fetch(`/api/admin/users/${editingUser.id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`,
-        },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
         body: JSON.stringify(payload),
       });
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || 'Error al actualizar usuario');
-
-      showFeedback('Usuario actualizado exitosamente!', 'success');
+      showFeedback('✅ Usuario actualizado exitosamente', 'success');
       setIsDetailModalOpen(false);
       fetchUsers();
     } catch (err) {
@@ -259,7 +194,6 @@ export default function Management() {
   };
 
   // ── Eliminación ────────────────────────────────────────────────────────────
-  // FIX: reemplaza window.confirm() por modal propio no bloqueante.
   const handleDeleteClick = () => {
     setIsDetailModalOpen(false);
     setIsConfirmOpen(true);
@@ -267,23 +201,14 @@ export default function Management() {
 
   const handleConfirmDelete = async () => {
     try {
-      // Get the current session token
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError || !session?.access_token) {
-        throw new Error('No authenticated session found');
-      }
-
+      const { data: { session } } = await supabase.auth.getSession();
       const res = await fetch(`/api/admin/users/${editingUser.id}`, {
         method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${session.access_token}`,
-        },
+        headers: { 'Authorization': `Bearer ${session.access_token}` },
       });
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || 'Error al eliminar usuario');
-
-      showFeedback('Usuario eliminado correctamente', 'success');
+      showFeedback('✅ Usuario eliminado correctamente', 'success');
       setIsConfirmOpen(false);
       fetchUsers();
     } catch (err) {
@@ -291,31 +216,35 @@ export default function Management() {
     }
   };
 
-  // ── Helpers de modal ───────────────────────────────────────────────────────
   const openDetailModal = (user) => {
     setEditingUser({ ...user, new_password: '' });
     setIsDetailModalOpen(true);
   };
 
-  // ── Loading auth ───────────────────────────────────────────────────────────
+  // Agrupar usuarios por rol preservando el orden definido
+  const grouped = ROLE_ORDER.reduce((acc, rol) => {
+    const list = users.filter(u => u.rol_name === rol);
+    if (list.length > 0) acc[rol] = list;
+    return acc;
+  }, {});
+
   if (authLoading) return <div className={styles.loading}>Cargando...</div>;
 
-  // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <AdminGate>
       <div className={styles.container}>
 
-        {/* Resumen por rol (filtrado por dominio del usuario actual) */}
+        {/* ── Resumen global ──────────────────────────────────────────── */}
         <div className={styles.summaryCompact}>
-          {Object.entries(summary).filter(([rol]) => (ROLE_DOMAIN[role] || []).includes(rol)).map(([rol, count]) => (
+          {ROLE_ORDER.map(rol => (
             <div key={rol} className={`${styles.summaryItem} ${SUMMARY_CLASS[rol] ?? ''}`}>
-              <span>{rol}</span>
-              <strong>{count}</strong>
+              <span>{ROLE_LABEL[rol]}</span>
+              <strong>{summary[rol]}</strong>
             </div>
           ))}
         </div>
 
-        {/* Acción principal */}
+        {/* ── Acción principal ─────────────────────────────────────────── */}
         <div className={styles.actionBar}>
           <button
             onClick={() => setIsCreateModalOpen(true)}
@@ -326,45 +255,67 @@ export default function Management() {
           </button>
         </div>
 
-        {/* Tabla */}
-        <div className={styles.tableContainer}>
-          {isLoading ? (
-            <div className={styles.loading}>Cargando usuarios...</div>
-          ) : (
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>Nombre</th>
-                  <th>Email</th>
-                  <th>Rol</th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.length > 0 ? (
-                  users.map(user => (
-                    <tr
-                      key={user.id}
-                      onClick={() => openDetailModal(user)}
-                      className={`${styles.row} ${ROW_CLASS[user.rol_name] ?? ''}`}
-                    >
-                      <td>{user.user_name}</td>
-                      <td>{user.email}</td>
-                      <td>{user.rol_name}</td>
+        {/* ── Grupos por rol ───────────────────────────────────────────── */}
+        {isLoading ? (
+          <div className={styles.loading}>Cargando usuarios...</div>
+        ) : (
+          <div className={styles.tableContainer}>
+            {Object.entries(grouped).map(([rol, userList]) => (
+              <div key={rol} style={{ marginBottom: '32px' }}>
+                <div style={{
+                  display: 'flex', alignItems: 'center', gap: '10px',
+                  paddingBottom: '8px', marginBottom: '8px',
+                  borderBottom: `2px solid ${ROLE_COLOR_ACCENT[rol] ?? '#e5e7eb'}`,
+                }}>
+                  <span style={{
+                    display: 'inline-block', width: '10px', height: '10px',
+                    borderRadius: '50%', background: ROLE_COLOR_ACCENT[rol] ?? '#e5e7eb',
+                    flexShrink: 0,
+                  }} />
+                  <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: '#1f2937' }}>
+                    {ROLE_LABEL[rol]}
+                  </h3>
+                  <span style={{
+                    marginLeft: 'auto', fontSize: '0.8rem', fontWeight: 600,
+                    background: `${ROLE_COLOR_ACCENT[rol]}22`,
+                    color: ROLE_COLOR_ACCENT[rol],
+                    padding: '2px 10px', borderRadius: '999px',
+                    border: `1px solid ${ROLE_COLOR_ACCENT[rol]}44`,
+                  }}>
+                    {userList.length}
+                  </span>
+                </div>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>Nombre</th>
+                      <th>Email</th>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="3" className={styles.noResults}>
-                      No hay usuarios registrados
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          )}
-        </div>
+                  </thead>
+                  <tbody>
+                    {userList.map(user => (
+                      <tr
+                        key={user.id}
+                        onClick={() => openDetailModal(user)}
+                        className={styles.row}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        <td>{user.user_name}</td>
+                        <td>{user.email}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ))}
 
-        {/* ── Modal: Crear Usuario ────────────────────────────────────────── */}
+            {Object.keys(grouped).length === 0 && (
+              <div className={styles.noResults}>No hay usuarios registrados</div>
+            )}
+          </div>
+        )}
+
+        {/* ── Modal: Crear Usuario ────────────────────────────────────── */}
         {isCreateModalOpen && (
           <div className={styles.modalOverlay}>
             <div className={styles.modalContent}>
@@ -378,9 +329,9 @@ export default function Management() {
               </button>
 
               {[
-                { label: 'Usuario',                  key: 'email',     type: 'text',     placeholder: 'Usuario' },
-                { label: 'Contraseña (mín. 6 chars)', key: 'password',  type: 'password', placeholder: '' },
-                { label: 'Nombre Completo',           key: 'user_name', type: 'text',     placeholder: '' },
+                { label: 'Usuario (sin @yazaki.com)',   key: 'email',     type: 'text',     placeholder: 'usuario' },
+                { label: 'Contraseña (mín. 6 chars)',   key: 'password',  type: 'password', placeholder: '' },
+                { label: 'Nombre Completo',             key: 'user_name', type: 'text',     placeholder: '' },
               ].map(({ label, key, type, placeholder }) => (
                 <div key={key} className={styles.formGroup}>
                   <label>{label}</label>
@@ -400,7 +351,7 @@ export default function Management() {
                   value={newUser.rol_name}
                   onChange={e => setNewUser(prev => ({ ...prev, rol_name: e.target.value }))}
                 >
-                  {allowedRoleOptions.map(({ value, label }) => (
+                  {ROLE_OPTIONS.map(({ value, label }) => (
                     <option key={value} value={value}>{label}</option>
                   ))}
                 </select>
@@ -418,7 +369,7 @@ export default function Management() {
                   className={styles.secondaryBtn}
                   onClick={() => {
                     setIsCreateModalOpen(false);
-                    setNewUser(EMPTY_NEW_USER);
+                    setNewUser({ email: '', password: '', user_name: '', rol_name: 'LINEA' });
                   }}
                 >
                   Cancelar
@@ -428,7 +379,7 @@ export default function Management() {
           </div>
         )}
 
-        {/* ── Modal: Editar Usuario ───────────────────────────────────────── */}
+        {/* ── Modal: Editar Usuario ───────────────────────────────────── */}
         {isDetailModalOpen && editingUser && (
           <div className={styles.modalOverlay}>
             <div className={styles.modalContent}>
@@ -462,7 +413,7 @@ export default function Management() {
                   value={editingUser.rol_name}
                   onChange={e => setEditingUser(prev => ({ ...prev, rol_name: e.target.value }))}
                 >
-                  {allowedRoleOptions.map(({ value, label }) => (
+                  {ROLE_OPTIONS.map(({ value, label }) => (
                     <option key={value} value={value}>{label}</option>
                   ))}
                 </select>
@@ -504,7 +455,7 @@ export default function Management() {
           </div>
         )}
 
-        {/* ── Modal: Confirmar Eliminación ─────────────────────────────────── */}
+        {/* ── Modal: Confirmar Eliminación ────────────────────────────── */}
         <ConfirmDeleteModal
           isOpen={isConfirmOpen}
           userName={editingUser?.user_name}
@@ -512,7 +463,7 @@ export default function Management() {
           onCancel={() => setIsConfirmOpen(false)}
         />
 
-        {/* ── Feedback Toast ────────────────────────────────────────────────── */}
+        {/* ── Feedback Toast ───────────────────────────────────────────── */}
         <FeedbackToast
           feedback={feedback}
           onClose={() => setFeedback(f => ({ ...f, show: false }))}

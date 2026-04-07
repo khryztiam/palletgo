@@ -11,9 +11,12 @@ const PAGE_META = {
   '/admin/Dashboard': { title: 'Dashboard',         subtitle: 'Panel de Administración'              },
   '/admin/Control':   { title: 'Request Control',   subtitle: 'Control de solicitudes del día'       },
   '/admin/Management':{ title: 'Administration',    subtitle: 'Gestión de usuarios del sistema'      },
+  '/admin/MaintenanceAdmin':{ title: 'Admin Técnicos y Usuarios', subtitle: 'Gestión de autenticación y personal técnico' },
   '/Request':         { title: 'Solicitudes',       subtitle: 'Crea y consulta tus órdenes'          },
   '/Dispatch':        { title: 'Despacho',          subtitle: 'Órdenes activas en tiempo real'       },
   '/Boarding':        { title: 'Embarque',          subtitle: 'Registro y control de embarques'      },
+  '/maintenance/Monitor': { title: 'Monitor de Mantenimiento', subtitle: 'Gestión y seguimiento de solicitudes' },
+  '/maintenance/RequestMaintenance': { title: 'Solicitud de Mantenimiento', subtitle: 'Crear nueva solicitud de servicio técnico' },
 };
 
 // Rutas donde no se muestra el layout (login / raíz)

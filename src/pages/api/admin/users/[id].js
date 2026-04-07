@@ -1,7 +1,16 @@
 // Archivo: /pages/api/admin/users/[id].js
 import { supabaseAdmin as supabase } from '@/lib/supabaseAdmin';
 
-// ─── Helper: Verify Admin Role from Authorization Header ──────────────────────
+// ─── Dominios de roles por perfil ───────────────────────────────────────────
+// TECNICO = usuarios del monitor de mtto, etiqueta visual "Home Position"
+// list_tec = catálogo de nombres de soporte (sin cuenta de auth, como entregadores)
+const ROLE_DOMAIN = {
+  ADMIN:      ['ADMIN', 'LINEA', 'EMBARQUE', 'SUPERVISOR'],
+  ADMIN_TEC:  ['TECNICO', 'ADMIN_TEC'],
+  SUPERADMIN: ['SUPERADMIN', 'ADMIN', 'LINEA', 'EMBARQUE', 'SUPERVISOR', 'TECNICO', 'ADMIN_TEC'],
+};
+
+// ─── Helper: Verify Admin Role from Authorization Header ──────────────────
 // Receives JWT token and validates it's a real user with ADMIN role
 async function verifyAdminRole(bearerToken) {
   try {
@@ -33,11 +42,12 @@ async function verifyAdminRole(bearerToken) {
       }
 
       // Check if user has ADMIN role
-      if (userData.rol_name !== 'ADMIN') {
-        return { isValid: false, reason: `User role is ${userData.rol_name}, not ADMIN` };
+      const callerRole = userData.rol_name;
+      if (!ROLE_DOMAIN[callerRole]) {
+        return { isValid: false, reason: `Role ${callerRole} cannot manage users` };
       }
 
-      return { isValid: true, reason: 'Admin verified', userEmail: email };
+      return { isValid: true, callerRole, userEmail: email };
     } catch (decodeErr) {
       return { isValid: false, reason: 'Failed to decode JWT token' };
     }
@@ -58,7 +68,7 @@ export default async function handler(req, res) {
 
   // ─── Authorization Check ────────────────────────────────────────────────────
   const authHeader = req.headers.authorization;
-  const { isValid, reason } = await verifyAdminRole(authHeader);
+  const { isValid, reason, callerRole } = await verifyAdminRole(authHeader);
   
   if (!isValid) {
     console.error('[API/admin/users/:id] Auth failed:', reason);
@@ -69,8 +79,10 @@ export default async function handler(req, res) {
     });
   }
 
+  const allowedRoles = ROLE_DOMAIN[callerRole];
+
   if (req.method === 'PUT') {
-    const { user_name, id_rol, rol_name } = req.body;
+    const { user_name, id_rol, rol_name, new_password } = req.body;
     if (!user_name || !id_rol || !rol_name) {
       return res.status(400).json({ 
         error: 'Faltan campos requeridos.',
@@ -78,12 +90,18 @@ export default async function handler(req, res) {
       });
     }
 
-    // Validar que el rol sea permitido
-    const validRoles = ['ADMIN', 'LINEA', 'EMBARQUE', 'SUPERVISOR'];
-    if (!validRoles.includes(rol_name)) {
-      return res.status(400).json({ 
-        error: `Rol inválido. Debe ser uno de: ${validRoles.join(', ')}`,
-        code: 'INVALID_ROLE'
+    if (new_password && new_password.length < 6) {
+      return res.status(400).json({
+        error: 'La contraseña debe tener al menos 6 caracteres.',
+        code: 'PASSWORD_TOO_SHORT'
+      });
+    }
+
+    // Validar que el nuevo rol esté dentro del dominio del caller
+    if (!allowedRoles.includes(rol_name)) {
+      return res.status(403).json({ 
+        error: `No tienes permiso para asignar el rol ${rol_name}.`,
+        code: 'ROLE_DOMAIN_VIOLATION'
       });
     }
 
@@ -96,6 +114,14 @@ export default async function handler(req, res) {
       if (error) {
         console.error('RLS Error updating user:', error);
         throw error;
+      }
+
+      if (new_password) {
+        const { error: pwErr } = await supabase.auth.admin.updateUserById(id, { password: new_password });
+        if (pwErr) {
+          console.error('Auth password update error:', pwErr);
+          throw pwErr;
+        }
       }
       
       return res.status(200).json({ 

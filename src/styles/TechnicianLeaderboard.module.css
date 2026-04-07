@@ -1,0 +1,204 @@
+/* TechnicianLeaderboard.module.css */
+
+.leaderboard {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.title {
+  margin: 0 0 20px 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1f2937;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: #9ca3af;
+}
+
+.empty p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.tableContainer {
+  overflow-x: auto;
+  margin-bottom: 24px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.table thead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.table th {
+  padding: 14px;
+  text-align: left;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.row {
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+}
+
+.row:hover {
+  background-color: #f9fafb;
+}
+
+.rowTopThree:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.position {
+  width: 70px;
+  font-weight: 600;
+  color: #6b7280;
+  text-align: center;
+}
+
+.medal {
+  font-size: 1.2rem;
+  margin-right: 6px;
+}
+
+.name {
+  min-width: 150px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.techName {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.supports {
+  text-align: center;
+  min-width: 150px;
+}
+
+.supportCount {
+  display: inline-block;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.status {
+  text-align: center;
+  min-width: 120px;
+}
+
+.statusBadge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.statusActive {
+  background-color: #dcfce7;
+  color: #065f46;
+}
+
+.statusInactive {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.statItem {
+  text-align: center;
+  padding: 12px;
+  background: #f9fafb;
+  border-radius: 8px;
+}
+
+.statLabel {
+  display: block;
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.statValue {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #667eea;
+}
+
+@media (max-width: 768px) {
+  .leaderboard {
+    padding: 16px;
+  }
+
+  .title {
+    font-size: 1.1rem;
+  }
+
+  .table th,
+  .table td {
+    padding: 8px 10px;
+    font-size: 0.85rem;
+  }
+
+  .position {
+    width: 50px;
+  }
+
+  .supports,
+  .status {
+    min-width: 0;
+  }
+
+  .medal {
+    font-size: 1rem;
+  }
+
+  .supportCount {
+    font-size: 0.9rem;
+    padding: 2px 8px;
+  }
+
+  .stats {
+    grid-template-columns: 1fr;
+  }
+}

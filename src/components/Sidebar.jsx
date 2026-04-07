@@ -11,10 +11,13 @@ import styles from '@/styles/Sidebar.module.css';
 
 // ─── Colores y datos por rol ──────────────────────────────────────────────────
 const ROLE_COLOR = {
+  SUPERADMIN: '#0f172a',
   ADMIN:      '#3b82f6',
   EMBARQUE:   '#991caf',
   LINEA:      '#22c55e',
   SUPERVISOR: '#f59e0b',
+  TECNICO:    '#ec4899',
+  ADMIN_TEC:  '#d946ef',
 };
 
 // Mapeo de nombre de icono → componente (evita pasar JSX en constantes)
@@ -26,18 +29,47 @@ const ICONS = {
   dispatch:   <FaTruck />,
   boarding:   <FaLayerGroup />,
   shipping:   <FaShippingFast />,
+  maintenance: <FaLayerGroup />,
+  monitor:    <FaChartBar />,
 };
 
 // ─── Navegación por rol ───────────────────────────────────────────────────────
 // Agrega rutas/secciones aquí sin tocar el JSX.
 const NAV_BY_ROLE = {
+  SUPERADMIN: [
+    {
+      label: 'Administración',
+      links: [
+        { href: '/admin/Dashboard',          icon: 'dashboard',   label: 'Dashboard'                    },
+        { href: '/admin/Control',            icon: 'clipboard',   label: 'Request Control'              },
+        { href: '/admin/Management',         icon: 'users',       label: 'Gestión de Usuarios'         },
+        { href: '/admin/GlobalUsers',          icon: 'users',       label: 'Usuarios Globales'            },
+        { href: '/admin/MaintenanceAdmin',   icon: 'users',       label: 'Admin Mantenimiento'          },
+      ],
+    },
+    {
+      label: 'Operaciones',
+      links: [
+        { href: '/Request',  icon: 'request',  label: 'Solicitudes' },
+        { href: '/Dispatch', icon: 'dispatch', label: 'Despacho'    },
+        { href: '/Boarding', icon: 'boarding', label: 'Embarque'    },
+      ],
+    },
+    {
+      label: 'Mantenimiento',
+      links: [
+        { href: '/maintenance/RequestMaintenance', icon: 'maintenance', label: 'Solicitud Mtto' },
+        { href: '/maintenance/Monitor',            icon: 'monitor',    label: 'Monitor Mtto'   },
+      ],
+    },
+  ],
   ADMIN: [
     {
       label: 'Administración',
       links: [
-        { href: '/admin/Dashboard', icon: 'dashboard', label: 'Dashboard'       },
-        { href: '/admin/Control',   icon: 'clipboard', label: 'Request Control' },
-        { href: '/admin/Management',icon: 'users',     label: 'Administration'  },
+        { href: '/admin/Dashboard',  icon: 'dashboard', label: 'Dashboard'       },
+        { href: '/admin/Control',    icon: 'clipboard', label: 'Request Control' },
+        { href: '/admin/Management', icon: 'users',     label: 'Usuarios'        },
       ],
     },
     {
@@ -72,6 +104,30 @@ const NAV_BY_ROLE = {
       label: 'Mi área',
       links: [
         { href: '/Request', icon: 'request', label: 'Solicitudes' },
+        { href: '/maintenance/RequestMaintenance', icon: 'maintenance', label: 'Solicitud Mtto' },
+      ],
+    },
+  ],
+  HOME_POSITION: [
+    {
+      label: 'Mi área',
+      links: [
+        { href: '/maintenance/Monitor', icon: 'monitor', label: 'Solicitudes Mtto' },
+      ],
+    },
+  ],
+  ADMIN_TEC: [
+    {
+      label: 'Administración',
+      links: [
+        { href: '/admin/Management',       icon: 'users',   label: 'Usuarios Mtto'           },
+        { href: '/admin/MaintenanceAdmin', icon: 'users',   label: 'Admin Técnicos y Usuarios' },
+      ],
+    },
+    {
+      label: 'Monitoreo',
+      links: [
+        { href: '/maintenance/Monitor', icon: 'monitor', label: 'Monitor Mtto' },
       ],
     },
   ],
@@ -90,6 +146,7 @@ export default function Sidebar({ isOpen, onClose }) {
 
   const sections  = NAV_BY_ROLE[role] || [];
   const roleColor = ROLE_COLOR[role]  || '#3b82f6';
+  const isMttoRole = role === 'ADMIN_TEC' || role === 'HOME_POSITION';
 
   const handleLogout = async () => {
     onClose();
@@ -112,7 +169,7 @@ export default function Sidebar({ isOpen, onClose }) {
       />
 
       <aside
-        className={`${styles.sidebar} ${isOpen ? styles.sidebarOpen : ''}`}
+        className={`${styles.sidebar} ${isOpen ? styles.sidebarOpen : ''} ${isMttoRole ? styles.sidebarMtto : ''}`}
         aria-label="Navegación principal"
       >
         {/* ── Brand ───────────────────────────────────────────────────── */}
