@@ -2,7 +2,8 @@
 
 > **Documentación Profesional para Usuarios y Desarrolladores**
 > 
-> Última actualización: Marzo 2026
+> Última actualización: Abril 2026
+> Versión: 0.3.0 (GlobalUsers + Timeline mejorado + RLS/APIs completadas)
 
 ---
 
@@ -17,13 +18,12 @@
 - **[04-AUTENTICACION.md](04-AUTENTICACION.md)** - Sistema de autenticación y roles
 - **[05-BASE-DE-DATOS.md](05-BASE-DE-DATOS.md)** - Esquema y operaciones SQL
 - **[06-APIs.md](06-APIs.md)** - Endpoints REST documentados
-- **[07-COMPONENTES.md](07-COMPONENTES.md)** - Arquitectura de componentes
-- **[08-FLUJOS.md](08-FLUJOS.md)** - Flujos de datos end-to-end
+- **[09-FLUJOS-POR-ROL.md](09-FLUJOS-POR-ROL.md)** - Flujos de negocio por rol
+- **[10-HANDOVER.md](10-HANDOVER.md)** - Guía para nuevo desarrollador (NUEVO)
 
 ### ⚙️ OPERACIONAL
-- **[09-DESPLIEGUE.md](09-DESPLIEGUE.md)** - Guía de producción
-- **[10-TROUBLESHOOTING.md](10-TROUBLESHOOTING.md)** - Solución de problemas comunes
-- **[11-CALIDAD.md](11-CALIDAD.md)** - Estándares y mejoras
+- **[09-FLUJOS-POR-ROL.md](09-FLUJOS-POR-ROL.md)** - Flujos de negocio detallados por rol ⭐ LEER PRIMERO
+- **[10-HANDOVER.md](10-HANDOVER.md)** - Guía para nuevo desarrollador (onboarding rápido) ⭐ PARA HEREDAR
 
 ---
 
@@ -31,16 +31,15 @@
 
 | Documento | Audiencia | Nivel | Tiempo |
 |-----------|-----------|-------|--------|
+|-----------|-----------|-------|--------|
 | 01 Arquitectura | Tech + Managers | Medio | 15 min |
 | 02 Setup | Devs | Principiante | 10 min |
 | 03 Guía Usuario | Usuarios | Fácil | 20 min |
 | 04 Autenticación | Devs Senior | Avanzado | 20 min |
 | 05 Base de Datos | Devs + DBA | Avanzado | 25 min |
 | 06 APIs | Devs | Medio | 15 min |
-| 07 Componentes | Devs Front | Medio | 20 min |
-| 08 Flujos | Devs | Avanzado | 25 min |
-| 09 Despliegue | DevOps | Avanzado | 30 min |
-| 10 Troubleshooting | Support + Devs | Fácil-Medio | Variable |
+| **09 Flujos por Rol** | **Usuarios + Devs** | **Medio** | **25 min** |
+| **10 Handover** | **Devs (nuevos)** | **Fácil** | **40 min** |
 | 11 Calidad | Tech Lead | Avanzado | 20 min |
 
 ---
@@ -81,14 +80,15 @@
 ## 📈 Estadísticas del Proyecto
 
 ```
-Páginas (Routes):         7
-Componentes:              20+
-API Endpoints:            4 (CRUD)
-Líneas de Código:         3000+
-Tests Unitarios:          0 ⚠️
-Cobertura:                0% ⚠️
-Problemas Críticos:       4 🔴
-Problemas Importantes:    9 🟡
+Páginas (Routes):         8 (+ GlobalUsers)
+Componentes:              25+
+API Endpoints:            6 (CRUD + Queue + Status)
+Líneas de Código:         3500+
+Tests Unitarios:          0 ⚠️ [RECOMENDADO: Cypress E2E]
+Cobertura:                0% 🟡
+Problemas Críticos:       0 ✅ [Resueltos marzo 2026]
+Problemas Importantes:    0 ✅ [Resueltos marzo 2026]
+RLS Políticas:            12+ ✅ [ACTIVAS]
 ```
 
 ---

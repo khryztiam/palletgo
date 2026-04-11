@@ -53,16 +53,30 @@ Según tu rol, tienes acceso a diferentes áreas:
 ---
 
 ### 🟢 SUPERVISOR - Ver Estadísticas
-**Acceso:** Supervisa el día de trabajo
+**Acceso:** Supervisa el día de trabajo (casi lo mismo que ADMIN, pero SIN crear/editar/eliminar usuarios)
 
 **Qué ves:**
-- ✅ Dashboard con gráficos
-- ✅ Tabla de todas las órdenes del día
+- ✅ Dashboard con gráficos (donut de estados, barras por área)
+- ✅ Tabla de todas las órdenes del día (Control)
 - ✅ Filtros por estado
 - ✅ Exportar datos a Excel
-- ✅ Editar órdenes si es necesario
+- ✅ Editar órdenes si es necesario (cambiar estado, comentarios)
+- ❌ NO puedes crear/editar/eliminar usuarios
 
 **Dónde:** Menú → "Dashboard" y "Control"
+
+**Permiso especial:** Si necesitas promover a alguien a SUPERVISOR, contacta a ADMIN
+
+**Diferencia clave ADMIN vs SUPERVISOR:**
+| Función | ADMIN | SUPERVISOR |
+|---------|-------|------------|
+| Ver Dashboard | ✅ | ✅ |
+| Ver Control | ✅ | ✅ |
+| Editar órdenes | ✅ | ✅ |
+| Crear usuarios | ✅ | ❌ |
+| Editar usuarios | ✅ | ❌ |
+| Eliminar usuarios | ✅ | ❌ |
+| Ver lista de usuarios | ✅ | ❌ |
 
 ---
 
@@ -71,10 +85,26 @@ Según tu rol, tienes acceso a diferentes áreas:
 
 **Todas las funciones de LINEA + EMBARQUE + SUPERVISOR +**
 - ✅ Crear/editar/eliminar usuarios
-- ✅ Ver reportes avanzados
-- ✅ Gestionar permisos
+- ✅ Ver lista global de usuarios (GlobalUsers - NUEVO)
+- ✅ Reportes avanzados
+- ✅ Gestionar permisos y roles
 
-**Dónde:** Menú → "Gestión de Usuarios" (además del resto)
+**Dónde:** Menú → "Gestión de Usuarios" + "Vista Global de Usuarios" (además del resto)
+
+---
+
+## 📊 Tabla de Acceso Rápida
+
+| Función | LINEA | EMBARQUE | SUPERVISOR | ADMIN |
+|---------|-------|----------|------------|-------|
+| **Crear solicitud** | ✅ | ❌ | ❌ | ✅ |
+| **Ver solicitudes** | ✅ (solo mis) | ✅ (todas) | ✅ (todas) | ✅ (todas) |
+| **Despacho** | ❌ | ✅ | ✅ (read-only) | ✅ |
+| **Embarques** | ❌ | ✅ | ✅ (read-only) | ✅ |
+| **Dashboard** | ❌ | ❌ | ✅ | ✅ |
+| **Control (Tabla)** | ❌ | ❌ | ✅ | ✅ |
+| **Gestión usuarios** | ❌ | ❌ | ❌ | ✅ |
+| **Vista global usuarios** | ❌ | ❌ | ❌ | ✅ |
 
 ---
 

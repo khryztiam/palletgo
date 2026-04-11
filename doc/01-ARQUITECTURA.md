@@ -244,6 +244,21 @@ Funcionalidad:
 Seguridad: rollback automático si falla
 ```
 
+#### GlobalUsers.js - Vista Global de Usuarios (**NUEVO v0.3.0**)
+```
+Roles: ADMIN
+Funcionalidad:
+  ✅ Tabla de TODOS los usuarios (no paginada)
+  ✅ Resumen por rol (tarjetas: ADMIN, EMBARQUE, LINEA, SUPERVISOR)
+  ✅ Métricas de actividad
+  ✅ Filtros por rol
+  ✅ Exportar usuario list to CSV
+Realtime: No realtime (datos estables)
+Casi todos estos componentes están en:
+  StatusCards.js (resumen por estado)
+  GlobalUsersList.js (tabla de usuarios)
+```
+
 ---
 
 ## 🔄 Flujo de Datos (End-to-End)
