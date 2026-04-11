@@ -1,7 +1,6 @@
 /* ======= Container ======= */
 .container {
   width: 100%;
-  max-width: 1200px;
   /* FIX: eliminado margin: 80px auto — el Layout maneja el espaciado */
   padding: 0 4px 20px;
 }

@@ -93,8 +93,9 @@
 │  │  │Dispatch  │  │OrdersTable│                      │   │
 │  │  │Boarding  │  │Timeline   │  ┌──────────────┐    │   │
 │  │  │Dashboard │  │ExportData │  │ CSS Modules  │    │   │
-│  │  │Control   │  └──────────┘  │ (Scoped)     │    │   │
-│  │  └──────────┘                 └──────────────┘    │   │
+│  │  │Summary   │  │Top5Turno  │  │ (Scoped)     │    │   │
+│  │  │Control   │  └──────────┘  └──────────────┘    │   │
+│  │  └──────────┘                                     │   │
 │  │                                                    │   │
 │  │  Supabase JS Client (supabase.js)                │   │
 │  │  - .auth.signInWithPassword()                     │   │
@@ -200,24 +201,15 @@ Realtime: Suscrito a events INSERT de orders
 ```
 Roles: EMBARQUE, SUPERVISOR, ADMIN
 Funcionalidad:
-  ✅ Ver órdenes activas (últimas 25)
+  ✅ Ver órdenes activas (pagina 50/página)
+  ✅ Filtro de turno AUTO / Turno 1 / Turno 2
   ✅ Timer automático de duración
   ✅ Notificaciones de voz (TTS)
   ✅ Modal para cambiar estado
-  ✅ Audio feedback
+  ✅ Top 3 entregadores del turno
+  ✅ Modal de detalle de orden
+  ✅ Entregadores CRUD
 Realtime: Suscrito a INSERT + UPDATE (continuo)
-```
-
-#### Control.js - Gestión Diaria
-```
-Roles: ADMIN, SUPERVISOR
-Funcionalidad:
-  ✅ Filtro por dia (HOY)
-  ✅ Tabla de órdenes con filtros
-  ✅ Resumen por estado (tarjetas)
-  ✅ Editar/eliminar órdenes
-  ✅ Exportar CSV
-Realtime: Actualiza en vivo
 ```
 
 #### Dashboard.js - Estadísticas
@@ -225,11 +217,30 @@ Realtime: Actualiza en vivo
 Roles: ADMIN, SUPERVISOR
 Funcionalidad:
   ✅ Filtro por fecha (rango)
+  ✅ KPI SLA promedio (meta 20 min) con indicador ok/warn/bad
+  ✅ KPI Total órdenes + órdenes activas
   ✅ Gráfico donut (estados)
-  ✅ Gráfico barras (áreas)
+  ✅ Gráfico barras (por área)
+  ✅ Top 5 áreas por turno (Top5Turno)
   ✅ Timeline (últimas 10)
   ✅ CSV export
 Rendering: Datos procesados fuera del render
+```
+
+#### Summary.js - Resumen Ejecutivo (**NUEVO v0.3.0**)
+```
+Roles: ADMIN, SUPERVISOR, SUPERADMIN
+Funcionalidad:
+  ✅ KPIs: total órdenes, tiempo prom entrega, T1/T2, SLA <=20min %
+  ✅ Gráfico barras apiladas por área/turno
+  ✅ Gráfico línea de tendencia diaria por turno
+  ✅ Dona de distribución por turno
+  ✅ Barras de rangos de duración (0-10 / 11-20 / 21-30 / >30 min)
+  ✅ Tabla detallada con paginación (30 filas/página en rangos >=7d)
+  ✅ Bloqueo automático tabla en rangos >=30d (redirige a Dashboard)
+  ✅ Atajos de rango: Hoy / 7D / 30D
+Default: últimos 7 días
+Filtro: Solo muestra órdenes con todos los campos completos
 ```
 
 #### Management.js - CRUD Usuarios

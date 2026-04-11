@@ -9,6 +9,7 @@ import styles from '@/styles/Layout.module.css';
 // Agrega aquí las rutas nuevas que crees en el futuro.
 const PAGE_META = {
   '/admin/Dashboard': { title: 'Dashboard',         subtitle: 'Panel de Administración'              },
+  '/admin/Summary':   { title: 'Summary',           subtitle: 'Resumen ejecutivo de operación'       },
   '/admin/Control':   { title: 'Request Control',   subtitle: 'Control de solicitudes del día'       },
   '/admin/Management':{ title: 'Administration',    subtitle: 'Gestión de usuarios del sistema'      },
   '/Request':         { title: 'Solicitudes',       subtitle: 'Crea y consulta tus órdenes'          },

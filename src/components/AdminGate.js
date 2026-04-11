@@ -6,11 +6,11 @@ import styles from '@/styles/AdminGate.module.css';
 // ─── Rutas permitidas por rol ─────────────────────────────────────────────────
 // Centralizado: agregar un rol o ruta es una sola línea aquí.
 const ROLE_ROUTES = {
-  SUPERADMIN: ['/admin/Dashboard', '/admin/Control', '/admin/Management', '/admin/GlobalUsers', '/Request', '/Dispatch', '/Boarding'],
-  ADMIN:      ['/admin/Dashboard', '/admin/Control', '/admin/Management'],
+  SUPERADMIN: ['/admin/Dashboard', '/admin/Summary', '/admin/Control', '/admin/Management', '/admin/GlobalUsers', '/Request', '/Dispatch', '/Boarding'],
+  ADMIN:      ['/admin/Dashboard', '/admin/Summary', '/admin/Control', '/admin/Management'],
   LINEA:      ['/Request'],
   EMBARQUE:   ['/Dispatch', '/Boarding'],
-  SUPERVISOR: ['/admin/Dashboard', '/admin/Control'],
+  SUPERVISOR: ['/admin/Dashboard', '/admin/Summary', '/admin/Control'],
 };
 
 const OPEN_ROUTES = ['/', '/login'];

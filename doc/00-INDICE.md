@@ -3,7 +3,7 @@
 > **Documentación Profesional para Usuarios y Desarrolladores**
 > 
 > Última actualización: Abril 2026
-> Versión: 0.3.0 (GlobalUsers + Timeline mejorado + RLS/APIs completadas)
+> Versión: 0.3.0 (GlobalUsers + Summary Ejecutivo + Timeline mejorado + RLS/APIs completadas)
 
 ---
 
@@ -18,8 +18,6 @@
 - **[04-AUTENTICACION.md](04-AUTENTICACION.md)** - Sistema de autenticación y roles
 - **[05-BASE-DE-DATOS.md](05-BASE-DE-DATOS.md)** - Esquema y operaciones SQL
 - **[06-APIs.md](06-APIs.md)** - Endpoints REST documentados
-- **[09-FLUJOS-POR-ROL.md](09-FLUJOS-POR-ROL.md)** - Flujos de negocio por rol
-- **[10-HANDOVER.md](10-HANDOVER.md)** - Guía para nuevo desarrollador (NUEVO)
 
 ### ⚙️ OPERACIONAL
 - **[09-FLUJOS-POR-ROL.md](09-FLUJOS-POR-ROL.md)** - Flujos de negocio detallados por rol ⭐ LEER PRIMERO
@@ -80,14 +78,14 @@
 ## 📈 Estadísticas del Proyecto
 
 ```
-Páginas (Routes):         8 (+ GlobalUsers)
+Páginas (Routes):         9 (+ Summary Ejecutivo)
 Componentes:              25+
 API Endpoints:            6 (CRUD + Queue + Status)
-Líneas de Código:         3500+
-Tests Unitarios:          0 ⚠️ [RECOMENDADO: Cypress E2E]
+Líneas de Código:         3800+
+Tests Unitarios:          0 ⚠️ [RECOMENDADO: Vitest/Cypress]
 Cobertura:                0% 🟡
-Problemas Críticos:       0 ✅ [Resueltos marzo 2026]
-Problemas Importantes:    0 ✅ [Resueltos marzo 2026]
+Problemas Críticos:       0 ✅ [Resueltos abril 2026]
+Problemas Importantes:    0 ✅ [Resueltos abril 2026]
 RLS Políticas:            12+ ✅ [ACTIVAS]
 ```
 

@@ -33,6 +33,20 @@ const formatOrdersForExport = (orders) =>
     'Fecha Entrega':     formatDateTime(order.date_delivery),
   }));
 
+export const exportOrdersCsv = (orders, dateRange) => {
+  if (!orders?.length) return;
+
+  const csv  = Papa.unparse(formatOrdersForExport(orders));
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url  = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+
+  link.download = `orders_${dateRange.start || 'inicio'}_${dateRange.end || 'fin'}.csv`;
+  link.href = url;
+  link.click();
+  window.URL.revokeObjectURL(url);
+};
+
 // ─── Colores por status ───────────────────────────────────────────────────────
 const SUMMARY_BOX_CLASS = {
   solicitado: styles.solicitado,
@@ -42,19 +56,9 @@ const SUMMARY_BOX_CLASS = {
 };
 
 // ─── Component ────────────────────────────────────────────────────────────────
-const ExportData = ({ data, dateRange, summary }) => {
+const ExportData = ({ data, dateRange, summary, showButton = true }) => {
   const handleExport = () => {
-    if (data.length === 0) return; // El botón ya está disabled, pero por seguridad
-
-    const csv  = Papa.unparse(formatOrdersForExport(data));
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url  = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
-
-    link.download = `orders_${dateRange.start || 'inicio'}_${dateRange.end || 'fin'}.csv`;
-    link.href = url;
-    link.click();
-    window.URL.revokeObjectURL(url);
+    exportOrdersCsv(data, dateRange);
   };
 
   const summaryItems = [
@@ -78,14 +82,16 @@ const ExportData = ({ data, dateRange, summary }) => {
         </div>
       </div>
 
-      <button
-        onClick={handleExport}
-        className={styles.csvExportBtn}
-        disabled={data.length === 0}
-      >
-        <FaFileCsv />
-        Exportar {data.length} Registros a CSV
-      </button>
+      {showButton && (
+        <button
+          onClick={handleExport}
+          className={styles.csvExportBtn}
+          disabled={data.length === 0}
+        >
+          <FaFileCsv />
+          Exportar {data.length} Registros a CSV
+        </button>
+      )}
     </div>
   );
 };

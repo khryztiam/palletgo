@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useAuth } from '@/context/AuthContext';
 import {
   FaHome, FaClipboardList, FaShippingFast, FaUserCog,
-  FaSignOutAlt, FaTimes, FaChartBar, FaTruck, FaLayerGroup, FaUsers,
+  FaSignOutAlt, FaTimes, FaChartBar, FaTruck, FaLayerGroup, FaUsers, FaChartLine,
 } from 'react-icons/fa';
 import styles from '@/styles/Sidebar.module.css';
 
@@ -21,6 +21,7 @@ const ROLE_COLOR = {
 // Mapeo de nombre de icono → componente (evita pasar JSX en constantes)
 const ICONS = {
   dashboard:    <FaChartBar />,
+  summary:      <FaChartLine />,
   clipboard:    <FaClipboardList />,
   users:        <FaUserCog />,
   globalusers:  <FaUsers />,
@@ -38,6 +39,7 @@ const NAV_BY_ROLE = {
       label: 'Administración',
       links: [
         { href: '/admin/Dashboard',   icon: 'dashboard',   label: 'Dashboard'       },
+        { href: '/admin/Summary',     icon: 'summary',     label: 'Summary'         },
         { href: '/admin/Control',     icon: 'clipboard',   label: 'Request Control' },
         { href: '/admin/GlobalUsers', icon: 'globalusers', label: 'Global Users'    },
       ],
@@ -56,6 +58,7 @@ const NAV_BY_ROLE = {
       label: 'Administración',
       links: [
         { href: '/admin/Dashboard',  icon: 'dashboard', label: 'Dashboard'       },
+        { href: '/admin/Summary',    icon: 'summary',   label: 'Summary'         },
         { href: '/admin/Control',    icon: 'clipboard', label: 'Request Control' },
         { href: '/admin/Management', icon: 'users',     label: 'Administration'  },
       ],
@@ -66,6 +69,7 @@ const NAV_BY_ROLE = {
       label: 'Supervisión',
       links: [
         { href: '/admin/Dashboard', icon: 'dashboard', label: 'Dashboard'      },
+        { href: '/admin/Summary',   icon: 'summary',   label: 'Summary'        },
         { href: '/admin/Control',   icon: 'clipboard', label: 'Request Control'},
       ],
     },

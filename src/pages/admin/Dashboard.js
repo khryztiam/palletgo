@@ -5,8 +5,9 @@ import { supabase } from "@/lib/supabase";
 import DashboardHeader from "@/components/admin/DashboardHeader";
 import DonutChart from "@/components/admin/DonutChart";
 import BarChart from "@/components/admin/BarChart";
+import Top5Turno from "@/components/admin/Top5Turno";
 import Timeline from "@/components/admin/Timeline";
-import ExportData from "@/components/admin/ExportData";
+import { exportOrdersCsv } from "@/components/admin/ExportData";
 import styles from "@/styles/Dashboard.module.css";
 
 // ─── Utils de fecha ───────────────────────────────────────────────────────────
@@ -44,6 +45,13 @@ const processOrdersData = (orders) => {
   const nextSummary  = { request: 0, in_progress: 0, delivered: 0, canceled: 0 };
   const nextUserBars = {};
   const nextTimeline = [];
+  const topTurnoMap = {
+    "Turno 1": {},
+    "Turno 2": {},
+  };
+
+  let sumaDuracion = 0;
+  let totalConDuracion = 0;
 
   (orders || []).forEach((order, index) => {
     const statusKey = STATUS_MAP[order.status];
@@ -64,19 +72,51 @@ const processOrdersData = (orders) => {
         date_delivery: order.date_delivery ? new Date(order.date_delivery) : null,
       });
     }
+
+    const hora = order.date_order ? new Date(order.date_order).getHours() : null;
+    const turno = hora !== null && hora >= 1 && hora < 14
+      ? "Turno 1"
+      : hora !== null && hora >= 14 && hora < 24
+        ? "Turno 2"
+        : null;
+
+    if (turno) {
+      const areaTurno = order.area || "SIN AREA";
+      topTurnoMap[turno][areaTurno] = (topTurnoMap[turno][areaTurno] || 0) + 1;
+    }
+
+    const duracion = Number(order.duration);
+    if (Number.isFinite(duracion)) {
+      sumaDuracion += duracion;
+      totalConDuracion += 1;
+    }
   });
 
-  return { nextSummary, nextUserBars, nextTimeline };
+  const avgDuration = totalConDuracion ? (sumaDuracion / totalConDuracion) : 0;
+
+  const topTurno = {
+    "Turno 1": Object.entries(topTurnoMap["Turno 1"])
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5),
+    "Turno 2": Object.entries(topTurnoMap["Turno 2"])
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5),
+  };
+
+  return { nextSummary, nextUserBars, nextTimeline, avgDuration, topTurno };
 };
 
 // ─── Dashboard Page ───────────────────────────────────────────────────────────
 export default function DashboardPage() {
   const todayStr = useMemo(() => formatDateInput(new Date()), []);
+  const defaultRange = useMemo(() => ({ start: todayStr, end: todayStr }), [todayStr]);
 
-  const [dateRange, setDateRange] = useState({ start: todayStr, end: todayStr });
+  const [dateRange, setDateRange] = useState(defaultRange);
   const [summary,   setSummary]   = useState({ request: 0, in_progress: 0, delivered: 0, canceled: 0 });
   const [userBars,  setUserBars]  = useState({});
   const [timeline,  setTimeline]  = useState([]);
+  const [topTurno, setTopTurno] = useState({ "Turno 1": [], "Turno 2": [] });
+  const [avgDuration, setAvgDuration] = useState(0);
   const [ordersData,setOrdersData]= useState([]);
   const [loading,   setLoading]   = useState(false);
   const [errorMsg,  setErrorMsg]  = useState("");
@@ -98,11 +138,13 @@ export default function DashboardPage() {
 
         if (error) throw error;
 
-        const { nextSummary, nextUserBars, nextTimeline } = processOrdersData(allOrders);
+          const { nextSummary, nextUserBars, nextTimeline, avgDuration, topTurno } = processOrdersData(allOrders);
 
         setSummary(nextSummary);
         setUserBars(nextUserBars);
         setTimeline(nextTimeline);
+          setTopTurno(topTurno);
+          setAvgDuration(avgDuration);
         setOrdersData(allOrders);
       } catch (err) {
         console.error("Error cargando dashboard:", err);
@@ -115,13 +157,43 @@ export default function DashboardPage() {
     fetchDashboardData();
   }, [dateRange.start, dateRange.end]);
 
+  const totalOrdenes = ordersData.length;
+  const activas = summary.request + summary.in_progress;
+
+  const estadoSla = avgDuration <= 20
+    ? { texto: "Cumpliendo SLA", clase: styles.slaOk }
+    : avgDuration <= 23
+      ? { texto: "En riesgo", clase: styles.slaWarn }
+      : { texto: "Fuera de SLA", clase: styles.slaBad };
+
   // ── Handlers de fecha ────────────────────────────────────────────────────
   const handleDateChange = (type, value) => {
-    if (type === "start" && !value) {
-      setDateRange({ start: "", end: "" });
-    } else {
-      setDateRange(prev => ({ ...prev, [type]: value || prev.start }));
-    }
+    setDateRange((prev) => {
+      if (type === 'start') {
+        const nextStart = value || prev.start;
+        const nextEnd = !prev.end || prev.end < nextStart ? nextStart : prev.end;
+        return { start: nextStart, end: nextEnd };
+      }
+
+      const nextEnd = value || prev.end || prev.start || todayStr;
+      const nextStart = !prev.start || prev.start > nextEnd ? nextEnd : prev.start;
+      return { start: nextStart, end: nextEnd };
+    });
+  };
+
+  const handleQuickRange = (days) => {
+    const end = new Date();
+    const start = new Date();
+    start.setDate(end.getDate() - (days - 1));
+
+    setDateRange({
+      start: formatDateInput(start),
+      end: formatDateInput(end),
+    });
+  };
+
+  const handleExport = () => {
+    exportOrdersCsv(ordersData, dateRange);
   };
 
   return (
@@ -131,7 +203,12 @@ export default function DashboardPage() {
           dateRange={dateRange}
           onDateChange={handleDateChange}
           onQuickToday={() => setDateRange({ start: todayStr, end: todayStr })}
-          onClearAll={()  => setDateRange({ start: "", end: "" })}
+          onQuick7Days={() => handleQuickRange(7)}
+          onQuick30Days={() => handleQuickRange(30)}
+          onClearAll={() => setDateRange(defaultRange)}
+          onExport={handleExport}
+          exportLabel={`Exportar ${ordersData.length} CSV`}
+          disableExport={ordersData.length === 0}
         />
 
         {/* Estados de carga y error: antes eran style={{}} inline */}
@@ -139,15 +216,36 @@ export default function DashboardPage() {
         {errorMsg && <div className={styles.error}>{errorMsg}</div>}
 
         {!loading && (
-          <div className={styles.visuals}>
-            <DonutChart data={summary} />
-            <ExportData
-              data={ordersData}
-              dateRange={dateRange}
-              summary={summary}
-            />
-            <BarChart areaData={userBars} />
-          </div>
+          <>
+            <div className={styles.quickKpis}>
+              <article className={styles.quickKpiCard}>
+                <span>Total ordenes</span>
+                <strong>{totalOrdenes}</strong>
+              </article>
+              <article className={styles.quickKpiCard}>
+                <span>Ordenes activas</span>
+                <strong>{activas}</strong>
+              </article>
+                <article className={`${styles.quickKpiCard} ${estadoSla.clase}`}>
+                  <span>SLA promedio (meta 20 min)</span>
+                  <strong>{avgDuration.toFixed(1)} min</strong>
+                  <small>{estadoSla.texto}</small>
+              </article>
+            </div>
+
+            <div className={styles.barLine}>
+              <BarChart areaData={userBars} />
+            </div>
+
+              <div className={styles.bottomLine}>
+                <div className={styles.bottomDonut}>
+                  <DonutChart data={summary} compact />
+                </div>
+                <div className={styles.bottomTop}>
+                  <Top5Turno topTurno={topTurno} />
+                </div>
+              </div>
+          </>
         )}
 
         {timeline.length > 0 && <Timeline events={timeline} />}

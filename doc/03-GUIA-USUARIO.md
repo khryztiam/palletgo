@@ -102,6 +102,7 @@ Según tu rol, tienes acceso a diferentes áreas:
 | **Despacho** | ❌ | ✅ | ✅ (read-only) | ✅ |
 | **Embarques** | ❌ | ✅ | ✅ (read-only) | ✅ |
 | **Dashboard** | ❌ | ❌ | ✅ | ✅ |
+| **Summary Ejecutivo** | ❌ | ❌ | ✅ | ✅ |
 | **Control (Tabla)** | ❌ | ❌ | ✅ | ✅ |
 | **Gestión usuarios** | ❌ | ❌ | ❌ | ✅ |
 | **Vista global usuarios** | ❌ | ❌ | ❌ | ✅ |
@@ -204,8 +205,11 @@ Si no tienes credenciales, contacta a tu administrador.
 3. Click "Guardar"
 
 **Ver órdenes a entregar:**
-- Lista abajo mostrará las últimas órdenes
-- Puedes filtrar por entregador
+- Lista abajo mostrará las últimas órdenes del turno activo
+- **Filtro de turno:** AUTO (detecta el turno actual) o manual (Turno 1 / Turno 2)
+- Paginación: 50 órdenes por página
+- **Top 3 entregadores del turno:** aparece al costado con conteo de entregas
+- Al hacer click en una orden se abre el detalle completo
 
 ---
 
@@ -214,20 +218,53 @@ Si no tienes credenciales, contacta a tu administrador.
 **Ubicación:** Menú → "Dashboard"
 
 **Qué ves:**
-- **Filtro de fechas:** Cambia el rango (ej: esta semana)
-- **Gráfico Dona:** Resumen de estados (cuántas solicitadas, en progreso, entregadas)
-- **Gráfico Barras:** Órdenes por área (cuál zona tiene más)
+- **Filtro de fechas:** Cambia el rango (Hoy / 7 días / 30 días o personalizado)
+- **KPI SLA promedio:** Meta 20 min — verde = cumpliendo, amarillo = en riesgo, rojo = fuera de SLA
+- **KPI Total órdenes** y **órdenes activas** del periodo seleccionado
+- **Gráfico Dona:** Resumen de estados (Solicitado, En Progreso, Entregado, Cancelado)
+- **Gráfico Barras:** Órdenes por área
+- **Top 5 áreas por turno:** Cuáles zonas generan más solicitudes en Turno 1 y Turno 2
 - **Timeline:** Últimas 10 órdenes (historial)
 - **Exportar CSV:** Descargar datos a Excel
 
 **Usar filtro:**
-1. Click en las fechas
-2. Selecciona rango (ej: 1 mar - 10 mar)
-3. Los gráficos se actualizan automáticamente
+1. Click en las fechas o usar atajos rápidos (Hoy / 7D / 30D)
+2. Los gráficos se actualizan automáticamente
 
 ---
 
-### 6. SUPERVISOR: Control del Día
+### 6. SUPERVISOR: Summary Ejecutivo (**NUEVO**)
+
+**Ubicación:** Menú → "Summary"
+
+**Para qué sirve:** Vista analítica consolidada para revisar el desempeño por turno en un rango de fechas.
+
+**Qué ves:**
+- **KPIs en la parte superior:**
+  - Total de órdenes del periodo
+  - Tiempo promedio de entrega (minutos)
+  - Total Turno 1 / Total Turno 2
+  - Cumplimiento SLA (órdenes entregadas en ≤20 min)
+- **Gráfico de barras apiladas:** Órdenes por área separadas por turno
+- **Gráfico de línea:** Tendencia diaria de órdenes por turno
+- **Dona:** Distribución Turno 1 vs Turno 2
+- **Rangos de duración:** Cuántas órdenes tardaron 0-10 / 11-20 / 21-30 / >30 min
+- **Tabla detallada:** Hora, solicitante, detalles, duración, entregador
+
+**Comportamiento de la tabla según el rango:**
+| Rango seleccionado | Comportamiento de la tabla |
+|-------------------|---------------------------|
+| 1 día (Hoy) | Muestra todas las filas sin paginar |
+| 2–29 días | Paginada (30 filas por página) |
+| 30+ días | Tabla bloqueada — ir a Dashboard para exportar |
+
+**Nota:** Solo se incluyen órdenes con todos los campos completos (fecha, área, duración, entregador, detalles).
+
+**Default:** Últimos 7 días al abrir la vista.
+
+---
+
+### 7. SUPERVISOR: Control del Día
 
 **Ubicación:** Menú → "Control"
 
@@ -248,7 +285,7 @@ Si no tienes credenciales, contacta a tu administrador.
 
 ---
 
-### 7. ADMIN: Gestión de Usuarios
+### 8. ADMIN: Gestión de Usuarios
 
 **Ubicación:** Menú → "Gestión de Usuarios"
 

@@ -1,7 +1,6 @@
 /* ======= Container ======= */
 .container {
   width: 100%;
-  max-width: 1200px;
   font-family: 'Poppins', sans-serif;
 }
 
@@ -48,11 +47,29 @@
 
 /* ======= Header / Filters ======= */
 .header {
-  padding: 20px;
+  padding: 12px;
   background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
   margin-bottom: 10px;
+}
+
+.headerTopRow {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.headerHintRow {
+  margin-top: 6px;
+  display: flex;
+  justify-content: space-between;
+  color: #6b7280;
+  font-size: 0.78rem;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .filters {
@@ -60,6 +77,35 @@
   flex-direction: column;
   gap: 12px;
   align-items: stretch;
+}
+
+.filtersCompact {
+  display: flex;
+  align-items: end;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.quickFilters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.quickFilters button {
+  padding: 6px 10px;
+  cursor: pointer;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  font-size: 0.82rem;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.quickFilters button:hover {
+  background: #f8fafc;
 }
 
 .filtersRow {
@@ -73,23 +119,22 @@
 .filterGroup {
   display: flex;
   flex-direction: column;
-  min-width: 140px;
-  flex: 1;
+  min-width: 120px;
 }
 
 .filterGroup label {
-  font-size: 0.9rem;
+  font-size: 0.78rem;
   color: #666;
-  margin-bottom: 5px;
+  margin-bottom: 3px;
   font-weight: 500;
 }
 
 .filterGroup input,
 .filterGroup select {
-  padding: 8px 10px;
+  padding: 6px 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  font-size: 0.95rem;
+  font-size: 0.86rem;
 }
 
 .filterGroup button {
@@ -106,6 +151,65 @@
   background: #f5f5f5;
 }
 
+.quickKpis {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.quickKpiCard {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 10px 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.quickKpiCard span {
+  display: block;
+  color: #6b7280;
+  font-size: 0.82rem;
+}
+
+.quickKpiCard strong {
+  display: block;
+  color: #111827;
+  margin-top: 3px;
+  font-size: 1.35rem;
+}
+
+.quickKpiCard small {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.slaOk {
+  border-left: 4px solid #16a34a;
+}
+
+.slaOk small {
+  color: #166534;
+}
+
+.slaWarn {
+  border-left: 4px solid #d97706;
+}
+
+.slaWarn small {
+  color: #b45309;
+}
+
+.slaBad {
+  border-left: 4px solid #dc2626;
+}
+
+.slaBad small {
+  color: #b91c1c;
+}
+
 /* ======= Visuals Grid ======= */
 .visuals {
   display: flex;
@@ -113,6 +217,39 @@
   gap: 0.8rem;
   margin-bottom: 6px;
   width: 100%;
+}
+
+.barLine {
+  width: 100%;
+  margin-bottom: 6px;
+}
+
+.bottomLine {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-bottom: 6px;
+  align-items: stretch;
+}
+
+.bottomLine > * {
+  min-width: 0;
+}
+
+.bottomDonut {
+  min-width: 0;
+  display: flex;
+}
+
+.bottomTop {
+  min-width: 0;
+  display: flex;
+}
+
+@media (min-width: 1100px) {
+  .bottomLine {
+    grid-template-columns: minmax(300px, 0.4fr) minmax(0, 0.6fr);
+  }
 }
 
 .visuals > * {
@@ -133,6 +270,124 @@
   border-radius: 8px;
   width: 100%;
   box-sizing: border-box;
+}
+
+.topTurnoCard {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 14px;
+  width: 100%;
+  height: 100%;
+}
+
+.topTurnoCard h3 {
+  font-size: 1.2rem;
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #d61313;
+  padding-bottom: 6px;
+}
+
+.topTurnoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.topTurnoCol {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 8px;
+  min-width: 0;
+}
+
+.topTurnoCol h4 {
+  margin: 0 0 6px;
+  font-size: 0.9rem;
+  color: #1f2937;
+}
+
+.topTurnoList {
+  margin: 0;
+  padding: 0 0 0 16px;
+}
+
+.topTurnoBars {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.topTurnoBarItem {
+  min-width: 0;
+}
+
+.topTurnoBarHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.84rem;
+  margin-bottom: 3px;
+}
+
+.topTurnoBarHead span {
+  color: #374151;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.topTurnoBarHead strong {
+  color: #111827;
+  flex-shrink: 0;
+}
+
+.topTurnoTrack {
+  width: 100%;
+  height: 7px;
+  border-radius: 999px;
+  background: #e5e7eb;
+  overflow: hidden;
+}
+
+.topTurnoFill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #1e88e5, #1f2a9e);
+}
+
+.topTurnoList li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 0;
+  font-size: 0.85rem;
+}
+
+.topTurnoList li span {
+  color: #374151;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.topTurnoList li strong {
+  color: #111827;
+  flex-shrink: 0;
+}
+
+.topTurnoEmpty {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #6b7280;
 }
 
 /* ======= Timeline (cards) ======= */
@@ -289,7 +544,17 @@
 .barchartWrapper {
   position: relative;
   width: 100%;
-  height: 300px;
+  height: 250px;
+}
+
+.barchartScroll {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.barchartCanvasWide {
+  width: 100%;
 }
 
 @media (max-width: 768px) {
@@ -303,7 +568,7 @@
   }
 
   .barchartWrapper {
-    height: 300px;
+    height: 220px;
   }
 }
 
@@ -319,7 +584,7 @@
   }
 
   .barchartWrapper {
-    height: 240px;
+    height: 200px;
   }
 }
 
@@ -342,6 +607,12 @@
   margin-bottom: 6px;
 }
 
+.donutchartContainerCompact {
+  padding: 14px;
+  margin-bottom: 0;
+  height: 100%;
+}
+
 .donutchartContainer h3 {
   font-size: 1.5rem;
   color: #333;
@@ -357,6 +628,15 @@
   height: 300px;
 }
 
+.donutchartWrapperCompact {
+  height: 190px;
+}
+
+.bottomLine .donutchartContainer,
+.bottomLine .topTurnoCard {
+  margin-bottom: 0;
+}
+
 @media (max-width: 768px) {
   .donutchartContainer h3 {
     font-size: 1.2rem;
@@ -369,6 +649,10 @@
 
   .donutchartWrapper {
     height: 240px;
+  }
+
+  .donutchartWrapperCompact {
+    height: 180px;
   }
 }
 
@@ -384,6 +668,10 @@
 
   .donutchartWrapper {
     height: 220px;
+  }
+
+  .donutchartWrapperCompact {
+    height: 165px;
   }
 }
 
@@ -529,6 +817,14 @@
     padding: 14px;
   }
 
+  .headerTopRow {
+    align-items: stretch;
+  }
+
+  .headerHintRow {
+    font-size: 0.75rem;
+  }
+
   .header h1 {
     font-size: 1.3rem;
   }
@@ -537,9 +833,12 @@
     gap: 10px;
   }
 
+  .quickKpis {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .filterGroup {
-    flex: 1;
-    min-width: 120px;
+    min-width: 112px;
   }
 
   .filterGroup label {
@@ -556,7 +855,7 @@
   .visuals > * {
     flex: 1 1 100%;
     min-width: 100%;
-    max-height: 240px;
+    max-height: 290px;
   }
 
   .csvExportBtn {
@@ -599,12 +898,52 @@
     padding: 10px;
   }
 
+  .headerHintRow {
+    font-size: 0.72rem;
+  }
+
   .filters {
     gap: 8px;
   }
 
   .filtersRow {
     gap: 8px;
+  }
+
+  .quickFilters {
+    gap: 8px;
+  }
+
+  .quickFilters button {
+    flex: 1 1 calc(50% - 4px);
+    min-width: 0;
+    padding: 5px 7px;
+    font-size: 0.82rem;
+  }
+
+  .quickKpis {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .quickKpiCard {
+    padding: 8px 10px;
+  }
+
+  .quickKpiCard span {
+    font-size: 0.78rem;
+  }
+
+  .quickKpiCard strong {
+    font-size: 1.1rem;
+  }
+
+  .topTurnoGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .topTurnoBarHead span {
+    white-space: normal;
   }
 
   .filterGroup {

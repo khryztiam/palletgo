@@ -13,19 +13,22 @@ import styles from '@/styles/Dashboard.module.css';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 const BarChart = ({ areaData }) => {
+  const labels = Object.keys(areaData || {});
+
   // Detectar si es mobile
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
   const isUltraSmall = typeof window !== 'undefined' && window.innerWidth < 478;
   
   const labelFontSize = isUltraSmall ? 9 : isMobile ? 10 : 12;
   const legendFontSize = isUltraSmall ? 10 : isMobile ? 11 : 12;
-  const maxRotation = isUltraSmall ? 90 : isMobile ? 60 : 45;
+  const maxRotation = isUltraSmall ? 70 : isMobile ? 45 : 30;
+  const pixelsPorLabel = isUltraSmall ? 38 : isMobile ? 42 : 48;
 
   const chartData = {
-    labels: Object.keys(areaData),
+    labels,
     datasets: [{
       label: '# Requests',
-      data: Object.values(areaData),
+      data: labels.map((label) => areaData[label] || 0),
       backgroundColor:      '#3498db',
       borderColor:          '#2980b9',
       borderWidth:           1,
@@ -63,11 +66,12 @@ const BarChart = ({ areaData }) => {
           minRotation: 0,
           padding: isUltraSmall ? 5 : 5,
           callback: function(value) {
+            const label = this.getLabelForValue(value);
             // Si es ultra pequeño, abreviar los labels
-            if (isUltraSmall && value.length > 10) {
-              return value.substring(0, 8) + '...';
+            if (isUltraSmall && String(label).length > 10) {
+              return String(label).substring(0, 8) + '...';
             }
-            return value;
+            return String(label).split(' ');
           }
         },
       },
@@ -84,8 +88,15 @@ const BarChart = ({ areaData }) => {
   return (
     <div className={styles.barchartContainer}>
       <h3>Solicitudes por Área</h3>
-      <div className={styles.barchartWrapper}>
-        <Bar data={chartData} options={options} />
+      <div className={styles.barchartScroll}>
+        <div
+          className={styles.barchartCanvasWide}
+          style={{ minWidth: `${Math.max(420, labels.length * pixelsPorLabel)}px` }}
+        >
+          <div className={styles.barchartWrapper}>
+            <Bar data={chartData} options={options} />
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -1,0 +1,390 @@
+.summaryPage {
+  width: 100%;
+  font-family: "Poppins", sans-serif;
+}
+
+.hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 20px;
+  border-radius: 14px;
+  background: linear-gradient(140deg, #0f172a, #1e293b 45%, #334155);
+  color: #fff;
+  margin-bottom: 14px;
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.22);
+}
+
+.hero h2 {
+  margin: 0;
+  font-size: 1.35rem;
+}
+
+.hero p {
+  margin: 6px 0 0;
+  color: #cbd5e1;
+  font-size: 0.9rem;
+}
+
+.filtros {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(130px, 1fr));
+  gap: 8px;
+}
+
+.filtros label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.8rem;
+  color: #e2e8f0;
+  gap: 4px;
+}
+
+.filtros input {
+  border: 1px solid #475569;
+  border-radius: 8px;
+  background: #0f172a;
+  color: #fff;
+  padding: 8px 10px;
+}
+
+.atajos {
+  display: flex;
+  gap: 6px;
+  grid-column: 1 / -1;
+}
+
+.atajos button {
+  border: 1px solid #64748b;
+  border-radius: 8px;
+  background: #0b1222;
+  color: #fff;
+  padding: 7px 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.atajos button:hover {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+.estado,
+.error {
+  margin: 10px 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+}
+
+.estado {
+  background: #f8fafc;
+  color: #334155;
+}
+
+.error {
+  background: #fef2f2;
+  color: #b91c1c;
+  border-left: 4px solid #ef4444;
+}
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.kpiCard {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.06);
+}
+
+.kpiCard span {
+  color: #64748b;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.kpiCard strong {
+  color: #0f172a;
+  font-size: 1.45rem;
+  line-height: 1;
+}
+
+.kpiTurno1 {
+  background: linear-gradient(155deg, rgba(30, 136, 229, 0.14), #ffffff 58%);
+  border-color: rgba(30, 136, 229, 0.45);
+}
+
+.kpiTurno2 {
+  background: linear-gradient(155deg, rgba(31, 42, 158, 0.14), #ffffff 58%);
+  border-color: rgba(31, 42, 158, 0.45);
+}
+
+.gridChart {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.chartCard {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  padding: 12px;
+  min-height: 280px;
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.06);
+}
+
+.chartCard h3 {
+  margin: 0 0 8px;
+  color: #1e293b;
+  font-size: 1rem;
+}
+
+.chartWrap {
+  height: 230px;
+}
+
+.fullWidthCard {
+  grid-column: 1 / -1;
+}
+
+.trendCard {
+  grid-column: span 6;
+}
+
+.compactCard {
+  grid-column: span 3;
+}
+
+.chartScroll {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.chartAreaWide {
+  height: 320px;
+}
+
+.chartWrapCompact {
+  height: 210px;
+}
+
+.tableCard {
+  margin-top: 12px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+}
+
+.tableHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.tableHeader h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #1e293b;
+}
+
+.tableHeader span {
+  font-size: 0.82rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.tableHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pageSizeLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: #475569;
+  font-weight: 600;
+}
+
+.pageSizeLabel select {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 4px 8px;
+  background: #fff;
+  color: #0f172a;
+}
+
+.tableWrap {
+  overflow: auto;
+  max-height: 420px;
+}
+
+.resumenTable {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 920px;
+}
+
+.resumenTable thead th {
+  position: sticky;
+  top: 0;
+  background: #f1f5f9;
+  color: #334155;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  text-align: left;
+  padding: 10px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.resumenTable tbody td {
+  padding: 10px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #0f172a;
+  font-size: 0.83rem;
+  vertical-align: top;
+}
+
+.resumenTable tbody tr:hover {
+  background: #f8fafc;
+}
+
+.detalleCell {
+  max-width: 420px;
+  white-space: normal;
+  word-break: break-word;
+  color: #334155;
+}
+
+.emptyCell {
+  text-align: center;
+  color: #64748b;
+  font-style: italic;
+}
+
+.derivacionBox {
+  padding: 18px 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.derivacionBox p {
+  margin: 0;
+  color: #334155;
+}
+
+.linkDashboard {
+  display: inline-flex;
+  width: fit-content;
+  text-decoration: none;
+  color: #ffffff;
+  background: #1f2a9e;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-weight: 600;
+}
+
+.linkDashboard:hover {
+  background: #1e88e5;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 10px 12px;
+  border-top: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.pagination span {
+  color: #334155;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.pagination button {
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #0f172a;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 1024px) {
+  .kpis {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .gridChart {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .fullWidthCard,
+  .trendCard,
+  .compactCard {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero {
+    flex-direction: column;
+  }
+
+  .filtros {
+    width: 100%;
+  }
+
+  .kpis {
+    grid-template-columns: 1fr;
+  }
+
+  .gridChart {
+    grid-template-columns: 1fr;
+  }
+
+  .fullWidthCard,
+  .trendCard,
+  .compactCard {
+    grid-column: span 1;
+  }
+
+  .tableHeader {
+    gap: 8px;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .tableHeaderActions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

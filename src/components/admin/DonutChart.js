@@ -4,7 +4,7 @@ import styles from '@/styles/Dashboard.module.css';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const DonutChart = ({ data }) => {
+const DonutChart = ({ data, compact = false }) => {
   // Detectar si es mobile
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
   const isUltraSmall = typeof window !== 'undefined' && window.innerWidth < 478;
@@ -30,6 +30,7 @@ const DonutChart = ({ data }) => {
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
+    cutout: compact ? '66%' : '58%',
     plugins: {
       legend: {
         position: 'bottom',
@@ -51,9 +52,9 @@ const DonutChart = ({ data }) => {
   };
 
   return (
-    <div className={styles.donutchartContainer}>
+    <div className={`${styles.donutchartContainer} ${compact ? styles.donutchartContainerCompact : ''}`}>
       <h3>Solicitudes por Estado</h3>
-      <div className={styles.donutchartWrapper}>
+      <div className={`${styles.donutchartWrapper} ${compact ? styles.donutchartWrapperCompact : ''}`}>
         <Doughnut data={chartData} options={chartOptions} />
       </div>
     </div>
