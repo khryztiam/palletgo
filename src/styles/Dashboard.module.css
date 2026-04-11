@@ -135,7 +135,7 @@
   box-sizing: border-box;
 }
 
-/* ======= Timeline ======= */
+/* ======= Timeline (cards) ======= */
 .timelineContainer {
   background-color: #f9f9f9;
   padding: 20px;
@@ -147,88 +147,123 @@
 
 .timelineContainer h3 {
   font-size: 1.5rem;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   color: #333;
   font-weight: 600;
   border-bottom: 2px solid #d61313;
+  padding-bottom: 8px;
 }
 
-.timeline {
-  position: relative;
-  margin: 0;
-  padding-left: 30px;
+.timelineGrid {
   list-style: none;
-  border-left: 2px solid #3498db;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
 }
 
-.timelineItem {
-  position: relative;
-  margin-bottom: 10px;
+.timelineCard {
+  background: #fff;
+  border-radius: 8px;
+  border-left: 4px solid #ccc;
+  padding: 12px 14px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.07);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: box-shadow 0.15s ease;
 }
 
-.timelineIcon {
-  position: absolute;
-  left: -17px;
-  top: 2px;
-  width: 35px;
-  height: 35px;
-  background-color: #3498db;
-  color: white;
+.timelineCard:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.timelineCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.timelineCardIcon {
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  text-align: center;
+  background-color: #ccc;
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 16px;
   flex-shrink: 0;
 }
 
-@media (max-width: 768px) {
-  .timelineIcon {
-    width: 32px;
-    height: 32px;
-    left: -16px;
-    font-size: 16px;
-  }
+.timelineCardTitle {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 
-@media (max-width: 478px) {
-  .timelineIcon {
-    width: 28px;
-    height: 28px;
-    left: -14px;
-    top: 3px;
-    font-size: 14px;
-  }
-
-  .timeline {
-    padding-left: 24px;
-    border-left: 2px solid #3498db;
-  }
-
-  .timelineItem {
-    margin-bottom: 8px;
-  }
-
-  .timelineContent {
-    padding-left: 6px;
-  }
+.timelineOrderId {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #222;
+  line-height: 1;
 }
 
-.timelineContent {
-  padding-left: 10px;
+.timelineBadge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #fff;
+  padding: 2px 7px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  align-self: flex-start;
 }
 
 .timelineDate {
-  font-size: 0.85rem;
-  font-weight: bold;
-  color: #807d7d;
-  margin-bottom: 5px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #999;
+  margin: 0;
 }
 
-.timelineDescription {
-  font-size: 1rem;
-  color: #333;
+.timelineMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 6px;
+  margin-top: 2px;
+}
+
+.timelineMetaRow {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  font-size: 0.82rem;
+  color: #444;
+  flex-wrap: wrap;
+}
+
+.timelineMetaIcon {
+  color: #aaa;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+  position: relative;
+  top: 1px;
+}
+
+.timelineMetaLabel {
+  font-weight: 600;
+  color: #666;
+}
+
+@media (max-width: 478px) {
+  .timelineGrid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ======= BarChart ======= */

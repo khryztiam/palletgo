@@ -146,7 +146,7 @@ export default function Management() {
 
   // Re-fetch cuando el rol del auth cambia (ya estaba en el original)
   useEffect(() => {
-    if (role === 'ADMIN') fetchUsers();
+    if (role === 'ADMIN' || role === 'SUPERADMIN') fetchUsers();
   }, [role, fetchUsers]);
 
   // ── Registro ───────────────────────────────────────────────────────────────
@@ -273,6 +273,8 @@ export default function Management() {
   // ── Loading auth ───────────────────────────────────────────────────────────
   if (authLoading) return <div className={styles.loading}>Cargando...</div>;
 
+  const displayUsers = role === 'SUPERADMIN' ? users : users.filter(u => u.rol_name !== 'SUPERADMIN');
+
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <AdminGate>
@@ -313,8 +315,8 @@ export default function Management() {
                 </tr>
               </thead>
               <tbody>
-                {users.length > 0 ? (
-                  users.map(user => (
+                {displayUsers.length > 0 ? (
+                  displayUsers.map(user => (
                     <tr
                       key={user.id}
                       onClick={() => openDetailModal(user)}

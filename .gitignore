@@ -42,3 +42,9 @@ yarn-error.log*
 /_internal/
 *.tsbuildinfo
 next-env.d.ts
+
+# IDE / editor settings (locales por máquina)
+.vscode/
+
+# documentos operativos internos
+INSTRUCCIONES_LINEA_EMBARQUE.md

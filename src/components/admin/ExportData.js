@@ -14,15 +14,23 @@ const formatDateTime = (isoString) => {
   });
 };
 
+// Elimina emojis y caracteres no alfanuméricos del nombre
+const sanitizar = (valor) =>
+  valor?.replace(/[^\p{L}\p{N}\p{Z}\p{P}]/gu, '').replace(/\s+/g, ' ').trim() || '';
+
+// Construye filas con columnas explícitas y en orden. Sin spread de raw fields.
 const formatOrdersForExport = (orders) =>
   orders.map((order) => ({
-    ...order,
-    ID_Orden:            order.id_order,
-    Estatus:             order.status,
-    Usuario_Solicitante: order.user_submit,
-    Area_Solicitante:    order.area,
-    Fecha_Solicitud:     formatDateTime(order.date_order),
-    Fecha_Entrega:       formatDateTime(order.date_delivery),
+    'ID Orden':          order.id_order,
+    'Estatus':           order.status,
+    'Solicitante':       sanitizar(order.user_submit),
+    'Área':              order.area          || '',
+    'Destino':           order.destiny       || '',
+    'Entregado por':     sanitizar(order.user_deliver),
+    'Detalles':          Array.isArray(order.details) ? order.details.join(', ') : (order.details || ''),
+    'Comentarios':       order.comments      || '',
+    'Fecha Solicitud':   formatDateTime(order.date_order),
+    'Fecha Entrega':     formatDateTime(order.date_delivery),
   }));
 
 // ─── Colores por status ───────────────────────────────────────────────────────

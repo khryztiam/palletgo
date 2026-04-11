@@ -11,6 +11,7 @@ import styles from '@/styles/Sidebar.module.css';
 
 // ─── Colores y datos por rol ──────────────────────────────────────────────────
 const ROLE_COLOR = {
+  SUPERADMIN: '#0f172a',
   ADMIN:      '#3b82f6',
   EMBARQUE:   '#991caf',
   LINEA:      '#22c55e',
@@ -32,14 +33,13 @@ const ICONS = {
 // ─── Navegación por rol ───────────────────────────────────────────────────────
 // Agrega rutas/secciones aquí sin tocar el JSX.
 const NAV_BY_ROLE = {
-  ADMIN: [
+  SUPERADMIN: [
     {
       label: 'Administración',
       links: [
-        { href: '/admin/Dashboard', icon: 'dashboard', label: 'Dashboard'       },
-        { href: '/admin/Control',   icon: 'clipboard', label: 'Request Control' },
-        { href: '/admin/Management',  icon: 'users',       label: 'Administration'  },
-        { href: '/admin/GlobalUsers', icon: 'globalusers', label: 'Global Users'     },
+        { href: '/admin/Dashboard',   icon: 'dashboard',   label: 'Dashboard'       },
+        { href: '/admin/Control',     icon: 'clipboard',   label: 'Request Control' },
+        { href: '/admin/GlobalUsers', icon: 'globalusers', label: 'Global Users'    },
       ],
     },
     {
@@ -48,6 +48,16 @@ const NAV_BY_ROLE = {
         { href: '/Request',  icon: 'request',  label: 'Solicitudes' },
         { href: '/Dispatch', icon: 'dispatch', label: 'Despacho'    },
         { href: '/Boarding', icon: 'boarding', label: 'Embarque'    },
+      ],
+    },
+  ],
+  ADMIN: [
+    {
+      label: 'Administración',
+      links: [
+        { href: '/admin/Dashboard',  icon: 'dashboard', label: 'Dashboard'       },
+        { href: '/admin/Control',    icon: 'clipboard', label: 'Request Control' },
+        { href: '/admin/Management', icon: 'users',     label: 'Administration'  },
       ],
     },
   ],

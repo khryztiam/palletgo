@@ -1,10 +1,11 @@
-# 📦 PalletGo - Sistema de Gestión Logística
+# 📦 PalletGo — Sistema de Gestión Logística
 
 [![Estado](https://img.shields.io/badge/Estado-Producción-green.svg)](#)
 [![Versión](https://img.shields.io/badge/Versión-0.3.0-blue.svg)](#)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black.svg)](#)
 [![Licencia](https://img.shields.io/badge/Licencia-Privada-red.svg)](#)
 
-> **PalletGo** es una solución web para gestión integral de solicitudes logísticas, despacho y embarques en tiempo real. Cuenta con notificaciones de voz, realtime updates y análisis de datos en vivo.
+> **PalletGo** es una solución web interna para la gestión integral de solicitudes logísticas, despacho y embarques en tiempo real, desarrollada para la planta de producción Yazaki. Incluye notificaciones de voz, actualizaciones en tiempo real vía Supabase Realtime, análisis de datos y control de acceso basado en roles.
 
 ---
 
@@ -16,15 +17,15 @@
 ### Para Desarrolladores
 ```bash
 # 1. Clonar
-git clone https://github.com/tu-org/palletgo.git && cd palletgo
+git clone https://github.com/khryztiam/palletgo.git && cd palletgo
 
-# 2. Instalar
+# 2. Instalar dependencias
 npm install
 
-# 3. Configurar (copiar credenciales en .env.local)
-cp .env .env.local
+# 3. Configurar variables de entorno
+# Crear .env.local con las credenciales de Supabase (ver sección Variables de Entorno)
 
-# 4. Ejecutar
+# 4. Ejecutar en modo desarrollo
 npm run dev
 ```
 
@@ -32,81 +33,76 @@ npm run dev
 
 ---
 
-## 📚 Documentación Profesional
+## 📚 Documentación
 
-Documentación completa y actualizada en carpeta **`/doc`**:
+Documentación técnica completa en la carpeta **`/doc`**:
 
-| Documento | Para Quién | Tiempo |
-|-----------|-----------|--------|
-| [📖 Índice General](./doc/00-INDICE.md) | Todos | 5 min |
-| [🏗️ Arquitectura](./doc/01-ARQUITECTURA.md) | Tech Leads, Devs Senior | 15 min |
-| [🚀 Setup](./doc/02-SETUP.md) | Devs, DevOps | 10 min |
-| [👥 Guía Usuario](./doc/03-GUIA-USUARIO.md) | Operadores | 20 min |
-| [🔐 Autenticación](./doc/04-AUTENTICACION.md) | Devs | 20 min |
-| [🗄️ Base de Datos](./doc/05-BASE-DE-DATOS.md) | Devs, DBAs | 25 min |
-| [📡 APIs REST](./doc/06-APIs.md) | Devs | 15 min |
-| [🔄 Flujos](./doc/08-FLUJOS.md) | Devs | 25 min |
-| [🌐 Despliegue](./doc/09-DESPLIEGUE.md) | DevOps | 30 min |
-| [🔍 Calidad](./doc/11-CALIDAD.md) | Tech Leads | 20 min |
+| Documento | Descripción |
+|-----------|-------------|
+| [📖 Índice General](./doc/00-INDICE.md) | Punto de entrada a toda la documentación |
+| [🏗️ Arquitectura](./doc/01-ARQUITECTURA.md) | Decisiones técnicas y estructura del sistema |
+| [🚀 Setup](./doc/02-SETUP.md) | Instalación y configuración del entorno |
+| [👥 Guía Usuario](./doc/03-GUIA-USUARIO.md) | Manual de uso para operadores |
+| [🔐 Autenticación](./doc/04-AUTENTICACION.md) | Flujo de auth, roles y permisos |
+| [🗄️ Base de Datos](./doc/05-BASE-DE-DATOS.md) | Esquema, relaciones y políticas RLS |
+| [📡 APIs REST](./doc/06-APIs.md) | Endpoints, contratos y ejemplos |
+| [🔍 Calidad](./doc/11-CALIDAD.md) | Criterios de calidad y roadmap |
 
 ---
 
 ## 🎯 Características Principales
 
-### ✅ Para LINEA (Crear Solicitudes)
-- 📝 Formulario intuitivo para crear solicitudes
-- 📊 Ver cola de espera en tiempo real
-- 🔄 Realtime updates automáticos
-- 📍 Stepper de progreso visual
+## 🎯 Funcionalidades por Rol
 
-### ✅ Para EMBARQUE (Despachar)
-- 📦 Panel en vivo de órdenes activas
-- 🔊 Notificaciones de voz automáticas
-- ⏱️ Timer de duración de cada orden
-- 📋 Cambio de estado intuitivo
-- 👥 Gestión de entregadores
+### 🔴 LINEA — Crear Solicitudes
+- Formulario intuitivo para nuevas solicitudes
+- Cola de espera en tiempo real
+- Stepper visual de progreso (Solicitado → En Progreso → Entregado)
+- Actualización automática sin recargar
 
-### ✅ Para SUPERVISOR (Monitoreo)
-- 📊 Dashboard con gráficos estadísticos
-- 📈 Análisis por área y estado
-- 📥 Exportación a CSV
-- 🔍 Filtros por fecha
-- 📋 Tabla completa con filtros
+### 🔵 EMBARQUE — Despacho y Boarding
+- Panel en vivo de órdenes activas
+- Notificaciones de voz automáticas (Speech Synthesis API)
+- Timer de duración por orden
+- Cambio de estado con un clic
+- Gestión de entregadores (lista CRUD)
+- Registro y control de embarques
 
-### ✅ Para ADMIN (Control Total)
-- 👤 Gestión de usuarios (crear/editar/eliminar)
-- 📚 Acceso a todas las funcionalidades
-- 🔑 Control de permisos
-- 📊 Reportes avanzados
+### 🟡 SUPERVISOR — Monitoreo
+- Dashboard con gráficos estadísticos (donut + barras)
+- Análisis de órdenes por área y estado
+- Exportación a CSV
+- Filtros por rango de fechas
+- Tabla con filtros reactivos
+
+### ⚫ ADMIN — Control Total
+- Todo lo anterior, más:
+- Gestión completa de usuarios (crear/editar/eliminar)
+- Vista global de usuarios con resumen por rol
+- Control de permisos y accesos
 
 ---
 
 ## 💻 Stack Tecnológico
 
-```json
-Frontend:
-- Next.js 16 (Pages Router)
-- React 19.2 con Hooks
-- CSS Modules (scoped)
-- Chart.js para gráficos
-
-Backend:
-- Supabase (PostgreSQL 15)
-- Realtime WebSockets
-- JWT Authentication
-- Vercel Hosting
-```
+| Capa | Tecnología |
+|------|-----------|
+| Frontend | Next.js 16 (Pages Router) + React 19 |
+| Estilos | CSS Modules (scoped, sin Tailwind) |
+| Gráficos | Chart.js 4 + React-ChartJS-2 |
+| Base de datos | Supabase (PostgreSQL 15) |
+| Tiempo real | Supabase Realtime WebSockets |
+| Autenticación | Supabase Auth (JWT) |
+| Deploy | Vercel |
 
 ---
 
-## 📊 Estadísticas
+## 📊 Estadísticas del Sistema
 
-- **7 rutas** principales
+- **8 rutas** principales
 - **20+ componentes** reutilizables
-- **25,000+ órdenes** procesadas
-- **27 usuarios** activos
-- **6 APIs** REST
-- **12 políticas RLS** activas
+- **6 endpoints** API REST
+- **12+ políticas RLS** activas
 
 ---
 
@@ -114,68 +110,73 @@ Backend:
 
 ```
 palletgo/
-├── doc/                    ← 📚 DOCUMENTACIÓN PROFESIONAL
-│   └── 00-INDICE.md        (documentos completos)
+├── doc/                    ← Documentación técnica completa
 ├── migrations/             ← Scripts SQL de base de datos
 │   ├── 000_disable_rls_reset.sql
 │   └── 001_enable_rls_adapted.sql
 ├── src/
-│   ├── pages/              ← Rutas principales + API endpoints
-│   │   └── api/
-│   │       ├── admin/users/  ← CRUD usuarios (requiere ADMIN)
-│   │       └── orders/       ← Cola y actualización de órdenes
-│   ├── components/         ← Componentes React
+│   ├── pages/              ← Rutas (Pages Router)
+│   │   ├── index.js        ← Login
+│   │   ├── Request.js      ← Solicitudes (LINEA)
+│   │   ├── Dispatch.js     ← Despacho (EMBARQUE)
+│   │   ├── Boarding.js     ← Embarques (EMBARQUE)
+│   │   └── admin/
+│   │       ├── Dashboard.js     ← Estadísticas (SUPERVISOR+)
+│   │       ├── Control.js       ← Control diario (SUPERVISOR+)
+│   │       ├── Management.js    ← Gestión usuarios (ADMIN)
+│   │       └── GlobalUsers.js   ← Vista global usuarios (ADMIN)
+│   ├── components/         ← Componentes reutilizables
 │   ├── context/            ← AuthContext global
 │   ├── lib/                ← Clientes Supabase (anon + service role)
-│   └── styles/             ← CSS Modules
-└── package.json            ← Dependencias NPM
+│   └── styles/             ← CSS Modules por componente
+└── package.json
 ```
 
 ---
 
 ## 🔐 Seguridad
 
-✅ Autenticación JWT  
-✅ Control de acceso por rol (RoleGate + AdminGate)  
-✅ Row Level Security (RLS) en todas las tablas  
-✅ Validación de sesión en todos los endpoints de API  
-✅ Service role (server-only) para operaciones privilegiadas  
-✅ Sesión persistente  
-✅ HTTPS en producción
+- Autenticación JWT via Supabase Auth
+- Control de acceso por rol (`AdminGate` + `RoleGate`)
+- Row Level Security (RLS) en todas las tablas de Supabase
+- Validación de sesión en cada endpoint de API
+- Service role solo en servidor (nunca expuesto al cliente)
+- HTTPS en producción
 
 ---
 
-## 📖 Documentación
+## ⚙️ Variables de Entorno
 
-**¿Necesitas empezar rápido?**
-- Usuarios → [Guía de Usuario](./doc/03-GUIA-USUARIO.md)
-- Devs → [Setup](./doc/02-SETUP.md)
-- Tech Leads → [Arquitectura](./doc/01-ARQUITECTURA.md)
-- Calidad → [Roadmap de mejoras](./doc/11-CALIDAD.md)
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://<proyecto>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon-key>
+SUPABASE_SERVICE_ROLE_KEY=<service-role-key>
+```
 
-**Documentación completa:** [Índice General](./doc/00-INDICE.md)
+> **Nota**: Nunca subir `.env.local` al repositorio.
 
 ---
 
-## 🚀 Próximos Pasos
+## 🗓️ Historial de Versiones
 
-- ✅ Documentación profesional
-- ✅ RLS en Supabase (12 políticas activas)
+| Versión | Fecha | Descripción |
+|---------|-------|-------------|
+| `0.3.0` | Abril 2026 | GlobalUsers, Timeline mejorado, seguridad API reforzada, CSS dashboard |
+| `0.2.0` | Dic 2025 | Mobile responsive completo, RLS implementado, docs profesional |
+| `0.1.0` | Sep 2025 | MVP — Request, Dispatch, Boarding, Dashboard |
+
+---
+
+## 🚀 Roadmap
+
+- ✅ RLS en Supabase (12+ políticas activas)
 - ✅ Validación de sesión en APIs backend
-- ✅ Endpoints de servicio para operaciones privilegiadas
-- ⏳ Tests unitarios
+- ✅ Vista global de usuarios (GlobalUsers)
+- ✅ Mobile responsive completo
+- ⏳ Tests unitarios (Vitest)
 - ⏳ `.env.example` para onboarding de devs
-
-Ver [Roadmap Completo](./doc/11-CALIDAD.md#-roadmap-recomendado)
-
----
-
-## 📞 Contacto
-
-- **Soporte:** soporte@yazaki.com
-- **Issues:** GitHub Issues
-- **Documentación:** Ver carpeta `/doc`
+- ⏳ Rate limiting en endpoints API
 
 ---
 
-> 💡 **¿Perdido?** Abre [Documentación](./doc/00-INDICE.md) o pregunta a tu supervisor.
+*Proyecto Publico — Computer Doctor SVSA. Todos los derechos reservados.*

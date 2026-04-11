@@ -54,9 +54,14 @@ const processOrdersData = (orders) => {
 
     if (index < 10) {
       nextTimeline.push({
-        date: new Date(order.date_order),
-        description: `Orden ${order.id_order} ${order.status} por ${order.user_submit || "—"} en ${order.area || "—"}`,
-        area: order.area,
+        id_order:     order.id_order,
+        status:       order.status,
+        area:         order.area,
+        destiny:      order.destiny,
+        user_submit:  order.user_submit  || "—",
+        user_deliver: order.user_deliver || null,
+        date_order:   new Date(order.date_order),
+        date_delivery: order.date_delivery ? new Date(order.date_delivery) : null,
       });
     }
   });

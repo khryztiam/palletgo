@@ -58,10 +58,13 @@
 }
 
 /* Color por rol */
+.summarySuperAdmin { background-color: #0f172a; }
 .summaryAdmin      { background-color: #005792; }
+.summaryAdminTec   { background-color: #d946ef; }
 .summaryLinea      { background-color: #0e6e30; }
 .summaryEmbarque   { background-color: #991caf; }
 .summarySupervisor { background-color: #af4c1c; }
+.summaryTecnico    { background-color: #ec4899; }
 
 /* ======= Action Bar ======= */
 .actionBar {

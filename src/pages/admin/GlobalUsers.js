@@ -7,8 +7,7 @@ import styles from '@/styles/Management.module.css';
 
 // ─── Constantes ───────────────────────────────────────────────────────────────
 const ROLE_MAPPING = {
-  SUPERADMIN: 7, ADMIN: 1, LINEA: 2, EMBARQUE: 3,
-  SUPERVISOR: 4, TECNICO: 5, ADMIN_TEC: 6,
+  SUPERADMIN: 7, ADMIN: 1, LINEA: 2, EMBARQUE: 3, SUPERVISOR: 4,
 };
 
 const ROLE_OPTIONS = [
@@ -17,11 +16,9 @@ const ROLE_OPTIONS = [
   { value: 'LINEA',      label: 'Línea'               },
   { value: 'EMBARQUE',   label: 'Embarque'            },
   { value: 'SUPERVISOR', label: 'Supervisor'          },
-  { value: 'TECNICO',    label: 'Home Position'       },
-  { value: 'ADMIN_TEC',  label: 'Admin Técnico'       },
 ];
 
-const ROLE_ORDER = ['SUPERADMIN', 'ADMIN', 'ADMIN_TEC', 'SUPERVISOR', 'LINEA', 'EMBARQUE', 'TECNICO'];
+const ROLE_ORDER = ['SUPERADMIN', 'ADMIN', 'SUPERVISOR', 'LINEA', 'EMBARQUE'];
 
 const ROLE_LABEL = {
   SUPERADMIN: 'Super Administrador',
@@ -29,18 +26,14 @@ const ROLE_LABEL = {
   LINEA:      'Línea',
   EMBARQUE:   'Embarque',
   SUPERVISOR: 'Supervisor',
-  TECNICO:    'Home Position',
-  ADMIN_TEC:  'Admin Técnico',
 };
 
 const ROLE_COLOR_ACCENT = {
   SUPERADMIN: '#0f172a',
   ADMIN:      '#3b82f6',
-  ADMIN_TEC:  '#d946ef',
   SUPERVISOR: '#f59e0b',
   LINEA:      '#22c55e',
   EMBARQUE:   '#991caf',
-  TECNICO:    '#ec4899',
 };
 
 const SUMMARY_CLASS = {
@@ -49,11 +42,9 @@ const SUMMARY_CLASS = {
   LINEA:      styles.summaryLinea,
   EMBARQUE:   styles.summaryEmbarque,
   SUPERVISOR: styles.summarySupervisor,
-  TECNICO:    styles.summaryTecnico,
-  ADMIN_TEC:  styles.summaryAdminTec,
 };
 
-const INITIAL_SUMMARY = { SUPERADMIN: 0, ADMIN: 0, LINEA: 0, EMBARQUE: 0, SUPERVISOR: 0, TECNICO: 0, ADMIN_TEC: 0 };
+const INITIAL_SUMMARY = { SUPERADMIN: 0, ADMIN: 0, LINEA: 0, EMBARQUE: 0, SUPERVISOR: 0 };
 
 // ─── ConfirmDeleteModal ───────────────────────────────────────────────────────
 const ConfirmDeleteModal = ({ isOpen, userName, onConfirm, onCancel }) => {

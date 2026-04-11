@@ -34,12 +34,12 @@ async function verifyAdminRole(bearerToken) {
         return { isValid: false, reason: 'User not found in database' };
       }
 
-      // Check if user has ADMIN role
-      if (userData.rol_name !== 'ADMIN') {
-        return { isValid: false, reason: `User role is ${userData.rol_name}, not ADMIN` };
+      // Check if user has ADMIN or SUPERADMIN role
+      if (!['ADMIN', 'SUPERADMIN'].includes(userData.rol_name)) {
+        return { isValid: false, reason: `User role is ${userData.rol_name}, not ADMIN or SUPERADMIN` };
       }
 
-      return { isValid: true, reason: 'Admin verified', userEmail: email };
+      return { isValid: true, reason: 'Admin verified', userEmail: email, callerRole: userData.rol_name };
     } catch (decodeErr) {
       return { isValid: false, reason: 'Failed to decode JWT token' };
     }
@@ -52,7 +52,7 @@ async function verifyAdminRole(bearerToken) {
 export default async function handler(req, res) {
   // ─── Authorization Check ────────────────────────────────────────────────────
   const authHeader = req.headers.authorization;
-  const { isValid, reason, userId } = await verifyAdminRole(authHeader);
+  const { isValid, reason, callerRole } = await verifyAdminRole(authHeader);
   
   if (!isValid) {
     console.error('[API/admin/users] Auth failed:', reason);
@@ -75,11 +75,19 @@ export default async function handler(req, res) {
     }
 
     // Validar que el rol sea permitido
-    const validRoles = ['ADMIN', 'LINEA', 'EMBARQUE', 'SUPERVISOR'];
+    const validRoles = ['SUPERADMIN', 'ADMIN', 'SUPERVISOR', 'LINEA', 'EMBARQUE'];
     if (!validRoles.includes(rol_name)) {
       return res.status(400).json({ 
         error: `Rol inválido. Debe ser uno de: ${validRoles.join(', ')}`,
         code: 'INVALID_ROLE'
+      });
+    }
+
+    // ADMIN no puede crear SUPERADMIN
+    if (callerRole === 'ADMIN' && rol_name === 'SUPERADMIN') {
+      return res.status(403).json({ 
+        error: 'ADMIN no puede crear usuarios SUPERADMIN.',
+        code: 'FORBIDDEN_ROLE'
       });
     }
 

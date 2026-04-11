@@ -32,12 +32,12 @@ async function verifyAdminRole(bearerToken) {
         return { isValid: false, reason: 'User not found in database' };
       }
 
-      // Check if user has ADMIN role
-      if (userData.rol_name !== 'ADMIN') {
-        return { isValid: false, reason: `User role is ${userData.rol_name}, not ADMIN` };
+      // Check if user has ADMIN or SUPERADMIN role
+      if (!['ADMIN', 'SUPERADMIN'].includes(userData.rol_name)) {
+        return { isValid: false, reason: `User role is ${userData.rol_name}, not ADMIN or SUPERADMIN` };
       }
 
-      return { isValid: true, reason: 'Admin verified', userEmail: email };
+      return { isValid: true, reason: 'Admin verified', userEmail: email, callerRole: userData.rol_name };
     } catch (decodeErr) {
       return { isValid: false, reason: 'Failed to decode JWT token' };
     }
@@ -58,7 +58,7 @@ export default async function handler(req, res) {
 
   // ─── Authorization Check ────────────────────────────────────────────────────
   const authHeader = req.headers.authorization;
-  const { isValid, reason } = await verifyAdminRole(authHeader);
+  const { isValid, reason, callerRole } = await verifyAdminRole(authHeader);
   
   if (!isValid) {
     console.error('[API/admin/users/:id] Auth failed:', reason);
@@ -79,12 +79,23 @@ export default async function handler(req, res) {
     }
 
     // Validar que el rol sea permitido
-    const validRoles = ['ADMIN', 'LINEA', 'EMBARQUE', 'SUPERVISOR'];
+    const validRoles = ['SUPERADMIN', 'ADMIN', 'SUPERVISOR', 'LINEA', 'EMBARQUE'];
     if (!validRoles.includes(rol_name)) {
       return res.status(400).json({ 
         error: `Rol inválido. Debe ser uno de: ${validRoles.join(', ')}`,
         code: 'INVALID_ROLE'
       });
+    }
+
+    // ADMIN no puede asignar SUPERADMIN ni modificar a un usuario SUPERADMIN
+    if (callerRole === 'ADMIN') {
+      if (rol_name === 'SUPERADMIN') {
+        return res.status(403).json({ error: 'ADMIN no puede asignar el rol SUPERADMIN.', code: 'FORBIDDEN_ROLE' });
+      }
+      const { data: targetUser } = await supabase.from('users').select('rol_name').eq('id', id).single();
+      if (targetUser?.rol_name === 'SUPERADMIN') {
+        return res.status(403).json({ error: 'ADMIN no puede modificar usuarios SUPERADMIN.', code: 'FORBIDDEN_ROLE' });
+      }
     }
 
     try {
@@ -112,6 +123,13 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'DELETE') {
+    // ADMIN no puede eliminar SUPERADMIN
+    if (callerRole === 'ADMIN') {
+      const { data: targetUser } = await supabase.from('users').select('rol_name').eq('id', id).single();
+      if (targetUser?.rol_name === 'SUPERADMIN') {
+        return res.status(403).json({ error: 'ADMIN no puede eliminar usuarios SUPERADMIN.', code: 'FORBIDDEN_ROLE' });
+      }
+    }
     try {
       // First, delete from auth.users
       const { error: authError } = await supabase.auth.admin.deleteUser(id);
