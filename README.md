@@ -1,7 +1,7 @@
 # 📦 PalletGo — Sistema de Gestión Logística
 
 [![Estado](https://img.shields.io/badge/Estado-Producción-green.svg)](#)
-[![Versión](https://img.shields.io/badge/Versión-0.3.0-blue.svg)](#)
+[![Versión](https://img.shields.io/badge/Versión-0.4.0-blue.svg)](#)
 [![Next.js](https://img.shields.io/badge/Next.js-16-black.svg)](#)
 [![Licencia](https://img.shields.io/badge/Licencia-Privada-red.svg)](#)
 
@@ -161,6 +161,7 @@ SUPABASE_SERVICE_ROLE_KEY=<service-role-key>
 
 | Versión | Fecha | Descripción |
 |---------|-------|-------------|
+| `0.4.0` | Abril 2026 | Summary ejecutivo, Top5Turno, Boarding turno/paginación, KPI SLA Dashboard |
 | `0.3.0` | Abril 2026 | GlobalUsers, Timeline mejorado, seguridad API reforzada, CSS dashboard |
 | `0.2.0` | Dic 2025 | Mobile responsive completo, RLS implementado, docs profesional |
 | `0.1.0` | Sep 2025 | MVP — Request, Dispatch, Boarding, Dashboard |
