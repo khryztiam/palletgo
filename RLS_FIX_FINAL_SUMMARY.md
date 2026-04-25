@@ -112,7 +112,7 @@ EMBARQUE puede hacer CRUD completo en list_users
 
 ### Test Manual (UI)
 1. http://localhost:3000/Boarding
-2. Login: `embarque_els` / `Yazakiels25`
+2. Login: `embarque_els` / `[contraseña]`
 3. Click "+ Agregar"
 4. Ingresa nombre
 5. Click "Guardar"

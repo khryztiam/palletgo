@@ -118,7 +118,7 @@ node _internal/scripts/test-crud-authenticated.js
 ### Test Manual en UI
 
 1. **Abre** http://localhost:3000/Boarding
-2. **Login** con: **embarque_els** / **Yazakiels25**
+2. **Login** con: **embarque_els** / **[contraseña]**
 3. **Crea entregador:**
    - Click: "+ Agregar"
    - Ingresa: "TEST DEMO"

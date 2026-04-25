@@ -62,7 +62,7 @@
 │
 ├─ O manualmente:
 │   1. http://localhost:3000/Boarding
-│   2. Login: embarque_els / Yazakiels25
+│   2. Login: embarque_els / [tu_contraseña]
 │   3. + Agregar → "TEST" → Guardar → ✅ Debe aparecer
 │
 └─ Listo ✅
