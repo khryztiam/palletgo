@@ -145,34 +145,34 @@ CREATE POLICY "list_users_select_authenticated"
   TO authenticated
   USING (true);
 
--- INSERT: Only ADMIN can add deliverers
-CREATE POLICY "list_users_insert_admin_only"
+-- INSERT: ADMIN and EMBARQUE can add deliverers
+CREATE POLICY "list_users_insert_admin_embarque"
   ON public.list_users
   FOR INSERT
   TO authenticated
   WITH CHECK (
-    (SELECT rol_name FROM public.users WHERE id = auth.uid()) = 'ADMIN'
+    (SELECT rol_name FROM public.users WHERE id = auth.uid()) IN ('ADMIN', 'EMBARQUE')
   );
 
--- UPDATE: Only ADMIN can update
-CREATE POLICY "list_users_update_admin_only"
+-- UPDATE: ADMIN and EMBARQUE can update
+CREATE POLICY "list_users_update_admin_embarque"
   ON public.list_users
   FOR UPDATE
   TO authenticated
   USING (
-    (SELECT rol_name FROM public.users WHERE id = auth.uid()) = 'ADMIN'
+    (SELECT rol_name FROM public.users WHERE id = auth.uid()) IN ('ADMIN', 'EMBARQUE')
   )
   WITH CHECK (
-    (SELECT rol_name FROM public.users WHERE id = auth.uid()) = 'ADMIN'
+    (SELECT rol_name FROM public.users WHERE id = auth.uid()) IN ('ADMIN', 'EMBARQUE')
   );
 
--- DELETE: Only ADMIN can delete
-CREATE POLICY "list_users_delete_admin_only"
+-- DELETE: ADMIN and EMBARQUE can delete
+CREATE POLICY "list_users_delete_admin_embarque"
   ON public.list_users
   FOR DELETE
   TO authenticated
   USING (
-    (SELECT rol_name FROM public.users WHERE id = auth.uid()) = 'ADMIN'
+    (SELECT rol_name FROM public.users WHERE id = auth.uid()) IN ('ADMIN', 'EMBARQUE')
   );
 
 -- ============================================================

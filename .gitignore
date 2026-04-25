@@ -20,11 +20,14 @@
 
 # production
 /build
+.git
+
 
 # misc
 .DS_Store
 *.pem
 *.pptx
+
 
 # debug
 npm-debug.log*

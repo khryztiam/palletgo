@@ -130,7 +130,7 @@ const formatDetalles = (detalles) => {
   return String(detalles);
 };
 
-const buildResumenEjecutivo = (ordenes) => {
+const buildResumenEjecutivo = (ordenes, ordenesSla) => {
   const totalesTurno = {
     "Turno 1": 0,
     "Turno 2": 0,
@@ -153,9 +153,6 @@ const buildResumenEjecutivo = (ordenes) => {
     ">30 min": { "Turno 1": 0, "Turno 2": 0 },
   };
   const filasResumen = [];
-
-  let sumaDuracion = 0;
-  let totalConDuracion = 0;
 
   (ordenes || []).forEach((orden) => {
     const turno = obtenerTurno(orden.date_order);
@@ -194,10 +191,19 @@ const buildResumenEjecutivo = (ordenes) => {
       fechaOrden: orden.date_order || null,
     });
 
-    if (Number.isFinite(Number(orden.duration))) {
-      sumaDuracion += Number(orden.duration);
-      totalConDuracion += 1;
-    }
+  });
+
+  let sumaDuracion = 0;
+  let totalConDuracion = 0;
+  let totalCumplen20 = 0;
+
+  (ordenesSla || []).forEach((orden) => {
+    const duracion = Number(orden.duration);
+    if (!Number.isFinite(duracion)) return;
+
+    sumaDuracion += duracion;
+    totalConDuracion += 1;
+    if (duracion <= 20) totalCumplen20 += 1;
   });
 
   const tiempoPromedio = totalConDuracion ? sumaDuracion / totalConDuracion : 0;
@@ -223,7 +229,7 @@ const buildResumenEjecutivo = (ordenes) => {
       turno1: totalesTurno["Turno 1"],
       turno2: totalesTurno["Turno 2"],
       cumplimiento20: totalConDuracion
-        ? ((totalesDuracion["0-10 min"] + totalesDuracion["11-20 min"]) * 100) / totalConDuracion
+        ? (totalCumplen20 * 100) / totalConDuracion
         : 0,
     },
     totalesTurno,
@@ -243,6 +249,7 @@ export default function SummaryPage() {
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState("");
   const [ordenes, setOrdenes] = useState([]);
+  const [ordenesSla, setOrdenesSla] = useState([]);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(30);
 
@@ -255,7 +262,7 @@ export default function SummaryPage() {
 
         const { data, error: dbError } = await supabase
           .from("orders")
-          .select("id_order, area, date_order, duration, user_submit, user_deliver, details")
+          .select("id_order, area, date_order, duration, status, user_submit, user_deliver, details")
           .gte("date_order", startISO)
           .lte("date_order", endISO)
           .limit(10000)
@@ -285,7 +292,12 @@ export default function SummaryPage() {
           );
         });
 
+        const dataSla = (data || []).filter((orden) => {
+          return orden.status === "ENTREGADO" && Number.isFinite(Number(orden.duration));
+        });
+
         setOrdenes(dataLimpia);
+        setOrdenesSla(dataSla);
       } catch (e) {
         console.error("Error cargando summary:", e);
         setError(`No se pudo cargar el resumen ejecutivo: ${e.message || "Error desconocido"}`);
@@ -297,7 +309,7 @@ export default function SummaryPage() {
     fetchData();
   }, [rangoFechas.start, rangoFechas.end]);
 
-  const resumen = useMemo(() => buildResumenEjecutivo(ordenes), [ordenes]);
+  const resumen = useMemo(() => buildResumenEjecutivo(ordenes, ordenesSla), [ordenes, ordenesSla]);
   const rangoDias = useMemo(
     () => diffDaysInclusive(rangoFechas.start, rangoFechas.end),
     [rangoFechas.start, rangoFechas.end]

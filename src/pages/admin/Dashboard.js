@@ -86,7 +86,7 @@ const processOrdersData = (orders) => {
     }
 
     const duracion = Number(order.duration);
-    if (Number.isFinite(duracion)) {
+    if (order.status === 'ENTREGADO' && Number.isFinite(duracion)) {
       sumaDuracion += duracion;
       totalConDuracion += 1;
     }
