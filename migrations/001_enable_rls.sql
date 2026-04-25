@@ -146,34 +146,26 @@ CREATE POLICY "list_users_select_authenticated"
   USING (true);
 
 -- INSERT: ADMIN and EMBARQUE can add deliverers
-CREATE POLICY "list_users_insert_admin_embarque"
+CREATE POLICY "list_users_insert_authenticated"
   ON public.list_users
   FOR INSERT
   TO authenticated
-  WITH CHECK (
-    (SELECT rol_name FROM public.users WHERE id = auth.uid()) IN ('ADMIN', 'EMBARQUE')
-  );
+  WITH CHECK (true);
 
 -- UPDATE: ADMIN and EMBARQUE can update
-CREATE POLICY "list_users_update_admin_embarque"
+CREATE POLICY "list_users_update_authenticated"
   ON public.list_users
   FOR UPDATE
   TO authenticated
-  USING (
-    (SELECT rol_name FROM public.users WHERE id = auth.uid()) IN ('ADMIN', 'EMBARQUE')
-  )
-  WITH CHECK (
-    (SELECT rol_name FROM public.users WHERE id = auth.uid()) IN ('ADMIN', 'EMBARQUE')
-  );
+  USING (true)
+  WITH CHECK (true);
 
 -- DELETE: ADMIN and EMBARQUE can delete
-CREATE POLICY "list_users_delete_admin_embarque"
+CREATE POLICY "list_users_delete_authenticated"
   ON public.list_users
   FOR DELETE
   TO authenticated
-  USING (
-    (SELECT rol_name FROM public.users WHERE id = auth.uid()) IN ('ADMIN', 'EMBARQUE')
-  );
+  USING (true);
 
 -- ============================================================
 -- END OF RLS SETUP
