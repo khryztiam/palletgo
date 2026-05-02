@@ -8,6 +8,7 @@ import {
   LineElement,
   ArcElement,
   BarElement,
+  Filler,
   Tooltip,
   Legend,
 } from "chart.js";
@@ -22,6 +23,7 @@ ChartJS.register(
   LineElement,
   ArcElement,
   BarElement,
+  Filler,
   Tooltip,
   Legend
 );
@@ -422,12 +424,11 @@ export default function SummaryPage() {
 
   return (
     <section className={styles.summaryPage}>
-      <div className={styles.hero}>
-        <div>
-          <h2>Summary Ejecutivo</h2>
-          <p>Vista consolidada de ordenes, turnos y tiempos de entrega.</p>
+      <div className={styles.filterBar}>
+        <div className={styles.filterBarTitle}>
+          <span>Periodo de analisis</span>
+          <small>Filtra el resumen operativo por fecha</small>
         </div>
-
         <div className={styles.filtros}>
           <label>
             Inicio
@@ -461,14 +462,9 @@ export default function SummaryPage() {
       {!cargando && !error && (
         <>
           <div className={styles.kpis}>
-            <article className={styles.kpiCard}>
+            <article className={`${styles.kpiCard} ${styles.kpiTotal}`}>
               <span>Total de ordenes</span>
               <strong>{resumen.kpis.totalOrdenes}</strong>
-            </article>
-
-            <article className={styles.kpiCard}>
-              <span>Tiempo prom entrega</span>
-              <strong>{resumen.kpis.tiempoPromedio.toFixed(1)} min</strong>
             </article>
 
             <article className={`${styles.kpiCard} ${styles.kpiTurno1}`}>
@@ -481,7 +477,12 @@ export default function SummaryPage() {
               <strong>{resumen.kpis.turno2}</strong>
             </article>
 
-            <article className={styles.kpiCard}>
+            <article className={`${styles.kpiCard} ${styles.kpiTiempo}`}>
+              <span>Tiempo prom entrega</span>
+              <strong>{resumen.kpis.tiempoPromedio.toFixed(1)} min</strong>
+            </article>
+
+            <article className={`${styles.kpiCard} ${styles.kpiSla}`}>
               <span>SLA &lt;= 20 min</span>
               <strong>{resumen.kpis.cumplimiento20.toFixed(1)}%</strong>
             </article>
@@ -520,16 +521,18 @@ export default function SummaryPage() {
 
             <article className={`${styles.chartCard} ${styles.trendCard}`}>
               <h3>Tendencia diaria por turno</h3>
-              <div className={styles.chartWrap}>
-                <Line
-                  data={lineData}
-                  options={{
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: true, position: "bottom" } },
-                    scales: { y: { beginAtZero: true } },
-                  }}
-                />
+              <div className={styles.chartScroll}>
+                <div className={`${styles.chartWrap} ${styles.chartTrendWide}`}>
+                  <Line
+                    data={lineData}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: { legend: { display: true, position: "bottom" } },
+                      scales: { y: { beginAtZero: true } },
+                    }}
+                  />
+                </div>
               </div>
             </article>
 
@@ -550,19 +553,21 @@ export default function SummaryPage() {
 
             <article className={`${styles.chartCard} ${styles.compactCard}`}>
               <h3>Rangos de tiempo de entrega</h3>
-              <div className={styles.chartWrapCompact}>
-                <Bar
-                  data={duracionTurnoData}
-                  options={{
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: true, position: "bottom", labels: { boxWidth: 11, font: { size: 11 } } } },
-                    scales: {
-                      x: { stacked: true, ticks: { maxRotation: 15, minRotation: 0, font: { size: 10 } } },
-                      y: { beginAtZero: true, stacked: true },
-                    },
-                  }}
-                />
+              <div className={styles.chartScroll}>
+                <div className={`${styles.chartWrapCompact} ${styles.chartRangeWide}`}>
+                  <Bar
+                    data={duracionTurnoData}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: { legend: { display: true, position: "bottom", labels: { boxWidth: 11, font: { size: 11 } } } },
+                      scales: {
+                        x: { stacked: true, ticks: { maxRotation: 15, minRotation: 0, font: { size: 10 } } },
+                        y: { beginAtZero: true, stacked: true },
+                      },
+                    }}
+                  />
+                </div>
               </div>
             </article>
           </div>

@@ -22,7 +22,7 @@
 ## 🏛️ Esquema General
 
 ```sql
-DATABASE: rhkhpigphjlccbscijms (Supabase)
+DATABASE: <proyecto-supabase> (Supabase)
 
 SCHEMAS:
 ├── auth (Supabase managed)

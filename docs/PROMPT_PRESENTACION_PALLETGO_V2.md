@@ -136,7 +136,7 @@ Dominios requeridos:
 
 - palletgo.vercel.app
 - *.vercel.app
-- rhkhpigphjlccbscijms.supabase.co
+- <proyecto>.supabase.co
 - *.supabase.co
 
 Resultado esperado:

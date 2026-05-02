@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.4",
@@ -22,6 +23,8 @@
     "react-snowfall": "^2.4.0"
   },
   "devDependencies": {
+    "eslint": "^9.39.1",
+    "eslint-config-next": "^16.0.10",
     "dotenv": "^17.3.1"
   }
 }

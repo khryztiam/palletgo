@@ -2,15 +2,31 @@
  * Public Orders Queue Endpoint
  * 
  * Purpose: Return active orders to build the queue display in Request.js
- * Uses Supabase service role (server-side) to bypass RLS
+ * Uses Supabase service role when available, with anon-key fallback for local dev
  * 
  * This is necessary because:
  * - RLS restricts LINEA role to see only own orders
  * - But UI needs to show queue position (requires seeing all orders)
- * - Solution: Server endpoint with service role access
+ * - Solution: Server endpoint centralizes the queue query
  */
 
-import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { createClient } from '@supabase/supabase-js';
+
+const getQueueClient = () => {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error('Supabase environment variables are missing');
+  }
+
+  return createClient(supabaseUrl, supabaseKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  });
+};
 
 export default async function handler(req, res) {
   // Only GET requests allowed
@@ -26,10 +42,12 @@ export default async function handler(req, res) {
 
     /**
      * Query: Get all active orders from today
-     * Uses service role admin client - bypasses RLS
+     * Uses service role when configured; otherwise relies on current SELECT RLS.
      * Only returns non-delivered/non-cancelled orders
      */
-    const { data, error } = await supabaseAdmin
+    const supabase = getQueueClient();
+
+    const { data, error } = await supabase
       .from('orders')
       .select('*')
       .not('status', 'in', '("ENTREGADO","CANCELADO")')

@@ -1,4 +1,4 @@
-# AGENTS.md — ITFlow
+# AGENTS.md
 
 ## Propósito
 

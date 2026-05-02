@@ -1,4 +1,4 @@
-# Instrucciones para Copilot — ITFlow
+# Instrucciones para Copilot
 
 ## Objetivo
 
@@ -8,12 +8,12 @@ Trabajar sobre la base de código existente de forma segura, quirúrgica y consi
 
 ## Stack técnico
 
-- **Framework**: Next.js 14+ con **Pages Router**
-- **UI**: React 18+
+- **Framework**: Next.js 16+ con **Pages Router**
+- **UI**: React 19+
 - **Lenguaje**: JavaScript (**sin TypeScript**)
-- **Backend**: Supabase (`@supabase/supabase-js`, `@supabase/ssr`)
+- **Backend**: Supabase (`@supabase/supabase-js`)
 - **Estilos**: CSS Modules (**sin Tailwind**)
-- **Iconos**: `react-icons`, `lucide-react`
+- **Iconos**: `react-icons`
 - **Linting / formato**: ESLint + Prettier
 - **Package manager**: npm
 
@@ -27,6 +27,7 @@ Trabajar sobre la base de código existente de forma segura, quirúrgica y consi
 - No reescribir archivos completos sin necesidad.
 - No cambiar arquitectura para resolver bugs puntuales.
 - No introducir nuevas dependencias si el problema puede resolverse con el stack actual.
+- Si en el futuro se requiere estandarizar iconografi­a, evaluar `lucide-react` como dependencia nueva antes de incorporarla.
 - No inventar tablas, columnas, rutas, variables de entorno o flujos que no existan en el proyecto.
 - Mantener compatibilidad con la estructura actual del código.
 

@@ -1,112 +1,113 @@
 /* =====================================================================
    Layout.module.css
-   Wrapper principal: sidebar fijo izquierda + área de contenido derecha.
+   Wrapper principal: sidebar fijo izquierda + area de contenido derecha.
    ===================================================================== */
 
-/* ── Wrapper global ─────────────────────────────────────────────────── */
 .wrapper {
   display: flex;
   min-height: 100vh;
 }
 
-/* ── Área de contenido ──────────────────────────────────────────────── */
 .main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-width: 0; /* Evita overflow cuando el contenido es muy ancho */
+  min-width: 0;
   background: #dadcdf;
 }
 
-/* ── Page Header (barra superior fija del contenido) ────────────────── */
 .pageHeader {
-  background: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
+  background:
+    radial-gradient(circle at 84% 18%, rgba(76, 175, 80, 0.26), transparent 28%),
+    linear-gradient(135deg, #1A2B4A 0%, #2A5CAA 54%, #731212 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
   padding: 0 28px;
-  height: 64px;                         /* +4px para acomodar el título mayor */
+  min-height: 112px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   position: sticky;
   top: 0;
   z-index: 20;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 12px 28px rgba(15, 31, 56, 0.18);
   flex-shrink: 0;
-}
-
-/* Mobile: reducir altura y padding del header */
-@media (max-width: 478px) {
-  .pageHeader {
-    padding: 0 12px;
-    height: 56px;
-  }
+  overflow: hidden;
 }
 
 .headerLeft {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
+  min-width: 0;
 }
 
-@media (max-width: 478px) {
-  .headerLeft {
-    gap: 8px;
-  }
-}
-
-/* Botón hamburguesa — visible solo en móvil */
 .hamburger {
   display: none;
-  background: none;
-  border: none;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.26);
   cursor: pointer;
-  color: #475569;
-  padding: 4px;
-  border-radius: 6px;
+  color: #ffffff;
+  padding: 9px;
+  border-radius: 8px;
   line-height: 0;
   transition: background 0.15s, color 0.15s;
 }
 
 .hamburger:hover {
-  background: #f1f5f9;
-  color: #1e293b;
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
 }
 
-/* Bloque título + subtítulo con línea acento izquierda */
+.headerIcon {
+  width: 52px;
+  height: 52px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  flex-shrink: 0;
+}
+
+.headerIcon svg {
+  width: 24px;
+  height: 24px;
+}
+
 .titleBlock {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding-left: 12px;
-  border-left: 3px solid #731212;
-  gap: 2px;
+  gap: 4px;
+  min-width: 0;
 }
 
 .pageTitle {
   margin: 0;
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: #731212;
-  line-height: 1;
-  letter-spacing: -0.01em;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.08;
+  letter-spacing: 0;
 }
 
 .pageSubtitle {
   margin: 0;
-  font-size: 0.78rem;
-  color: #94a3b8;
-  line-height: 1;
-  font-weight: 400;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.35;
+  font-weight: 500;
 }
 
-/* ── Contenido scrolleable ──────────────────────────────────────────── */
 .content {
   flex: 1;
   padding: 24px 28px;
   overflow-y: auto;
 }
 
-/* ── Responsive ─────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .hamburger {
     display: flex;
@@ -114,6 +115,7 @@
 
   .pageHeader {
     padding: 0 16px;
+    min-height: 96px;
   }
 
   .content {
@@ -121,18 +123,27 @@
   }
 
   .pageTitle {
-    font-size: 1.1rem;
+    font-size: 1.35rem;
   }
 
   .pageSubtitle {
-    font-size: 0.7rem;
+    font-size: 0.78rem;
+  }
+
+  .headerIcon {
+    width: 44px;
+    height: 44px;
   }
 }
 
-/* Ultra-small screens (< 480px) */
 @media (max-width: 478px) {
   .pageHeader {
     padding: 0 12px;
+    min-height: 88px;
+  }
+
+  .headerLeft {
+    gap: 8px;
   }
 
   .content {
@@ -140,15 +151,24 @@
   }
 
   .titleBlock {
-    padding-left: 8px;
-    border-left-width: 2px;
+    gap: 3px;
   }
 
   .pageTitle {
-    font-size: 1rem;
+    font-size: 1.08rem;
   }
 
   .pageSubtitle {
-    font-size: 0.65rem;
+    font-size: 0.68rem;
+  }
+
+  .headerIcon {
+    width: 38px;
+    height: 38px;
+  }
+
+  .headerIcon svg {
+    width: 18px;
+    height: 18px;
   }
 }

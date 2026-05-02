@@ -1,9 +1,30 @@
 // src/components/Layout.jsx
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { FaBars } from 'react-icons/fa';
+import {
+  FaBars,
+  FaChartBar,
+  FaChartLine,
+  FaClipboardList,
+  FaHome,
+  FaLayerGroup,
+  FaShippingFast,
+  FaTruck,
+  FaUserCog,
+} from 'react-icons/fa';
 import Sidebar from './Sidebar';
 import styles from '@/styles/Layout.module.css';
+
+const HEADER_ICONS = {
+  dashboard: <FaChartBar />,
+  summary: <FaChartLine />,
+  control: <FaClipboardList />,
+  management: <FaUserCog />,
+  request: <FaHome />,
+  dispatch: <FaTruck />,
+  boarding: <FaLayerGroup />,
+  default: <FaShippingFast />,
+};
 
 // ─── Metadata de cada ruta (título y subtítulo del Page Header) ───────────────
 // Agrega aquí las rutas nuevas que crees en el futuro.
@@ -15,6 +36,16 @@ const PAGE_META = {
   '/Request':         { title: 'Solicitudes',       subtitle: 'Crea y consulta tus órdenes'          },
   '/Dispatch':        { title: 'Despacho',          subtitle: 'Órdenes activas en tiempo real'       },
   '/Boarding':        { title: 'Embarque',          subtitle: 'Registro y control de embarques'      },
+};
+
+const ROUTE_ICON_BY_PATH = {
+  '/admin/Dashboard': 'dashboard',
+  '/admin/Summary': 'summary',
+  '/admin/Control': 'control',
+  '/admin/Management': 'management',
+  '/Request': 'request',
+  '/Dispatch': 'dispatch',
+  '/Boarding': 'boarding',
 };
 
 // Rutas donde no se muestra el layout (login / raíz)
@@ -31,6 +62,7 @@ export default function Layout({ children }) {
   }
 
   const meta = PAGE_META[router.pathname] || { title: 'PalletGo', subtitle: '' };
+  const headerIcon = HEADER_ICONS[ROUTE_ICON_BY_PATH[router.pathname]] || HEADER_ICONS.default;
 
   return (
     <div className={styles.wrapper}>
@@ -54,6 +86,10 @@ export default function Layout({ children }) {
             >
               <FaBars size={20} />
             </button>
+
+            <div className={styles.headerIcon} aria-hidden="true">
+              {headerIcon}
+            </div>
 
             <div className={styles.titleBlock}>
               <h1 className={styles.pageTitle}>{meta.title}</h1>

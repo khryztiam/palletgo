@@ -1,5 +1,18 @@
 import React from 'react';
-import { MdTimer, MdLocalShipping, MdWarning, MdError } from 'react-icons/md';
+import {
+  MdTimer,
+  MdLocalShipping,
+  MdWarning,
+  MdError,
+  MdPlayArrow,
+  MdDone,
+  MdPerson,
+  MdPlace,
+  MdNotes,
+  MdInventory2,
+  MdSchedule,
+  MdCheckCircle,
+} from 'react-icons/md';
 import styles from '@/styles/Card.module.css';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -59,7 +72,9 @@ const CardTimer = ({ elapsedSeconds, isAlerting, isCritical }) => {
 // ─── Subcomponente: Footer ────────────────────────────────────────────────────
 const CardFooter = ({ variant, order, isAlerting, onStatusClick }) => {
   if (variant === 'dispatch') {
-    const label = order.status === 'SOLICITADO' ? 'Iniciar Despacho' : 'Marcar Entregado';
+    const isRequested = order.status === 'SOLICITADO';
+    const label = isRequested ? 'Iniciar despacho' : 'Marcar entregado';
+    const ActionIcon = isRequested ? MdPlayArrow : MdDone;
 
     return (
       <div className={styles.footer}>
@@ -68,11 +83,10 @@ const CardFooter = ({ variant, order, isAlerting, onStatusClick }) => {
           className={[
             styles.statusButton,
             statusToClass[order.status] ?? '',
-            isAlerting ? styles.buttonAlert : '',
           ].join(' ')}
         >
-          {label}
-          {isAlerting && <MdWarning className={styles.buttonAlertIcon} />}
+          <ActionIcon className={styles.buttonIcon} />
+          <span>{label}</span>
         </button>
       </div>
     );
@@ -111,18 +125,29 @@ export const Card = ({
   isAlerting = false,
 }) => {
   const isCritical = order.elapsedSeconds > 20 * 60;
+  const priorityLabel = isCritical ? 'Critico' : isAlerting ? 'Alerta' : 'En tiempo';
+  const PriorityIcon = isCritical ? MdError : isAlerting ? MdWarning : MdCheckCircle;
+  const commentsText = typeof order.comments === 'string' ? order.comments.trim() : '';
+  const hasComments = Boolean(commentsText && commentsText !== 'N/A');
+  const shouldPulseCard = variant !== 'dispatch' && isAlerting;
 
   return (
     <div className={[
       styles.card,
       variant === 'dispatch' ? styles.dispatch : '',
-      isAlerting ? styles.alertPulse   : '',
-      isCritical ? styles.criticalAlert : '',
+      variant === 'dispatch'
+        ? isCritical ? styles.dispatchCritical : isAlerting ? styles.dispatchAlert : styles.dispatchOk
+        : '',
+      shouldPulseCard ? styles.alertPulse : '',
+      shouldPulseCard && isCritical ? styles.criticalAlert : '',
     ].join(' ')}>
 
       {/* ── Header ─────────────────────────────────────────────────────── */}
       <div className={styles.header}>
-        <h3>{order.area} - Orden # {order.id_order}</h3>
+        <div className={styles.titleGroup}>
+          <span className={styles.orderEyebrow}>Orden #{order.id_order}</span>
+          <h3>{order.area}</h3>
+        </div>
 
         {showTimer && (
           <CardTimer
@@ -135,48 +160,135 @@ export const Card = ({
 
       {/* ── Body ───────────────────────────────────────────────────────── */}
       <div className={styles.body}>
-        <div className={styles.columns}>
+        {variant === 'dispatch' ? (
+          <div className={styles.dispatchTicket}>
+            <div className={styles.dispatchInfoGrid}>
+              <div className={[styles.infoTile, styles.infoTilePrimary].join(' ')}>
+                <MdPlace className={styles.infoIcon} />
+                <div>
+                  <span>Destino</span>
+                  <strong>{order.destiny || 'N/A'}</strong>
+                </div>
+              </div>
 
-          {/* Columna Izquierda */}
-          <div className={styles.column}>
-            <p className={styles.highlight}>
-              {new Date(order.date_order).toLocaleString('es-MX')}
-            </p>
+              <div className={styles.infoTile}>
+                <MdPerson className={styles.infoIcon} />
+                <div>
+                  <span>Solicitante</span>
+                  <strong>{order.user_submit || 'N/A'}</strong>
+                </div>
+              </div>
 
-            <p className={styles.label}>Detalles:</p>
-            <ul className={styles.list}>
-              {Array.isArray(order.details)
-                ? order.details.map((detail, index) => (
-                    <li key={`${order.id_order}-detail-${index}`}>{detail}</li>
-                  ))
-                : <li>{order.details}</li>
-              }
-            </ul>
-          </div>
+              <div className={styles.infoTile}>
+                <MdSchedule className={styles.infoIcon} />
+                <div>
+                  <span>Creada</span>
+                  <strong>{new Date(order.date_order).toLocaleString('es-MX')}</strong>
+                </div>
+              </div>
 
-          {/* Separador visual */}
-          <div className={styles.columnDivider} />
+              <div className={[
+                styles.infoTile,
+                styles.priorityTile,
+                isCritical ? styles.priorityTileCritical : isAlerting ? styles.priorityTileAlert : styles.priorityTileOk,
+              ].join(' ')}>
+                <span className={[
+                  styles.priorityIconWrap,
+                  isCritical ? styles.priorityIconCritical : isAlerting ? styles.priorityIconAlert : styles.priorityIconOk,
+                ].join(' ')}>
+                  <PriorityIcon />
+                </span>
+                <div>
+                  <span>Prioridad</span>
+                  <strong>{priorityLabel}</strong>
+                </div>
+              </div>
+            </div>
 
-          {/* Columna Derecha */}
-          <div className={styles.column}>
-            {variant === 'dispatch' && (
-              <p>
-                <span className={styles.label}>Solicitante:</span> {order.user_submit}
-              </p>
-            )}
-            <p>
-              <span className={styles.label}>Destino:</span> {order.destiny || 'N/A'}
-            </p>
-            <p>
-              <span className={styles.label}>Comentarios:</span> {order.comments || 'N/A'}
-            </p>
+            <div className={styles.dispatchPanels}>
+              <section className={styles.detailPanel}>
+                <div className={styles.panelTitle}>
+                  <MdInventory2 className={styles.metaIcon} />
+                  <span>Detalles</span>
+                </div>
+                <ul className={styles.list}>
+                  {Array.isArray(order.details)
+                    ? order.details.map((detail, index) => (
+                        <li key={`${order.id_order}-detail-${index}`}>{detail}</li>
+                      ))
+                    : <li>{order.details}</li>
+                  }
+                </ul>
+              </section>
+
+              {hasComments && (
+                <section className={styles.commentPanel}>
+                  <div className={styles.panelTitle}>
+                    <MdNotes className={styles.metaIcon} />
+                    <span>Comentarios</span>
+                  </div>
+                  <p>{commentsText}</p>
+                </section>
+              )}
+            </div>
+
             {order.user_deliver && (
-              <p>
-                <span className={styles.label}>Entregado por:</span> {order.user_deliver}
-              </p>
+              <div className={styles.deliverLine}>
+                <MdDone className={styles.metaIcon} />
+                <span>Asignado a {order.user_deliver}</span>
+              </div>
             )}
           </div>
-        </div>
+        ) : (
+          <div className={styles.columns}>
+
+            {/* Columna Izquierda */}
+            <div className={styles.column}>
+              <p className={styles.metaLine}>
+                <MdSchedule className={styles.metaIcon} />
+                <span>{new Date(order.date_order).toLocaleString('es-MX')}</span>
+              </p>
+
+              <p className={styles.sectionLabel}>
+                <MdInventory2 className={styles.metaIcon} />
+                Detalles
+              </p>
+              <ul className={styles.list}>
+                {Array.isArray(order.details)
+                  ? order.details.map((detail, index) => (
+                      <li key={`${order.id_order}-detail-${index}`}>{detail}</li>
+                    ))
+                  : <li>{order.details}</li>
+                }
+              </ul>
+            </div>
+
+            {/* Separador visual */}
+            <div className={styles.columnDivider} />
+
+            {/* Columna Derecha */}
+            <div className={styles.column}>
+              <p className={styles.metaLine}>
+                <MdPerson className={styles.metaIcon} />
+                <span><span className={styles.label}>Solicitante:</span> {order.user_submit}</span>
+              </p>
+              <p className={styles.metaLine}>
+                <MdPlace className={styles.metaIcon} />
+                <span><span className={styles.label}>Destino:</span> {order.destiny || 'N/A'}</span>
+              </p>
+              <p className={styles.metaLine}>
+                <MdNotes className={styles.metaIcon} />
+                <span><span className={styles.label}>Comentarios:</span> {order.comments || 'N/A'}</span>
+              </p>
+              {order.user_deliver && (
+                <p className={styles.metaLine}>
+                  <MdDone className={styles.metaIcon} />
+                  <span><span className={styles.label}>Entregado por:</span> {order.user_deliver}</span>
+                </p>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* ── Footer ─────────────────────────────────────────────────────── */}

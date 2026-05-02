@@ -149,7 +149,7 @@ palletgo/
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://<proyecto>.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon-key>
+NEXT_PUBLIC_SUPABASE_KEY=<anon-public-key>
 SUPABASE_SERVICE_ROLE_KEY=<service-role-key>
 ```
 

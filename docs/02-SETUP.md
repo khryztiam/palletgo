@@ -65,13 +65,13 @@ New-Item -Path ".env.local" -Type File
 touch .env.local
 ```
 
-Abre `.env.local` y copia exactamente:
+Abre `.env.local` y usa este formato como ejemplo:
 
 ```env
 # Supabase Configuration
-NEXT_PUBLIC_SUPABASE_URL=https://rhkhpigphjlccbscijms.supabase.co
-NEXT_PUBLIC_SUPABASE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJoa2hwaWdwaGpsY2Nic2Npam1zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMwMjY0MjgsImV4cCI6MjA1ODYwMjQyOH0.qVK85u74U911euO8L6VYaisAaM_CGRv9wdv7LgwTTrE
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJoa2hwaWdwaGpsY2Nic2Npam1zIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0MzAyNjQyOCwiZXhwIjoyMDU4NjAyNDI4fQ.6kGsWSoBT3NiuuIPomp1v4ogLIZJY8tTqt1cUfGs0SE
+NEXT_PUBLIC_SUPABASE_URL=https://<proyecto>.supabase.co
+NEXT_PUBLIC_SUPABASE_KEY=<anon-public-key>
+SUPABASE_SERVICE_ROLE_KEY=<service-role-key>
 
 # Opcional (para analytics, etc)
 # NEXT_PUBLIC_ANALYTICS_ID=tu_id_aqui
@@ -81,7 +81,7 @@ SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhY
 - **NUNCA** subas `.env.local` a git (ya está en `.gitignore`)
 - `NEXT_PUBLIC_*` son públicas (visibles en el cliente)
 - `SUPABASE_SERVICE_ROLE_KEY` es **SECRETO** (solo servidor)
-- Las claves aquí son reales del proyecto
+- Solicita las claves reales por el canal interno definido para el proyecto
 
 ---
 
@@ -95,7 +95,7 @@ node explore-db.js
 
 **Salida esperada:**
 ```
-🔗 Conectando a Supabase (Proyecto: rhkhpigphjlccbscijms)
+🔗 Conectando a Supabase (Proyecto: <proyecto>)
 
 📋 TABLAS ENCONTRADAS:
 
@@ -279,7 +279,7 @@ Para ver datos en tiempo real, accede a:
 **Login**:
 1. Abre el enlace
 2. Login con tu cuenta personal
-3. Proyecto: `rhkhpigphjlccbscijms`
+3. Proyecto: `<proyecto>`
 4. Ir a: `SQL Editor` para ejecutar queries crudas
 
 ### Consultas Útiles
