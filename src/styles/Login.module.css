@@ -5,7 +5,10 @@
   align-items: center;
   min-height: 100vh;
   padding: 1rem;
-  background: linear-gradient(to right, #2c3e50, #4ca1af);
+  background:
+    radial-gradient(circle at top left, rgba(42, 92, 170, 0.28), transparent 26%),
+    radial-gradient(circle at bottom right, rgba(76, 175, 80, 0.2), transparent 24%),
+    linear-gradient(135deg, #15233d 0%, #203d70 52%, #2a5caa 100%);
   animation: fadeInUp 0.6s ease-out;
 }
 
@@ -16,56 +19,69 @@
 
 /* ======= Box ======= */
 .box {
-  background: #ffffff;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.96);
+  padding: 2.5rem 2rem 1.75rem;
+  border-radius: 24px;
+  box-shadow: 0 26px 70px rgba(15, 23, 42, 0.3);
   width: 100%;
-  max-width: 360px;
+  max-width: 430px;
   text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  display: flex;
+  flex-direction: column;
 }
 
 /* ======= Logo ======= */
-.logoWrapper {
+.brandArea {
   display: flex;
-  justify-content: center;
-  margin-bottom: 1rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 1.7rem;
 }
 
-.logoCircle {
-  background-color: #e0ecf7;
-  border-radius: 50%;
-  padding: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+.logoBadge {
+  background: linear-gradient(180deg, #ffffff 0%, #eef5ff 100%);
+  border-radius: 28px;
+  padding: 14px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 18px 34px rgba(42, 92, 170, 0.18);
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 80px;
-  height: 80px;
+  width: 104px;
+  height: 104px;
 }
 
 /* ======= Título ======= */
 .title {
-  font-size: 2rem;
-  font-weight: bold;
-  letter-spacing: 0.5px;
+  font-size: 2.4rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1;
   background: linear-gradient(90deg, #2A5CAA, #4CAF50);
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  margin-bottom: 0.25rem;
+  margin: 0;
 }
 
-.box h2 {
-  font-size: 1.1rem;
-  color: #444;
-  margin-bottom: 1.25rem;
-  font-weight: 500;
+.subtitle {
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0;
 }
 
 /* ======= Form ======= */
 .form {
   display: flex;
   flex-direction: column;
+  gap: 1rem;
+  width: 50%;
+  min-width: 220px;
+  align-self: center;
+  align-items: stretch;
 }
 
 /* Accesibilidad: label visible solo para lectores de pantalla */
@@ -81,37 +97,98 @@
   border: 0;
 }
 
-.inputField {
+.inputGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   width: 100%;
-  padding: 10px 14px;
-  margin: 8px 0;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 15px;
-  transition: border-color 0.3s, box-shadow 0.3s;
+  box-sizing: border-box;
+  min-height: 50px;
+  padding: 0 0.95rem;
+  border: 1px solid #dbe4f0;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  transition: border-color 0.24s ease, box-shadow 0.24s ease, background 0.24s ease;
 }
 
-.inputField:focus {
-  border-color: #4ca1af;
+.inputGroup:focus-within {
+  border-color: #2A5CAA;
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(42, 92, 170, 0.14);
+}
+
+.inputIcon {
+  width: 1.2rem;
+  height: 1.2rem;
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+.inputField {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  background: transparent !important;
+  box-shadow: none;
+  color: #1e293b;
+  font-size: 0.95rem;
+  font-family: inherit;
   outline: none;
-  box-shadow: 0 0 0 3px rgba(76, 161, 175, 0.2);
+  appearance: none;
+}
+
+.inputField::placeholder {
+  color: #94a3b8;
+}
+
+.inputField:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.inputField:-webkit-autofill,
+.inputField:-webkit-autofill:hover,
+.inputField:-webkit-autofill:focus {
+  -webkit-text-fill-color: #1e293b;
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+.inputField::selection {
+  background: rgba(42, 92, 170, 0.18);
 }
 
 .loginButton {
   width: 100%;
-  padding: 10px;
-  background: #4ca1af;
+  box-sizing: border-box;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.9rem 1rem;
+  background: linear-gradient(135deg, #2A5CAA 0%, #2563eb 100%);
   color: white;
   border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  font-weight: bold;
+  border-radius: 14px;
+  font-size: 0.98rem;
+  font-weight: 800;
   cursor: pointer;
-  transition: background 0.3s ease;
-  margin-top: 1rem;
+  transition: transform 0.24s ease, box-shadow 0.24s ease, opacity 0.24s ease;
+  box-shadow: 0 14px 30px rgba(37, 99, 235, 0.28);
+  margin-top: 0.25rem;
 }
 
-.loginButton:hover:not(:disabled) { background: #357d92; }
+.loginButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 34px rgba(37, 99, 235, 0.36);
+}
+
+.loginButton:active:not(:disabled) {
+  transform: translateY(0);
+}
 
 .loginButton:disabled {
   opacity: 0.6;
@@ -121,13 +198,13 @@
 /* ======= Error ======= */
 /* FIX: el original tenía .error-message declarado dos veces — unificado aquí */
 .error {
-  color: #b90000;
-  background: #ffe3e3;
-  border: 1px solid #ffaaaa;
-  border-radius: 6px;
-  padding: 10px;
-  margin-bottom: 1rem;
-  font-size: 0.95rem;
+  color: #991b1b;
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  border-radius: 14px;
+  padding: 0.75rem 0.9rem;
+  font-size: 0.86rem;
+  font-weight: 700;
   animation: shake 0.4s ease-in-out;
 }
 
@@ -138,4 +215,63 @@
   60%  { transform: translateX(-6px);}
   80%  { transform: translateX(6px); }
   100% { transform: translateX(0);   }
+}
+
+.footer {
+  color: #94a3b8;
+  border-top: 1px solid #e2e8f0;
+  margin-top: 1.35rem;
+  padding-top: 1rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+  width: 50%;
+  min-width: 220px;
+  align-self: center;
+}
+
+@media (max-width: 480px) {
+  .box {
+    padding: 2rem 1.25rem 1.5rem;
+    border-radius: 20px;
+  }
+
+  .logoBadge {
+    width: 92px;
+    height: 92px;
+    border-radius: 24px;
+  }
+
+  .title {
+    font-size: 2.1rem;
+  }
+
+  .inputGroup {
+    padding: 0 0.85rem;
+  }
+
+  .inputField {
+    font-size: 1rem;
+  }
+
+  .form {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .footer {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .container,
+  .error {
+    animation: none;
+  }
+
+  .inputGroup,
+  .loginButton {
+    transition: none;
+  }
 }

@@ -1,146 +1,81 @@
-# 📚 Documentación PalletGo - Índice General
+# Documentacion PalletGo - Indice general
 
-> **Documentación Profesional para Usuarios y Desarrolladores**
-> 
-> Última actualización: Abril 2026
-> Versión: 0.3.0 (GlobalUsers + Summary Ejecutivo + Timeline mejorado + RLS/APIs completadas)
+> Ultima actualizacion: 2 de mayo de 2026
+> Version documentada: 2.6.0
 
----
+Este indice concentra la documentacion vigente del proyecto. El README queda como presentacion corta; los detalles tecnicos, estructura, estadisticas y flujos completos viven aqui.
 
-## 📋 Índice de Contenidos
+## Lectura recomendada
 
-### 🚀 INICIO RÁPIDO
-- **[01-ARQUITECTURA.md](01-ARQUITECTURA.md)** - Visión general del proyecto
-- **[02-SETUP.md](02-SETUP.md)** - Guía de instalación y configuración
-- **[03-GUIA-USUARIO.md](03-GUIA-USUARIO.md)** - Manual para usuarios estándar
+| Necesidad | Documento |
+|-----------|-----------|
+| Entender que hace el sistema | [README](../README.md) |
+| Revisar arquitectura y rutas | [01-ARQUITECTURA.md](01-ARQUITECTURA.md) |
+| Instalar o levantar local | [02-SETUP.md](02-SETUP.md) |
+| Capacitar usuarios | [03-GUIA-USUARIO.md](03-GUIA-USUARIO.md) |
+| Revisar roles y sesion | [04-AUTENTICACION.md](04-AUTENTICACION.md) |
+| Revisar tablas, RLS y migraciones | [05-BASE-DE-DATOS.md](05-BASE-DE-DATOS.md) |
+| Revisar endpoints | [06-APIs.md](06-APIs.md) |
+| Entender el flujo operativo por rol | [09-FLUJOS-POR-ROL.md](09-FLUJOS-POR-ROL.md) |
+| Handover a otro desarrollador | [10-HANDOVER.md](10-HANDOVER.md) |
+| Revisar deuda tecnica y calidad | [11-CALIDAD.md](11-CALIDAD.md) |
 
-### 👨‍💻 PARA DESARROLLADORES
-- **[04-AUTENTICACION.md](04-AUTENTICACION.md)** - Sistema de autenticación y roles
-- **[05-BASE-DE-DATOS.md](05-BASE-DE-DATOS.md)** - Esquema y operaciones SQL
-- **[06-APIs.md](06-APIs.md)** - Endpoints REST documentados
+## Flujo principal del negocio
 
-### ⚙️ OPERACIONAL
-- **[09-FLUJOS-POR-ROL.md](09-FLUJOS-POR-ROL.md)** - Flujos de negocio detallados por rol ⭐ LEER PRIMERO
-- **[10-HANDOVER.md](10-HANDOVER.md)** - Guía para nuevo desarrollador (onboarding rápido) ⭐ PARA HEREDAR
-
----
-
-## 📊 Distribución de Documentos
-
-| Documento | Audiencia | Nivel | Tiempo |
-|-----------|-----------|-------|--------|
-|-----------|-----------|-------|--------|
-| 01 Arquitectura | Tech + Managers | Medio | 15 min |
-| 02 Setup | Devs | Principiante | 10 min |
-| 03 Guía Usuario | Usuarios | Fácil | 20 min |
-| 04 Autenticación | Devs Senior | Avanzado | 20 min |
-| 05 Base de Datos | Devs + DBA | Avanzado | 25 min |
-| 06 APIs | Devs | Medio | 15 min |
-| **09 Flujos por Rol** | **Usuarios + Devs** | **Medio** | **25 min** |
-| **10 Handover** | **Devs (nuevos)** | **Fácil** | **40 min** |
-| 11 Calidad | Tech Lead | Avanzado | 20 min |
-
----
-
-## 🎯 Guía Rápida por Rol
-
-### 👤 **USUARIO ESTÁNDAR** (Operador de Línea, Embarque)
-1. Lee: [03-GUIA-USUARIO.md](03-GUIA-USUARIO.md)
-2. Ve: Videos en carpeta `/videos` (si existen)
-3. Contacta: Soporte interno
-
-### 👨‍💻 **DESARROLLADOR JUNIOR**
-1. Lee: [02-SETUP.md](02-SETUP.md) - Primera hora
-2. Lee: [01-ARQUITECTURA.md](01-ARQUITECTURA.md)
-3. Lee: [07-COMPONENTES.md](07-COMPONENTES.md)
-4. Practica: Intenta hacer cambios menores
-
-### 👨‍💼 **DESARROLLADOR SENIOR**
-1. Lee: [01-ARQUITECTURA.md](01-ARQUITECTURA.md)
-2. Lee: [04-AUTENTICACION.md](04-AUTENTICACION.md)
-3. Lee: [05-BASE-DE-DATOS.md](05-BASE-DE-DATOS.md)
-4. Lee: [08-FLUJOS.md](08-FLUJOS.md)
-5. Revisar: [11-CALIDAD.md](11-CALIDAD.md) para mejoras
-
-### 🔧 **DEVOPS / SRE**
-1. Lee: [02-SETUP.md](02-SETUP.md)
-2. Lee: [09-DESPLIEGUE.md](09-DESPLIEGUE.md)
-3. Lee: [10-TROUBLESHOOTING.md](10-TROUBLESHOOTING.md)
-4. Configura: Variables de .env
-
-### 🐛 **SOPORTE TÉCNICO**
-1. Lee: [10-TROUBLESHOOTING.md](10-TROUBLESHOOTING.md)
-2. Lee: [03-GUIA-USUARIO.md](03-GUIA-USUARIO.md)
-3. Contacta: Desarrolladores para bugs
-
----
-
-## 📈 Estadísticas del Proyecto
-
-```
-Páginas (Routes):         9 (+ Summary Ejecutivo)
-Componentes:              25+
-API Endpoints:            6 (CRUD + Queue + Status)
-Líneas de Código:         3800+
-Tests Unitarios:          0 ⚠️ [RECOMENDADO: Vitest/Cypress]
-Cobertura:                0% 🟡
-Problemas Críticos:       0 ✅ [Resueltos abril 2026]
-Problemas Importantes:    0 ✅ [Resueltos abril 2026]
-RLS Políticas:            12+ ✅ [ACTIVAS]
+```text
+1. LINEA crea una solicitud desde Request.
+2. Supabase Realtime actualiza la cola operativa.
+3. EMBARQUE recibe aviso visual/voz en Dispatch.
+4. EMBARQUE toma la solicitud, controla el tiempo y actualiza estado.
+5. Boarding registra/controla embarques cuando aplica.
+6. SUPERVISOR y ADMIN revisan indicadores, filtros, detalle y exportacion.
 ```
 
----
+## Estructura vigente del proyecto
 
-## 🔐 Seguridad - Checklist Crítico
+```text
+palletgo/
+├── docs/                  Documentacion tecnica
+├── migrations/            Scripts SQL y ajustes RLS
+├── public/                Recursos estaticos
+├── src/
+│   ├── pages/             Rutas Pages Router
+│   │   ├── index.js       Login
+│   │   ├── Request.js     Solicitudes LINEA
+│   │   ├── Dispatch.js    Despacho EMBARQUE
+│   │   ├── Boarding.js    Embarques EMBARQUE
+│   │   ├── admin/         Summary, Dashboard, Control, Management, GlobalUsers
+│   │   └── api/           Endpoints backend
+│   ├── components/        Componentes reutilizables
+│   ├── context/           AuthContext
+│   ├── lib/               Clientes Supabase
+│   └── styles/            CSS Modules y estilos globales
+├── eslint.config.mjs      Configuracion ESLint
+├── package.json
+└── README.md
+```
 
-- [ ] `.env.local` configurado con claves Supabase
-- [ ] RLS (Row Level Security) habilitado en Supabase
-- [ ] Validación de sesión en todos los endpoints
-- [ ] HTTPS habilitado en producción
-- [ ] Variables secretas nunca en `.env` público
-- [ ] Usuarios creados solo desde Management panel
-- [ ] Backups diarios de BD
+## Estadisticas actuales
 
----
+| Metrica | Estado |
+|---------|--------|
+| Rutas Pages Router | 15 archivos en `src/pages`, incluyendo APIs |
+| Endpoints API | 4 archivos API activos |
+| Componentes | 17 componentes principales |
+| CSS Modules / estilos | 16 archivos de estilo |
+| Migraciones SQL | 7 archivos |
+| Tests automatizados | No identificados en el repo |
+| Version actual | 2.6.0 |
 
-## 🚀 Próximos Pasos Recomendados
+## Roles operativos
 
-### Inmediatos (Esta semana)
-- [ ] Leer documentación completa (2 horas)
-- [ ] Verificar setup & variables de entorno
-- [ ] Crear plan de testing
+| Rol | Alcance |
+|-----|---------|
+| LINEA | Solicita y consulta estado de ordenes. |
+| EMBARQUE | Atiende, despacha, actualiza estados y gestiona entregadores. |
+| SUPERVISOR | Monitorea indicadores, control diario, filtros y exportaciones. |
+| ADMIN | Administra usuarios, permisos y vistas globales. |
 
-### Corto Plazo (Este mes)
-- [ ] Implementar Error Boundary
-- [ ] Crear tests unitarios básicos
-- [ ] Documentar procesos de despliegue
+## Historial documental y changelog
 
-### Mediano Plazo (Este trimestre)
-- [ ] 30% coverage de tests
-- [ ] Implementar RLS completo
-- [ ] Dark mode opcional
-
----
-
-## 📞 Contacto y Soporte
-
-**Preguntas sobre:**
-- **Setup/Instalación**: Ver [02-SETUP.md](02-SETUP.md)
-- **Uso de la app**: Ver [03-GUIA-USUARIO.md](03-GUIA-USUARIO.md)
-- **Desarrollo**: Ver documentación técnica
-- **Bugs**: Crear issue en repositorio
-
----
-
-## 📝 Modo de Uso Recomendado
-
-Esta documentación está diseñada para ser **navegada**:
-
-1. **Mantén abierto este índice** como punto de entrada
-2. **Abre los documentos que necesites** según tu rol
-3. **Usa Ctrl+F** para buscar términos específicos
-4. **Vuelve al índice** cuando cambies de tema
-
----
-
-**¿Listo para comenzar?** → [01-ARQUITECTURA.md](01-ARQUITECTURA.md) ✨
+El historial reconstruido por commits esta en [CAMBIOS-DOCUMENTACION.md](CAMBIOS-DOCUMENTACION.md). La serie documentada inicia en `1.0.0`, reconoce el salto tecnico mayor en `2.0.0` y deja el relanzamiento UI/UX del 4 de marzo de 2026 como `2.1.0`.

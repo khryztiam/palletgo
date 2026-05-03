@@ -1,7 +1,12 @@
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import Image from "next/image";
+import { FiLock, FiUser } from "react-icons/fi";
 import styles from "@/styles/Login.module.css";
+import packageInfo from "../../package.json";
+
+const DOMAIN = "@yazaki.com";
+const APP_VERSION = `v${packageInfo.version}`;
 
 export default function Login() {
   const { login } = useAuth();
@@ -17,7 +22,7 @@ export default function Login() {
     setIsLoggingIn(true);
 
     try {
-      const emailFinal = `${username}@yazaki.com`.toLowerCase();
+      const emailFinal = `${username}${DOMAIN}`.toLowerCase();
       await login(emailFinal, password);
       // Redirect lo maneja AuthContext
     } catch {
@@ -30,55 +35,59 @@ export default function Login() {
     <div className={styles.container}>
       <div className={styles.box}>
 
-        {/* Logo */}
-        <div className={styles.logoWrapper}>
-          <div className={styles.logoCircle}>
+        <div className={styles.brandArea}>
+          <div className={styles.logoBadge}>
             <Image
               src="/logo_app.svg"
               alt="Logo PalletGo"
-              width={70}
-              height={70}
+              width={72}
+              height={72}
+              priority
             />
           </div>
+          <h1 className={styles.title}>PalletGo</h1>
+          <p className={styles.subtitle}>Inicia sesión para continuar</p>
         </div>
 
-        {/* Título */}
-        <h1 className={styles.title}>PalletGo</h1>
-        <h2>Iniciar sesión</h2>
-
-        {/* Error con animación shake */}
-        {error && <div className={styles.error}>{error}</div>}
-
-        {/* Formulario */}
         <form onSubmit={handleSubmit} className={styles.form} noValidate>
 
           <label htmlFor="username" className={styles.srOnly}>
             Usuario
           </label>
-          <input
-            id="username"
-            type="text"
-            placeholder="Usuario"
-            className={styles.inputField}
-            value={username}
-            onChange={(e) => setUsername(e.target.value.trim())}
-            required
-            autoComplete="username"
-          />
+          <div className={styles.inputGroup}>
+            <FiUser className={styles.inputIcon} aria-hidden="true" />
+            <input
+              id="username"
+              type="text"
+              placeholder="Usuario"
+              className={styles.inputField}
+              value={username}
+              onChange={(e) => setUsername(e.target.value.trim())}
+              required
+              autoComplete="username"
+              disabled={isLoggingIn}
+            />
+          </div>
 
           <label htmlFor="password" className={styles.srOnly}>
             Contraseña
           </label>
-          <input
-            id="password"
-            type="password"
-            placeholder="Contraseña"
-            className={styles.inputField}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            autoComplete="current-password"
-          />
+          <div className={styles.inputGroup}>
+            <FiLock className={styles.inputIcon} aria-hidden="true" />
+            <input
+              id="password"
+              type="password"
+              placeholder="Contraseña"
+              className={styles.inputField}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              autoComplete="current-password"
+              disabled={isLoggingIn}
+            />
+          </div>
+
+          {error && <div className={styles.error}>{error}</div>}
 
           <button
             type="submit"
@@ -89,6 +98,10 @@ export default function Login() {
           </button>
 
         </form>
+
+        <div className={styles.footer}>
+          PalletGo {APP_VERSION}
+        </div>
       </div>
     </div>
   );
